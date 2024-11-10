@@ -13,7 +13,7 @@ function App() {
           <div className="nav-right">
             <ul>
               <li><a href="#informacion">Información</a></li>
-              <li><a href="#texto">Texto</a></li>
+              <li><a href="#texto">Precio</a></li>
               <li><a href="#contacto">Contacto</a></li>
             </ul>
           </div>
@@ -28,8 +28,8 @@ function App() {
 
       {/* LOHANAAAAAAAAAAA */}
 
-      <section id="texto">
-        <h2>Texto</h2>
+      <section id="Precio">
+        <h2>pRECIO</h2>
         <p>Contenido de texto relacionado con el garage.</p>
       </section>
 
