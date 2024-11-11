@@ -7,21 +7,24 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 function App() {
   return (
     <div className="App">
-      {/* ALEXANDERRRRRRR */}
-      <nav>
-        <div className="nav-container">
-          <div className="nav-left">
-            <h1>Flexguaraje Peru</h1>
-          </div>
-          <div className="nav-right">
-            <ul>
-              <li><a href="#informacion">Información</a></li>
-              <li><a href="#Precio">Precio</a></li>
-              <li><a href="#contacto">Contacto</a></li>
+      {/* ID "inicio" para que el enlace nos lleve a esta sección */}
+      <div id="inicio">
+        <nav>
+          <div className="nav-container">
+            <div className="nav-left">
+              <h1>Flexguaraje Peru</h1>
+            </div>
+            <div className="nav-right">
+              <ul>
+                <li><a href="#inicio">Inicio</a></li> {/* Enlace para llevar a "Inicio" */}
+                <li><a href="#informacion">Información</a></li>
+                <li><a href="#precio">Precio</a></li> {/* Cambié 'Precio' a 'precio' en minúscula */}
+                <li><a href="#contacto">Contacto</a></li>
             </ul>
           </div>
         </div>
       </nav>
+    </div>
 
       {/* CESARRRRRRRRRRRRRR */}
       <section id="informacion">
@@ -68,8 +71,9 @@ function App() {
 
       {/* LOHANAAAAAAAAAAA */}
 
-      <section id="precio">
-        <h2>Precios</h2>
+      {/* Sección de Precio */}
+      <section id="precio"> {/* Asegúrate de que el id sea 'precio' en minúscula */}
+        <h2>Precio</h2>
         <div className="precio-content">
           <div className="precio-item">
             <h3>Plan Básico</h3>

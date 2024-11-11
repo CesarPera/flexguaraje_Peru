@@ -1,4 +1,4 @@
-/* General Body styles */
+/* Estilos generales */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -13,7 +13,7 @@ body {
   height: 100vh;
 }
 
-/* Navigation bar */
+/* Barra de navegación fija */
 nav {
   background-color: #333;
   color: white;
@@ -21,9 +21,18 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: fixed; /* Hace que el nav esté fijo */
+  top: 0; /* Siempre en la parte superior */
+  left: 0;
+  right: 0;
+  z-index: 1000; /* Para asegurarse de que quede sobre el contenido */
 }
 
-/* Container for navigation */
+/* Agregar espacio superior para evitar que el contenido quede oculto por la barra de navegación */
+.App {
+  padding-top: 60px; /* Esto depende de la altura del nav */
+}
+
 .nav-container {
   display: flex;
   justify-content: space-between;
@@ -31,7 +40,7 @@ nav {
   align-items: center;
 }
 
-/* Left section for the Garage title */
+/* Izquierda del nav (logo o nombre) */
 .nav-left {
   display: flex;
   align-items: center;
@@ -45,7 +54,7 @@ nav {
   color: white;
 }
 
-/* Right section for navigation links */
+/* Derecha del nav (enlaces) */
 .nav-right ul {
   display: flex;
   list-style-type: none;
@@ -73,7 +82,7 @@ nav {
   border-radius: 4px;
 }
 
-/* Section content styles */
+/* Sección de contenido */
 section h2 {
   margin-top: 0;
   font-size: 22px;
@@ -84,6 +93,7 @@ section p {
   line-height: 1.6;
 }
 
+/* Quienes somos, objetivo, misión, visión */
 .quienes-somos,
 .objetivo,
 .mision,
@@ -109,12 +119,11 @@ section p {
   box-shadow: 0px 0px 14px 5px #000000;
   transition: transform 0.3s ease-in-out;
 }
-
 .informacion-i img:hover {
   transform: scale(1.1); /* Zoom al pasar el mouse */
 }
 
-/* Responsiveness for smaller screens */
+/* Responsiveness */
 @media (max-width: 768px) {
   .nav-container {
     flex-direction: column;
@@ -132,44 +141,8 @@ section p {
   }
 }
 
-/*Lohana */
-/* Estilos generales :) */
-.App {
-  font-family: Arial, sans-serif;
-}
 
-.nav-container {
-  display: flex;
-  justify-content: space-between;
-  padding: 20px;
-  background-color: #333;
-  color: white;
-}
-
-.nav-left h1 {
-  font-size: 24px;
-}
-
-.nav-right ul {
-  list-style: none;
-  display: flex;
-  gap: 15px;
-}
-
-.nav-right ul li a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-section {
-  padding: 20px;
-  margin-top: 20px;
-}
-
-section h2 {
-  font-size: 24px;
-}
+/*/FIN DEL NAV*/
 
 /* Estilos para la sección de precios */
 .precio-content {
