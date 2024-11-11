@@ -107,9 +107,12 @@ section p {
   height: 350px;
   margin: 40px 20px;
   box-shadow: 0px 0px 14px 5px #000000;
+  transition: transform 0.3s ease-in-out;
 }
 
-
+.informacion-i img:hover {
+  transform: scale(1.1); /* Zoom al pasar el mouse */
+}
 
 /* Responsiveness for smaller screens */
 @media (max-width: 768px) {
@@ -221,5 +224,84 @@ section h2 {
 
   .precio-item {
     width: 45%;
+  }
+}
+/* General Body styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+/* App container styles */
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Navigation bar */
+nav {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Footer styles */
+.footer-container {
+  padding: 20px;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.footer-content h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.social-icons a {
+  text-decoration: none;
+  color: white;
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.social-icons a:hover {
+  transform: scale(1.1);
+}
+
+.social-icons i {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+/* Responsiveness for smaller screens */
+@media (max-width: 768px) {
+  .footer-container {
+    padding: 10px;
+  }
+
+  .social-icons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .social-icons a {
+    font-size: 16px;
   }
 }
