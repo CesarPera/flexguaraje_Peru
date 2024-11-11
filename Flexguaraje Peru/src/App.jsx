@@ -65,9 +65,25 @@ function App() {
 
       {/* LOHANAAAAAAAAAAA */}
 
-      <section id="Precio">
-        <h2>pRECIO</h2>
-        <p>Contenido de texto relacionado con el garage.</p>
+      <section id="precio">
+        <h2>Precios</h2>
+        <div className="precio-content">
+          <div className="precio-item">
+            <h3>Plan Básico</h3>
+            <p>Acceso a servicios básicos del garaje.</p>
+            <p className="precio">$50 / mes</p>
+          </div>
+          <div className="precio-item">
+            <h3>Plan Estándar</h3>
+            <p>Incluye servicios adicionales como limpieza y mantenimiento.</p>
+            <p className="precio">$100 / mes</p>
+          </div>
+          <div className="precio-item">
+            <h3>Plan Premium</h3>
+            <p>Acceso completo a todos los servicios, incluyendo asistencia 24/7.</p>
+            <p className="precio">$150 / mes</p>
+          </div>
+        </div>
       </section>
 
       {/* CAMILAAAAAAAAAAAAAAA */}
