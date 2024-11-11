@@ -1,5 +1,8 @@
 import React from 'react';
 import './index.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+
 
 function App() {
   return (
@@ -36,8 +39,21 @@ function App() {
       {/* CAMILAAAAAAAAAAAAAAA */}
 
       <section id="contacto">
-        <h2>Contacto</h2>
-        <p>Información de contacto del garageeeee.</p>
+      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+         <div class="col-md-4 d-flex align-items-center">
+        <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+        <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"/></svg>
+      </a>
+      <span class="mb-3 mb-md-0 text-body-secondary">&copy; 2024 Flexguaraje-Perú</span>
+    </div>
+    <div class="d-inline-flex">
+    <a href="#" target="_blank" rel="noopener noreferrer"><i className="bi bi-envelope mx-1" style={{ fontSize: '2rem' }}></i></a>
+    <a href="#" target="_blank" rel="noopener noreferrer"><i className="bi bi-facebook mx-1"style={{ fontSize: '2rem' }}></i></a>
+    <a href="#" target="_blank" rel="noopener noreferrer"><i className="bi bi-whatsapp mx-1" style={{ fontSize: '2rem' }}></i></a>
+    <a href="#" target="_blank" rel="noopener noreferrer"><i className="bi bi-instagram mx-1" style={{ fontSize: '2rem' }}></i></a>
+
+    </div>
+      </footer>
       </section>
     </div>
 
