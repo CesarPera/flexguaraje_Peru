@@ -74,14 +74,6 @@ nav {
 }
 
 /* Section content styles */
-section {
-  padding: 20px;
-  margin: 20px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
 section h2 {
   margin-top: 0;
   font-size: 22px;
@@ -91,6 +83,33 @@ section p {
   font-size: 16px;
   line-height: 1.6;
 }
+
+.quienes-somos,
+.objetivo,
+.mision,
+.vision {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.informacion-l {
+  padding: 20px;
+  margin: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 0px 14px 5px #927c7c;
+  width: 40%;
+}
+
+.informacion-i img {
+  width: 400px;
+  height: 350px;
+  margin: 40px 20px;
+  box-shadow: 0px 0px 14px 5px #000000;
+}
+
+
 
 /* Responsiveness for smaller screens */
 @media (max-width: 768px) {
