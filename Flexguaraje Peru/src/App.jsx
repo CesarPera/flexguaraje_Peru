@@ -15,7 +15,7 @@ function App() {
           <div className="nav-right">
             <ul>
               <li><a href="#informacion">Información</a></li>
-              <li><a href="#texto">Precio</a></li>
+              <li><a href="#Precio">Precio</a></li>
               <li><a href="#contacto">Contacto</a></li>
             </ul>
           </div>
