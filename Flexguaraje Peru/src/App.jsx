@@ -26,6 +26,14 @@ function App() {
       </nav>
     </div>
 
+      {/* Imagen debajo del nav */}
+      <div className="hero-image">
+        <img src="https://images.unsplash.com/photo-1579762593217-46655e4e7efc?q=80&w=2117&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
+      </div>
+
+
+
+
       {/* CESARRRRRRRRRRRRRR */}
       <section id="informacion">
         <div className='quienes-somos'>
