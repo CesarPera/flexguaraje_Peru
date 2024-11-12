@@ -1,31 +1,63 @@
 import React from 'react';
 import './index.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 function App() {
   return (
     <div className="App">
-      {/* ID "inicio" para que el enlace nos lleve a esta sección */}
+      {/* ALEXANDERRRRRRRRRRRRRRRRR */}
+      {/* NAVEGACIONNNNNNNNNN */}
       <div id="inicio">
-        <nav>
-          <div className="nav-container">
-            <div className="nav-left">
-              <h1>Flexguaraje Peru</h1>
-            </div>
-            <div className="nav-right">
-              <ul>
-                <li><a href="#informacion">Información</a></li>
-                <li><a href="#precio">Precio</a></li> {/* Cambié 'Precio' a 'precio' en minúscula */}
-                <li><a href="#contacto">Contacto</a></li>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light nav">
+          <div className="container-fluid nav-container">
+            <a className="navbar-brand nav-left" href="#inicio">
+              <img
+                src="https://img.icons8.com/?size=100&id=OKqrTQ0RHJSW&format=png&color=000000"
+                alt="Logo"
+                className="d-inline-block align-top"
+              />
+              <h1 className="d-inline-block ms-2">
+                <b>Flexguaraje <br />Peru</b>
+              </h1>
+            </a>
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon">
+                <img
+                  src="https://img.icons8.com/?size=100&id=zDIlSQiGaA2y&format=png&color=000000"
+                  alt="menu-icon"
+                  className="menu-icon"
+                />
+              </span>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarNav">
+              <ul className="navbar-nav ms-auto nav-right">
+                <li className="nav-item">
+                  <a className="nav-link" href="#inicio">Información</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#precio">Precio</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#contacto">Contacto</a>
+                </li>
               </ul>
             </div>
           </div>
         </nav>
       </div>
 
-      {/* Imagen debajo del nav */}
+
+      {/* Imagen debajo del NAVEGACIONNNNN */}
       <section>
         <div className='img-inicio'>
           <img src="https://juujbox.com/cdn/shop/articles/storage_units_1_1.png?v=1688497006" alt="" className='img-fluid' />
@@ -33,6 +65,7 @@ function App() {
       </section>
 
       {/* CESARRRRRRRRRRRRRR */}
+      {/* INFORMACIONNNNNNN */}
       <section id="informacion">
         <div className='quienes-somos'>
           <div className='informacion-l'>
@@ -75,29 +108,30 @@ function App() {
         </div>
       </section>
 
-      {/* LOHANAAAAAAAAAAA */}
 
-      {/* Sección de Precio */}
-      <section id="precio"> {/* Asegúrate de que el id sea 'precio' en minúscula */}
-        <div className="precio-content">
-          <div className="precio-item">
-            <h2 className="precio">Precio</h2>
-            <h3><b>Formula: m2 + (cantidad x Tiempo)</b></h3>
-            <p>m2 = S/ 2<br />hora = S/ 10<br />dia = S/ 100<br />semana = S/ 500<br />mes = S/ 1800</p>
-          </div>
-
-        </div>
-      </section>
-
-      <section>
+      {/* DONDE ENCONTRARNOSSSSSSSSSSSSSSSS */}
+      <section className='mapa-p'>
         <div className='mapa'>
           <h2><b>¿Donde encontrarnos?</b></h2>
           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4132.558129496107!2d-77.00147639611748!3d-12.016518150333596!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c5f336d16f49%3A0x91c6ced90a797ea9!2sZegel%20-%20San%20Juan%20de%20Lurigancho!5e1!3m2!1ses-419!2spe!4v1731299514254!5m2!1ses-419!2spe" width="100%" height="450" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Google Maps Embed"></iframe>
         </div>
       </section>
 
-      {/* CAMILAAAAAAAAAAAAAAA */}
 
+      {/* LOHANAAAAAAAAAAA */}
+      {/* PRECIOOOOOOOOO */}
+      <section id="precio"> {/* Asegúrate de que el id sea 'precio' en minúscula */}
+        <div className="precio-content">
+          <div className="precio-item">
+            <h2 className="precio">Precio</h2>
+            <h3><b>(cantidad de m2 x costo de m2)<br />+<br />(cantidad de tiempo x costo de Tiempo)</b></h3>
+            <p>m2 = S/ 2<br />hora = S/ 10<br />dia = S/ 100<br />semana = S/ 500<br />mes = S/ 1800</p>
+          </div>
+        </div>
+      </section>
+
+      {/* CAMILAAAAAAAAAAAAAAA */}
+      {/* CONTACTOOOOOOOOOOOOOOOOOOOOOOO */}
       <section id="contacto">
         <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
           <div class="col-md-4 d-flex align-items-center">
@@ -117,14 +151,10 @@ function App() {
             <a href="https://www.instagram.com/cesar_pera_08/" target="_blank" rel="noopener noreferrer">
               <i className="bi bi-instagram mx-1 text-danger" style={{ fontSize: '3rem' }}></i> {/* Color de peligro de Bootstrap */}
             </a>
-
           </div>
         </footer>
       </section>
     </div>
-
-
-
   );
 }
 

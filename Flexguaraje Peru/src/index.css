@@ -6,20 +6,24 @@ body {
   background-color: #f4f4f4;
 }
 
-.img-inicio img {
-  width: 100%;
-  height: 400px;
-  margin-top: 40px;
-}
-
-/* App container styles */
 .App {
   display: flex;
   flex-direction: column;
+  height: 100vh;
 }
 
+b {
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+/* ALEXANDERRRRRRRRRRRRRRRR */
 /* Barra de navegación fija */
-nav {
+.container-fluid {
   background-color: #333;
   color: white;
   padding: 10px 20px;
@@ -27,27 +31,11 @@ nav {
   justify-content: space-between;
   align-items: center;
   position: fixed;
-  /* Hace que el nav esté fijo */
   top: 0;
-  /* Siempre en la parte superior */
   left: 0;
   right: 0;
   z-index: 1000;
-  /* Para asegurarse de que quede sobre el contenido */
 }
-
-
-.hero-image img {
-  margin: -11px 0px 100px ;
-  width: 100%;
-  height: 500px;
-  object-fit: stretch; /* Hace que la imagen se estire para llenar el contenedor */
-}
-
-
-
-/* Agregar espacio superior para evitar que el contenido quede oculto por la barra de navegación */
-
 
 .nav-container {
   display: flex;
@@ -56,10 +44,21 @@ nav {
   align-items: center;
 }
 
+/* BOTON DE LISTAAAAAA DE NAVVVV */
+.navbar-toggler-icon img {
+  width: 30px;
+  height: auto;
+}
+
 /* Izquierda del nav (logo o nombre) */
 .nav-left {
   display: flex;
   align-items: center;
+  text-align: center;
+}
+
+.nav-left img {
+  width: 80px;
 }
 
 .nav-left h1 {
@@ -86,9 +85,9 @@ nav {
   text-decoration: none;
   color: white;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 20px;
   letter-spacing: 1px;
-  padding: 10px;
+  padding: 20px;
   transition: color 0.3s ease, background-color 0.3s ease;
 }
 
@@ -96,6 +95,21 @@ nav {
   color: #333;
   background-color: #fff;
   border-radius: 4px;
+  width: 100%;
+}
+
+/* Estilos para la sección de imagen de inicio */
+.img-inicio img {
+  width: 100%;
+  height: 400px;
+  margin-top: 90px;
+}
+
+.hero-image img {
+  margin: -11px 0px 100px;
+  width: 100%;
+  height: 500px;
+  object-fit: stretch;
 }
 
 /* Sección de contenido */
@@ -109,6 +123,11 @@ section p {
   line-height: 1.6;
 }
 
+
+
+
+
+/* CESARRRRRRRRRRRRRR */
 /* Quienes somos, objetivo, misión, visión */
 .quienes-somos,
 .objetivo,
@@ -117,47 +136,52 @@ section p {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .informacion-l {
   padding: 20px;
-  margin: 20px;
+  margin: 40px;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0px 0px 14px 5px #927c7c;
-  width: 40%;
+  width: 45%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.informacion-l:hover {
+  transform: scale(1.05);
 }
 
 .informacion-i img {
   width: 400px;
   height: 350px;
-  margin: 40px 20px;
+  margin: 40px 40px;
   box-shadow: 0px 0px 14px 5px #000000;
   transition: transform 0.3s ease-in-out;
 }
 
+/* Estilos para el mapa */
+.mapa {
+  padding: 20px;
+  margin: 30px auto 80px auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 0px 14px 5px #000000;
+  width: 80%;
+}
 
-/* Responsiveness */
-@media (max-width: 768px) {
-  .nav-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .nav-right ul {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .nav-right li {
-    margin-left: 0;
-    margin-bottom: 10px;
-  }
+.mapa h2 {
+  font-size: 25px;
+  font-family: cursive;
+  text-align: center;
 }
 
 
-/*/FIN DEL NAV*/
 
+
+
+/* LOHANAAAAAAAAAAAAA */
 /* Estilos para la sección de precios */
 .precio-content {
   display: flex;
@@ -168,10 +192,11 @@ section p {
 .precio-item {
   background-color: #f5f5f5;
   padding: 15px;
-  width: 30%;
+  width: 40%;
   border-radius: 8px;
   box-shadow: 0px 0px 14px 5px #ebfc03;
   text-align: center;
+  transition: transform 0.3s ease-in-out;
 }
 
 .precio-item h3 {
@@ -184,13 +209,82 @@ section p {
 }
 
 .precio {
-  font-size: 18px;
+  font-size: 35px;
+  font-family: cursive;
   font-weight: bold;
   color: #333;
 }
 
+.precio-item:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 0px 14px 5px #ebfc03;
+}
+
+
+
+
+
+/* CAMILAAAAAAAAAAAAAAAAAAA */
+/* Estilos del pie de página */
+
+
+
+
+
 /* Responsive Styles */
+@media (max-width: 1200px) {
+
+  /* PRECIOOOOOO */
+  .precio-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .precio-item {
+    width: 50%;
+    margin-bottom: 20px;
+  }
+}
+
 @media (max-width: 768px) {
+
+  /* INFORMACIONNNNNN */
+  .informacion-l {
+    width: 80%;
+    /* Reduce el ancho del contenido a 70% en pantallas pequeñas */
+  }
+
+  .informacion-i img {
+    max-width: 55%;
+    max-height: 250px;
+    margin: 10px;
+    /* La imagen ocupa 70% de la pantalla */
+  }
+
+  .quienes-somos,
+  .objetivo,
+  .mision,
+  .vision {
+    flex-direction: column;
+    /* Los elementos se apilan en columna */
+    text-align: center;
+    /* Centra el contenido */
+  }
+
+  .informacion-i {
+    order: 1;
+  }
+
+  /*MAPAAAAAAAA */
+  .mapa-p {
+    margin-top: 30px;
+  }
+
+  .mapa iframe {
+    height: 300px;
+  }
+
+  /* PRECIOOOOOOO RESPONSIVE */
   .precio-content {
     flex-direction: column;
     align-items: center;
@@ -200,86 +294,8 @@ section p {
     width: 80%;
     margin-bottom: 20px;
   }
-}
 
-@media (max-width: 1024px) {
-  .precio-content {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-  .precio-item {
-    width: 45%;
-  }
-}
-
-/* General Body styles */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
-}
-
-/* App container styles */
-.App {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-/* Navigation bar */
-nav {
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Footer styles */
-.footer-container {
-  padding: 20px;
-  background-color: #333;
-  color: white;
-  text-align: center;
-  margin-top: 40px;
-}
-
-.footer-content h2 {
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-.social-icons {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-}
-
-.social-icons a {
-  text-decoration: none;
-  color: white;
-  font-size: 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: transform 0.2s;
-}
-
-.social-icons a:hover {
-  transform: scale(1.1);
-}
-
-.social-icons i {
-  font-size: 2rem;
-  margin-bottom: 5px;
-}
-
-/* Responsiveness for smaller screens */
-@media (max-width: 768px) {
+  /* PIEEEE RESPONSIVEEEE */
   .footer-container {
     padding: 10px;
   }
@@ -294,28 +310,19 @@ nav {
   }
 }
 
-.precio {
-  font-size: 35px;
-  font-family: cursive;
-}
+@media (max-width: 480px) {
 
-.precio-item:hover {
-  transform: scale(1.1);
-  box-shadow: 0px 0px 14px 5px #ebfc03;
-  margin-top: 10px;
-}
+  /* INFORMACIONNNNNN */
+  .informacion-l {
+    width: 80%;
+  }
 
-.mapa {
-  padding: 20px;
-  margin: 60px auto;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0px 0px 14px 5px #000000;
-  width: 80%;
-}
+  .informacion-i img {
+    max-width: 50%;
+    max-height: 250px;
+  }
 
-.mapa h2 {
-  font-size: 25px;
-  font-family: cursive;
-  text-align: center;
+  h2 {
+    font-size: 1.5rem;
+  }
 }
