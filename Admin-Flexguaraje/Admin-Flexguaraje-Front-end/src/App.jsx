@@ -19,6 +19,7 @@ function App() {
 
         <div className="content-container">
           <Routes>
+            <Route path="/" element={<Clientes />} /> {/* Página por defecto */}
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/espacios" element={<Espacios />} />
             <Route path="/servicios" element={<Servicios />} />
