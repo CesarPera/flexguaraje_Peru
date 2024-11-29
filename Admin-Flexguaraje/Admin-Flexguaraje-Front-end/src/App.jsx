@@ -1,35 +1,33 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './App.css';
+import HeaderAdmin from './Componentes/headerAdmin';
+import ListaAdmin from './Componentes/ListaAdmin';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
+// Aquí definimos las páginas (pueden ser otros componentes)
+import Clientes from './paginas/Clientes/Clientes';
+import Espacios from './paginas/Espacios/Espacios';
+import Servicios from './paginas/Servicios/Servicios';
+import Reportes from './paginas/Reportes/Reportes';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      {/* Layout principal con HeaderAdmin y ListaAdmin */}
+      <div className="app-layout">
+        <HeaderAdmin />
+        <ListaAdmin />
+
+        <div className="content-container">
+          <Routes>
+            <Route path="/clientes" element={<Clientes />} />
+            <Route path="/espacios" element={<Espacios />} />
+            <Route path="/servicios" element={<Servicios />} />
+            <Route path="/reportes" element={<Reportes />} />
+          </Routes>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;

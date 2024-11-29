@@ -1,42 +1,144 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* GENERALLLLLLLLLLLLLLLL */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/*CABEZAAAAAAAAAAAAAAAAAAAA*/
+header {
+  width: 100%;
+  background-color: rgb(43, 166, 223);
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  position: fixed;
+  margin-top: -100px;
+
+  z-index: 2;
+
+}
+
+h1 {
+  font-size: 60px;
+}
+
+button {
+  padding: 10px;
+  font-family: cursive;
+}
+
+button:hover {
+  background-color: yellow;
+}
+
+/* LISTAAAAAAAAAAAAAAAAAAAAA */
+
+.vertical-menu {
+  height: 100vh;
+  position: fixed;
+  margin-top: 100px;
+  top: 0;
+  left: 0;
+  background-color: #9ec9f1;
+  width: 70px;
+  font-family: cursive;
+  z-index: 2;
+
+  /* Transición para expandir/retraer */
+  transition: width 0.3s ease;
+}
+
+.vertical-menu.expanded {
+  /* Ancho cuando está expandido */
+  width: 200px;
+}
+
+/* Imagen de la listaaaaaaaaaaaa */
+.logo-container {
   text-align: center;
+  cursor: pointer;
+  padding: 10px 0;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.logo-img {
+  width: 40px;
+  height: 40px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Estilo de los elementos del menú */
+.menu-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.menu-item {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  cursor: pointer;
+
+  /* Transición al expandir */
+  transition: padding-left 0.3s ease;
 }
 
-.card {
-  padding: 2em;
+/* Letra inicial visible en estado colapsado */
+.short-label {
+  font-size: 25px;
+  font-weight: bold;
+  color: #333;
+  width: 40px;
 }
 
-.read-the-docs {
-  color: #888;
+/* Nombre completo visible solo en estado expandido */
+.full-label {
+  font-size: 25px;
+  font-weight: bold;
+  color: #333;
+  margin-left: 11px;
+
+  /* Transición para aparecer/desaparecer */
+  transition: opacity 0.3s ease;
 }
+
+
+/* Estilo para el overlay (oscurecer el fondo) */
+.overlay {
+  position: fixed;
+  top: 100px;
+  left: 70px;
+  right: 0;
+  bottom: 0;
+  display: none;
+
+  /* Negro con opacidad */
+  background-color: rgba(0, 0, 0, 0.5);
+
+  /* Asegurarse de que esté debajo de los elementos fijos */
+  z-index: 0;
+}
+
+.overlay.active {
+  /* Mostrar cuando está activo */
+  display: block;
+}
+
+
+.contenido-header {
+
+  padding: 20px;
+  margin-left: 70px;
+  margin-top: 100px;
+  flex-grow: 1;
+
+}
+
+
+/* NO TOCARRRRRRRRRRRR CODIGO DE AQUI PARA ARRIBA */
+/* PUEDES AGREGAR DE AQUI PARA ABAJOOOOOOOOO */
