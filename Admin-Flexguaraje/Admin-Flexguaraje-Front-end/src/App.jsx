@@ -17,6 +17,7 @@ function App() {
         <HeaderAdmin />
         <ListaAdmin />
 
+
         <div className="content-container">
           <Routes>
             <Route path="/" element={<Clientes />} /> {/* Página por defecto */}
@@ -27,7 +28,10 @@ function App() {
           </Routes>
         </div>
       </div>
+
+
     </Router>
+
   );
 }
 

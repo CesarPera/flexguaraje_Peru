@@ -9,3 +9,111 @@
 /* RECUERDA QUE TODO LOS CSS ESTAN VINCULADO AL PARECER, NO ES COMO EN HTML O JSP QUE ES UNO SOLO EL CSS PERO EN AQUI EN TODO JUNTO EN UNO SOLO EL CSS, QUISE SEPARAR EL ESTILO PARA QUE ASI CADA UNO TENGA SU PROPIO ESTILO PERO NOSE PUDO, PROXIMAMENTE BUSCARE Y INVESTIGARE PARA HACER ESO XD */
 
 /* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
+
+/* TITULOOOOOOO */
+.title-espacios {
+    font-size: 2rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    border-bottom: 5px solid black;
+    text-align: center;
+    width: 500px;
+    margin: 5px auto 30px auto;
+    color: #333;
+}
+
+/* FILTROSSSSS */
+.filtro-container {
+    max-width: 300px;
+    background-color: #b2c5d8;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.form-label {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* TABLASSSSSSSS */
+.table {
+    margin-top: 20px;
+}
+
+.tabla-espacios th,
+.tabla-espacios td {
+    /* Centra verticalmente */
+    vertical-align: middle;
+}
+
+/* LOS ESPACIOS DE CADA COLUMNA */
+.espacios-n {
+    width: 50px;
+}
+
+.espacios-dni {
+    width: 140px;
+}
+
+.espacios-t {
+    width: 100px;
+}
+
+.espacios-e {
+    width: 210px;
+}
+
+/* DNI ESTILOOOOOOO Y BUTTON */
+.dni-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Espaciado entre elementos */
+}
+
+.dni-buttons button {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+}
+
+/* OPCIONES DE ESTADOSSSSSS */
+.form-select {
+    width: 200px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: 10px;
+
+}
+
+.estado-disponible {
+    background-color: #28a745;
+    /* Verde */
+    color: white;
+}
+
+.estado-ocupado {
+    background-color: #dc3545;
+    /* Rojo */
+    color: white;
+}
+
+.estado-mantenimiento {
+    background-color: #ffc107;
+    /* Naranja */
+    color: black;
+}
+
+.estado-disponible option,
+.estado-ocupado option,
+.estado-mantenimiento option {
+    background-color: white;
+    color: black;
+}
