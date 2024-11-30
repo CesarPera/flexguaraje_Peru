@@ -20,12 +20,20 @@ header {
   margin-top: -100px;
 
   z-index: 2;
-
 }
+
+/* TITULOOOOOOOOOOOOOOOO */
+header h1 a {
+  text-decoration: none;
+  color: inherit;
+}
+
 
 h1 {
   font-size: 60px;
 }
+
+/* BOTTON DE CERRAR SESION */
 
 button {
   padding: 10px;
@@ -130,14 +138,69 @@ button:hover {
 }
 
 
-.contenido-header {
-
+/* EL CONTENIDOOOOOOOO DE INICIO OSEA LA PALABRA MOTIVACIONAL Y ESO PZ XD */
+.contenido-inicio {
   padding: 20px;
   margin-left: 70px;
   margin-top: 100px;
   flex-grow: 1;
-
+  background: #f4f7fb;
+  color: #333;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
+.intro-text h2 {
+  font-size: 2.5rem;
+  color: #2a82d7;
+  /* Color principal de Flexguaraje */
+  font-weight: bold;
+}
+
+.empresa-nombre {
+  color: #d96b32;
+  /* Color complementario para el nombre de la empresa */
+}
+
+.subtitulo {
+  font-size: 1.3rem;
+  color: #444;
+  margin-top: 10px;
+}
+
+.motivacion p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #555;
+  margin: 20px 0;
+}
+
+.motivacion p:last-child {
+  font-style: italic;
+  color: #777;
+}
+
+.cierre p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-top: 30px;
+  font-weight: bold;
+}
+
+.motivacion p,
+.cierre p {
+  text-align: justify;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cierre h3 {
+  font-size: 2rem;
+  margin: 30px;
+}
+
 
 
 /* NO TOCARRRRRRRRRRRR CODIGO DE AQUI PARA ARRIBA */
