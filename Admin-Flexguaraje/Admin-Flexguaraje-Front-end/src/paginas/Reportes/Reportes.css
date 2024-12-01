@@ -1,81 +1,118 @@
+/* Estilos generales para la página */
 .reportes-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+    font-family: Arial, sans-serif;
     padding: 20px;
-    margin-left: 70px;
-    margin-top: 100px;
-    flex-grow: 1;
 }
 
-/*EDITARRRR O AGREGAR TODOOOO DEBAJO DE ESTA LINEAAAAAAAAAAAAAAA */
-/* RECUERDA QUE TODO LOS CSS ESTAN VINCULADO AL PARECER, NO ES COMO EN HTML O JSP QUE ES UNO SOLO EL CSS PERO EN AQUI EN TODO JUNTO EN UNO SOLO EL CSS, QUISE SEPARAR EL ESTILO PARA QUE ASI CADA UNO TENGA SU PROPIO ESTILO PERO NOSE PUDO, PROXIMAMENTE BUSCARE Y INVESTIGARE PARA HACER ESO XD */
-
-/* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
-
-.reporte-container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.trabajador-info {
+h1 {
+    text-align: center;
     margin-bottom: 20px;
-    padding: 10px;
-    background-color: #f1f8e9;
-    border-radius: 5px;
-}
-
-.trabajador-info p {
-    margin: 8px 0;
-    font-size: 16px;
-    line-height: 1.5;
-}
-
-.reportes {
-    margin-top: 20px;
-}
-
-.reportes h3 {
-    color: #1976d2;
-    font-size: 20px;
-    margin-bottom: 15px;
-}
-
-.reporte-item {
-    margin-bottom: 15px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.reporte-item h4 {
-    margin: 0;
-    color: #00796b;
-    font-size: 18px;
-}
-
-.reporte-item p {
-    margin: 5px 0;
-    font-size: 14px;
-    color: #555;
-}
-
-.reporte-item p strong {
     color: #333;
 }
-.btn-agregar-reporte {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+
+/* Formulario */
+.form-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 700px;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-.btn-agregar-reporte:hover {
+.form-container input,
+.form-container select,
+.form-container button {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+
+.form-container button {
+    background-color: #4caf50;
+    color: white;
+    cursor: pointer;
+}
+
+.form-container button:hover {
     background-color: #45a049;
+}
+
+/* Tabla */
+.table-container {
+    width: 80%;
+    margin-top: 30px;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+th, td {
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #4caf50;
+    color: white;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.estado-disponible {
+    background-color: #4caf50;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.estado-ocupado {
+    background-color: #f44336;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.estado-mantenimiento {
+    background-color: #ff9800;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+/* Botones */
+.btn-accion {
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.btn-accion.editar {
+    background-color: #2196f3;
+}
+
+.btn-accion.eliminar {
+    background-color: #f44336;
+}
+
+.btn-accion.editar:hover {
+    background-color: #1976d2;
+}
+
+.btn-accion.eliminar:hover {
+    background-color: #e53935;
 }
