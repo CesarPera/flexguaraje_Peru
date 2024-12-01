@@ -9,3 +9,73 @@
 /* RECUERDA QUE TODO LOS CSS ESTAN VINCULADO AL PARECER, NO ES COMO EN HTML O JSP QUE ES UNO SOLO EL CSS PERO EN AQUI EN TODO JUNTO EN UNO SOLO EL CSS, QUISE SEPARAR EL ESTILO PARA QUE ASI CADA UNO TENGA SU PROPIO ESTILO PERO NOSE PUDO, PROXIMAMENTE BUSCARE Y INVESTIGARE PARA HACER ESO XD */
 
 /* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
+
+.reporte-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.trabajador-info {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f1f8e9;
+    border-radius: 5px;
+}
+
+.trabajador-info p {
+    margin: 8px 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.reportes {
+    margin-top: 20px;
+}
+
+.reportes h3 {
+    color: #1976d2;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.reporte-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reporte-item h4 {
+    margin: 0;
+    color: #00796b;
+    font-size: 18px;
+}
+
+.reporte-item p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.reporte-item p strong {
+    color: #333;
+}
+.btn-agregar-reporte {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-agregar-reporte:hover {
+    background-color: #45a049;
+}
