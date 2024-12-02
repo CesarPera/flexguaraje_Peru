@@ -9,3 +9,112 @@
 /* RECUERDA QUE TODO LOS CSS ESTAN VINCULADO AL PARECER, NO ES COMO EN HTML O JSP QUE ES UNO SOLO EL CSS PERO EN AQUI EN TODO JUNTO EN UNO SOLO EL CSS, QUISE SEPARAR EL ESTILO PARA QUE ASI CADA UNO TENGA SU PROPIO ESTILO PERO NOSE PUDO, PROXIMAMENTE BUSCARE Y INVESTIGARE PARA HACER ESO XD */
 
 /* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
+.boletas-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    text-align: left;
+    background-color: #f1f1f1;
+    border: 1px solid #010101;
+}
+
+.boletas-table th, .boletas-table td {
+    padding: 10px;
+    border: 1px solid #020202;
+}
+
+.boletas-table th {
+    background-color: #c8c7d7ee;
+    font-weight: bold;
+}
+
+.table-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.table-actions button {
+    padding: 10px 15px;
+    background-color: #479fec;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.table-actions button:hover {
+    background-color: #70b4f0;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(160, 157, 157, 0.893); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px; 
+    max-width: 90%;
+    max-height: 90vh; 
+    overflow-y: auto; 
+    position: relative; 
+}
+
+.modal-content label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #070707;
+    border-radius: 4px;
+}
+
+.modal-actions {
+    text-align: right;
+}
+
+.modal-actions button {
+    margin-left: 10px;
+    padding: 8px 12px;
+    background-color: #416080;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-actions button:hover {
+    background-color: #316397;
+}
+
+.btn-add {
+    background-color: #56a4e3;
+    margin-left: 10px;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-add:hover {
+    background-color: rgb(141, 164, 213);
+} 
+
+.servicios-page {
+    text-align: center; /* Asegura que el texto también esté centrado */
+}
