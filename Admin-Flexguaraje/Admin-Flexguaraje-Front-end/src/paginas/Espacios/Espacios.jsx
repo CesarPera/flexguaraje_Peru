@@ -66,7 +66,6 @@ function Espacios() {
                         <th scope="col" className="espacios-n">#</th>
                         <th scope="col" className="espacios-dni">DNI</th>
                         <th scope="col" className="espacios-na">Nombre y Apellido</th>
-                        <th scope="col" className="espacios-c">Contacto</th>
                         <th scope="col" className="espacios-t">Inicio</th>
                         <th scope="col" className="espacios-t">Final</th>
                         <th scope="col" className="espacios-e">Estado</th>
@@ -86,7 +85,6 @@ function Espacios() {
                                 </div>
                             </td>
                             <td>{dato.nombre}</td>
-                            <td></td>
                             <td>{dato.inicio}</td>
                             <td>{dato.final}</td>
                             <td>
