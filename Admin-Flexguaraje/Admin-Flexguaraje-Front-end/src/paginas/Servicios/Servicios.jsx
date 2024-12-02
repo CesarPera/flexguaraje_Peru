@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import './Servicios.css';
 
 function Servicios() {
+<<<<<<< Updated upstream
     const [isModalOpen, setIsModalOpen] = useState(false); 
+=======
+    const [isModalOpen, setIsModalOpen] = useState(false); // Controla la visibilidad del modal
+>>>>>>> Stashed changes
     const [formData, setFormData] = useState({
         nombres: '',
         DNI: '',
@@ -12,7 +16,11 @@ function Servicios() {
         fechaFinal: '',
     });
 
+<<<<<<< Updated upstream
     const [boletas, setBoletas] = useState([]); 
+=======
+    const [boletas, setBoletas] = useState([]); // Estado para almacenar las boletas generadas
+>>>>>>> Stashed changes
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
