@@ -10,42 +10,85 @@
 
 /* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
 .boletas-table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
+    width: 60%; 
+    margin: 0 auto; 
+    margin: 20px auto 0;
+    border-collapse: collapse; 
+}
+.boletas-table th,
+.boletas-table td {
+    border: 1px solid #efe8e8;
+    padding: 5px;
     text-align: left;
-    background-color: #f1f1f1;
-    border: 1px solid #010101;
 }
 
-.boletas-table th, .boletas-table td {
-    padding: 10px;
-    border: 1px solid #020202;
+.boletas-table .highlight-column {
+    background-color: #b1b5b5; 
+    color: rgb(9, 9, 9); 
 }
+
+.boletas-table .columna {
+    background-color: #cdd1d1; 
+    color: rgb(9, 9, 9);
+
+}
+
 
 .boletas-table th {
-    background-color: #c8c7d7ee;
-    font-weight: bold;
+    background-color: #727472; 
+    color: white; 
+    padding: 10px; 
+    text-align: center;
 }
+
 
 .table-actions {
     margin-top: 20px;
     text-align: center;
 }
 
+
+
 .table-actions button {
-    padding: 10px 15px;
-    background-color: #479fec;
-    color: white;
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
-    margin: 0 10px;
     cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.table-actions button:hover {
-    background-color: #70b4f0;
+.btn-generate {
+    background-color: #4CAF50; 
+    color: white;
 }
+
+.btn-generate:hover {
+    background-color: #3fb861; 
+}
+
+.btn-update {
+    background-color: #3677e1; 
+    color: white;
+}
+
+
+.btn-update:hover {
+    background-color: #56a4e3; 
+}
+
+.btn-delete {
+    background-color: #f44336; /* Rojo */
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #d32f2f; /* Rojo más oscuro */
+}
+
+
+
 
 .modal-overlay {
     position: fixed;
@@ -103,18 +146,40 @@
 }
 
 .btn-add {
-    background-color: #56a4e3;
+    background-color: #4CAF50;
     margin-left: 10px;
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    text-align: center;
 }
 
 .btn-add:hover {
-    background-color: rgb(141, 164, 213);
+    background-color: #3fb861;
 } 
 
-.servicios-page {
-    text-align: center; /* Asegura que el texto también esté centrado */
+.center-button-container {
+    display: flex;
+    justify-content: center; /* Centra el botón horizontalmente */
+    align-items: center;     /* Centra el botón verticalmente */
+}
+
+.title-servicios{
+    font-size: 40px;
+    font-family: sans-serif;
+    font-weight: bold;
+    text-align: center;
+    width: 500px;
+    margin: 30px auto 30px auto;
+    color: #333;
+    vertical-align: middle;
+}
+
+.table-atributos {
+    width: 200px;
+}
+
+.table-datos{
+    width: 230px;
 }
