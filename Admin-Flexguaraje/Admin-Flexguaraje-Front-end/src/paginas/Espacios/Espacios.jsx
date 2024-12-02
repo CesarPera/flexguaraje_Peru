@@ -2,34 +2,68 @@ import React, { useState } from 'react';
 import './Espacios.css';
 
 function Espacios() {
-    // Datos iniciales
-    const [datos, setDatos] = useState([
-        { id: 1, dni: '75117638', nombre: 'Cesar Daniel Carhuas Aldana', inicio: '10/10/24', final: `24/12/24`, estado: 'DISPONIBLE' },
-        { id: 2, dni: '45678912', nombre: 'María Pérez', inicio: '10/10/24', final: `24/12/24`, estado: 'OCUPADO' },
-        { id: 3, dni: '78912345', nombre: 'Juan López', inicio: '10/10/24', final: `24/12/24`, estado: 'MANTENIMIENTO' },
-    ]);
+    // Datos iniciales con 20 espacios disponibles
+    const [datos, setDatos] = useState(
+        Array.from({ length: 20 }, (_, index) => ({
+            id: index + 1,
+            codigo: `E${index + 1}`,
+            dni: '',
+            nombre: '',
+            contacto: '',
+            inicio: '',
+            final: '',
+            estado: 'DISPONIBLE',
+        }))
+    );
 
     // Estado para el filtro de estado
     const [filtroEstado, setFiltroEstado] = useState(''); // Vacío para mostrar todos los estados
 
-    // Completar con datos ficticios
-    while (datos.length < 20) {
-        datos.push({
-            id: datos.length + 1,
-            dni: `750000${datos.length}`,
-            nombre: `Cliente ${datos.length}`,
-            inicio: `10/10/24`,
-            final: `24/12/24`,
-            estado: 'DISPONIBLE',
-        });
-    }
+    // Estado del modal
+    const [showModal, setShowModal] = useState(false);
 
-    // Manejar el cambio de estado
-    const handleEstadoChange = (id, nuevoEstado) => {
-        const nuevosDatos = datos.map((dato) =>
-            dato.id === id ? { ...dato, estado: nuevoEstado } : dato
+    // Estado para el nuevo espacio
+    const [nuevoEspacio, setNuevoEspacio] = useState({
+        dni: '',
+        nombre: '',
+        contacto: '',
+        inicio: '',
+        final: '',
+        espacio: '',
+        estado: 'DISPONIBLE',
+    });
+
+    // Espacios disponibles para seleccionar
+    const espaciosDisponibles = datos.filter((dato) => dato.estado === 'DISPONIBLE');
+
+    // Función para manejar la apertura/cierre del modal
+    const handleModalToggle = () => setShowModal(!showModal);
+
+    // Función para manejar los cambios en el formulario
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNuevoEspacio({ ...nuevoEspacio, [name]: value });
+    };
+
+    // Función para agregar un nuevo espacio
+    const agregarEspacio = () => {
+        const nuevoDato = {
+            ...nuevoEspacio,
+            id: datos.length + 1,
+            codigo: nuevoEspacio.espacio, // Código del espacio seleccionado
+            estado: 'OCUPADO', // Marcar el espacio como ocupado
+        };
+
+        // Actualizar los datos y cerrar el modal
+        setDatos((prevDatos) =>
+            prevDatos.map((dato) =>
+                dato.codigo === nuevoEspacio.espacio
+                    ? { ...dato, ...nuevoDato } // Actualizar los datos del espacio seleccionado
+                    : dato
+            )
         );
-        setDatos(nuevosDatos);
+        setShowModal(false); // Cerrar el modal
+        setNuevoEspacio({ dni: '', nombre: '', contacto: '', inicio: '', final: '', espacio: '', estado: 'DISPONIBLE' }); // Limpiar el formulario
     };
 
     // Filtrar los datos según el estado
@@ -60,12 +94,108 @@ function Espacios() {
                 </div>
             </div>
 
+            <div className='btn-acciones'>
+                <button className="btn-agregar" onClick={handleModalToggle}>
+                    Agregar
+                </button>
+
+                {/* Modal */}
+                {showModal && (
+                    <div className="modal-backdrop">
+                        <div className="modal-content">
+                            <h3 className='text-center'>AGREGAR ESPACIO</h3>
+                            <form>
+                                <div>
+                                    <label>DNI:</label>
+                                    <input
+                                        type="text"
+                                        name="dni"
+                                        value={nuevoEspacio.dni}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label>Nombre y Apellido:</label>
+                                    <input
+                                        type="text"
+                                        name="nombre"
+                                        value={nuevoEspacio.nombre}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label>Contacto:</label>
+                                    <input
+                                        type="text"
+                                        name="contacto"
+                                        value={nuevoEspacio.contacto}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label>Inicio:</label>
+                                    <input
+                                        type="date"
+                                        name="inicio"
+                                        value={nuevoEspacio.inicio}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label>Final:</label>
+                                    <input
+                                        type="date"
+                                        name="final"
+                                        value={nuevoEspacio.final}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label>Espacio Disponible:</label>
+                                    <select className='select-espacios'
+                                        name="espacio"
+                                        value={nuevoEspacio.espacio}
+                                        onChange={handleInputChange}
+                                        required
+                                    >
+                                        <option value="">Seleccionar</option>
+                                        {espaciosDisponibles.map((espacio) => (
+                                            <option key={espacio.codigo} value={espacio.codigo}>
+                                                {espacio.codigo}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </form>
+                            <div className='mobal-btn'>
+                                <button className="btn btn-success" onClick={agregarEspacio}>
+                                    Guardar
+                                </button>
+                                <button className="btn btn-secondary" onClick={handleModalToggle}>
+                                    Cancelar
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                )}
+
+                <button className='btn-actualizar'>Actualizar</button>
+                <button className='btn-eliminar'>Eliminar</button>
+            </div>
+
             <table className="table table-primary table-hover table-bordered border-primary text-center tabla-espacios">
                 <thead>
                     <tr>
-                        <th scope="col" className="espacios-n">#</th>
+                        <th scope="col" className="espacios-n">Codigo</th>
                         <th scope="col" className="espacios-dni">DNI</th>
                         <th scope="col" className="espacios-na">Nombre y Apellido</th>
+                        <th scope="col" className="espacios-na">Contacto</th>
                         <th scope="col" className="espacios-t">Inicio</th>
                         <th scope="col" className="espacios-t">Final</th>
                         <th scope="col" className="espacios-e">Estado</th>
@@ -74,31 +204,13 @@ function Espacios() {
                 <tbody>
                     {datosFiltrados.map((dato) => (
                         <tr key={dato.id}>
-                            <th scope="row">{dato.id}</th>
-                            <td>
-                                <div className="dni-content">
-                                    <span>{dato.dni}</span>
-                                    <div className="dni-buttons">
-                                        <button className="btn btn-success btn-sm mx-1">✅</button>
-                                        <button className="btn btn-danger btn-sm mx-1">❌</button>
-                                    </div>
-                                </div>
-                            </td>
+                            <th scope="row">{dato.codigo}</th>
+                            <td>{dato.dni}</td>
                             <td>{dato.nombre}</td>
+                            <td>{dato.contacto}</td>
                             <td>{dato.inicio}</td>
                             <td>{dato.final}</td>
-                            <td>
-                                <select
-                                    value={dato.estado}
-                                    className={`form-select estado-${dato.estado.toLowerCase()}`}
-                                    aria-label="Seleccionar estado"
-                                    onChange={(e) => handleEstadoChange(dato.id, e.target.value)}
-                                >
-                                    <option value="DISPONIBLE">DISPONIBLE</option>
-                                    <option value="OCUPADO">OCUPADO</option>
-                                    <option value="MANTENIMIENTO">MANTENIMIENTO</option>
-                                </select>
-                            </td>
+                            <td>{dato.estado}</td>
                         </tr>
                     ))}
                 </tbody>
