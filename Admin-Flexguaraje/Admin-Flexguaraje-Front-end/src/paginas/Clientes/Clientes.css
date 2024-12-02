@@ -9,3 +9,61 @@
 /* RECUERDA QUE TODO LOS CSS ESTAN VINCULADO AL PARECER, NO ES COMO EN HTML O JSP QUE ES UNO SOLO EL CSS PERO EN AQUI EN TODO JUNTO EN UNO SOLO EL CSS, QUISE SEPARAR EL ESTILO PARA QUE ASI CADA UNO TENGA SU PROPIO ESTILO PERO NOSE PUDO, PROXIMAMENTE BUSCARE Y INVESTIGARE PARA HACER ESO XD */
 
 /* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
+
+.clientes-page {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.tabla-clientes {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.tabla-clientes th, .tabla-clientes td {
+    border: 1px solid #3b27d2;
+    padding: 8px;
+    text-align: left;
+}
+
+.tabla-clientes th {
+    background-color: #7577df;
+    font-weight: bold;
+}
+
+.estado-pendiente {
+    color: orange;
+}
+
+.estado-completado {
+    color: green;
+}
+
+.seccion-nuevo-cliente {
+    margin-top: 20px;
+}
+
+.seccion-nuevo-cliente input {
+    padding: 8px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.seccion-nuevo-cliente button {
+    padding: 8px 12px;
+    background-color: #6a5acd;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.seccion-nuevo-cliente button:hover {
+    background-color: #5a4cb5;
+}
+
+select {
+    margin-left: 10px;
+    padding: 5px;
+    cursor: pointer;
+}
