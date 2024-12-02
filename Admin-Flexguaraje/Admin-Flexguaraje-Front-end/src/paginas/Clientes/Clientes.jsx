@@ -5,9 +5,9 @@ import './Clientes.css'
 
 function Clientes() {
     const [clientes, setClientes] = useState([
-        { id: 1, nombre: "Juan Pérez", email: "juan.perez@example.com", telefono: "555-1234", dni: "12345678" },
-        { id: 2, nombre: "Ana Gómez", email: "ana.gomez@example.com", telefono: "555-5678", dni: "23456789" },
-        { id: 3, nombre: "Carlos López", email: "carlos.lopez@example.com", telefono: "555-9876", dni: "34567890" }
+        { id: 1, nombre: "Juan Pérez", email: "juan.perez@gmail.com", telefono: "987456123", dni: "12345678" },
+        { id: 2, nombre: "Ana Gómez", email: "ana.gomez@gmail.com", telefono: "958208299", dni: "23456789" },
+        { id: 3, nombre: "Carlos López", email: "carlos.lopez@gmail.com", telefono: "950838363", dni: "34567890" }
     ]);
 
     const [nuevoCliente, setNuevoCliente] = useState({
