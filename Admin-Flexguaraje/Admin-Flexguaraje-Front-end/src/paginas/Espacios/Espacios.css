@@ -133,11 +133,9 @@
     align-items: center;
 }
 
-
-
 .modal-backdrop h3 {
     font-weight: bold;
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 
 .modal-backdrop label {
@@ -153,14 +151,31 @@
     padding: 10px;
 }
 
-.mobal-btn {
+/* AGREGARRRRRRRRRRRRRRRRRR BTN */
+.modal-btn {
     display: flex;
     gap: 60px;
     margin: 10px auto;
 }
 
-.mobal-btn .btn {
+.modal-btn .btn {
     font-size: 20px;
     font-weight: bolder;
     padding: 10px;
+}
+
+/* ACTUALIZARRRRRRRRRRR BTN */
+
+.modal-backdrop label {
+    font-size: 1.2rem;
+    font-weight: bolder;
+}
+
+.modal-backdrop select {
+    display: flex;
+    width: 200px;
+    text-align: center;
+    padding: 10px;
+    margin: 10px auto;
+    font-size: 1rem;
 }

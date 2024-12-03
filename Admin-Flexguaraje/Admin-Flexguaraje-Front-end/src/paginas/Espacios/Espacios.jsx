@@ -16,13 +16,12 @@ function Espacios() {
         }))
     );
 
-    // Estado para el filtro de estado
-    const [filtroEstado, setFiltroEstado] = useState(''); // Vacío para mostrar todos los estados
-
-    // Estado del modal
+    const [filtroEstado, setFiltroEstado] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-    // Estado para el nuevo espacio
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
     const [nuevoEspacio, setNuevoEspacio] = useState({
         dni: '',
         nombre: '',
@@ -33,42 +32,98 @@ function Espacios() {
         estado: 'DISPONIBLE',
     });
 
-    // Espacios disponibles para seleccionar
+    const [codigoActualizar, setCodigoActualizar] = useState('');
+    const [codigoEliminar, setCodigoEliminar] = useState('');
+    const [nuevoEstado, setNuevoEstado] = useState(''); // Nuevo estado para el espacio a actualizar
+
+
+
     const espaciosDisponibles = datos.filter((dato) => dato.estado === 'DISPONIBLE');
+    const espaciosActualizables = datos.filter(
+        (dato) => dato.estado === 'DISPONIBLE' || dato.estado === 'OCUPADO' || dato.estado === 'MANTENIMIENTO'
+    );
 
-    // Función para manejar la apertura/cierre del modal
+    const espaciosOcupados = datos.filter((dato) => dato.estado === 'OCUPADO');
+
     const handleModalToggle = () => setShowModal(!showModal);
+    const handleUpdateModalToggle = () => setShowUpdateModal(!showUpdateModal);
+    const handleDeleteModalToggle = () => setShowDeleteModal(!showDeleteModal);
 
-    // Función para manejar los cambios en el formulario
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNuevoEspacio({ ...nuevoEspacio, [name]: value });
     };
 
-    // Función para agregar un nuevo espacio
     const agregarEspacio = () => {
         const nuevoDato = {
             ...nuevoEspacio,
             id: datos.length + 1,
-            codigo: nuevoEspacio.espacio, // Código del espacio seleccionado
-            estado: 'OCUPADO', // Marcar el espacio como ocupado
+            codigo: nuevoEspacio.espacio,
+            estado: 'OCUPADO',
         };
 
-        // Actualizar los datos y cerrar el modal
         setDatos((prevDatos) =>
             prevDatos.map((dato) =>
                 dato.codigo === nuevoEspacio.espacio
-                    ? { ...dato, ...nuevoDato } // Actualizar los datos del espacio seleccionado
+                    ? { ...dato, ...nuevoDato }
                     : dato
             )
         );
-        setShowModal(false); // Cerrar el modal
-        setNuevoEspacio({ dni: '', nombre: '', contacto: '', inicio: '', final: '', espacio: '', estado: 'DISPONIBLE' }); // Limpiar el formulario
+        setShowModal(false);
+        setNuevoEspacio({ dni: '', nombre: '', contacto: '', inicio: '', final: '', espacio: '', estado: 'DISPONIBLE' });
     };
 
-    // Filtrar los datos según el estado
+    const actualizarEspacio = () => {
+        if (!codigoActualizar || !nuevoEstado) {
+            alert('Por favor selecciona un espacio y un nuevo estado.');
+            return;
+        }
+
+        setDatos((prevDatos) =>
+            prevDatos.map((dato) =>
+                dato.codigo === codigoActualizar ? { ...dato, estado: nuevoEstado } : dato
+            )
+        );
+        setShowUpdateModal(false);
+        setCodigoActualizar('');
+        setNuevoEstado('');
+    };
+
+    const opcionesEstado = (estadoActual) => {
+        switch (estadoActual) {
+            case 'DISPONIBLE':
+            case 'OCUPADO':
+                return ['MANTENIMIENTO'];
+            case 'MANTENIMIENTO':
+                return ['DISPONIBLE'];
+            default:
+                return [];
+        }
+    };
+
+    const eliminarEspacio = () => {
+        setDatos((prevDatos) =>
+            prevDatos.map((dato) =>
+                dato.codigo === codigoEliminar
+                    ? {
+                        ...dato,
+                        dni: '',
+                        nombre: '',
+                        contacto: '',
+                        inicio: '',
+                        final: '',
+                        estado: 'DISPONIBLE',
+                    }
+                    : dato
+            )
+        );
+        setShowDeleteModal(false);
+        setCodigoEliminar('');
+    };
+
     const datosFiltrados = filtroEstado
-        ? datos.filter(dato => dato.estado === filtroEstado)
+        ? datos.filter((dato) => dato.estado === filtroEstado)
         : datos;
 
     return (
@@ -76,13 +131,11 @@ function Espacios() {
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="title-espacios">Espacios de Almacenamiento</h2>
 
-                {/* Filtro de estado */}
                 <div className="filtro-container">
                     <label htmlFor="filtroEstado" className="form-label">Filtrar por estado</label>
                     <select
                         id="filtroEstado"
                         className="form-select"
-                        aria-label="Seleccionar estado para filtrar"
                         value={filtroEstado}
                         onChange={(e) => setFiltroEstado(e.target.value)}
                     >
@@ -99,7 +152,6 @@ function Espacios() {
                     Agregar
                 </button>
 
-                {/* Modal */}
                 {showModal && (
                     <div className="modal-backdrop">
                         <div className="modal-content">
@@ -157,7 +209,8 @@ function Espacios() {
                                 </div>
                                 <div>
                                     <label>Espacio Disponible:</label>
-                                    <select className='select-espacios'
+                                    <select
+                                        className='select-espacios'
                                         name="espacio"
                                         value={nuevoEspacio.espacio}
                                         onChange={handleInputChange}
@@ -172,7 +225,7 @@ function Espacios() {
                                     </select>
                                 </div>
                             </form>
-                            <div className='mobal-btn'>
+                            <div className='modal-btn'>
                                 <button className="btn btn-success" onClick={agregarEspacio}>
                                     Guardar
                                 </button>
@@ -180,13 +233,99 @@ function Espacios() {
                                     Cancelar
                                 </button>
                             </div>
-
                         </div>
                     </div>
                 )}
 
-                <button className='btn-actualizar'>Actualizar</button>
-                <button className='btn-eliminar'>Eliminar</button>
+                <button className='btn-actualizar' onClick={handleUpdateModalToggle}>Actualizar</button>
+
+                {showUpdateModal && (
+                    <div className="modal-backdrop">
+                        <div className="modal-content">
+                            <h3 className='text-center'>ACTUALIZAR ESPACIO</h3>
+                            <form>
+                                <div>
+                                    <label>Seleccionar Espacio:</label>
+                                    <select
+                                        value={codigoActualizar}
+                                        onChange={(e) => setCodigoActualizar(e.target.value)}
+                                        required
+                                    >
+                                        <option value="">Seleccionar</option>
+                                        {espaciosActualizables.map((espacio) => (
+                                            <option key={espacio.codigo} value={espacio.codigo}>
+                                                {espacio.codigo} - {espacio.estado}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                {codigoActualizar && (
+                                    <div>
+                                        <label>Nuevo Estado:</label>
+                                        <select
+                                            value={nuevoEstado}
+                                            onChange={(e) => setNuevoEstado(e.target.value)}
+                                            required
+                                        >
+                                            <option value="">Seleccionar</option>
+                                            {opcionesEstado(
+                                                datos.find((dato) => dato.codigo === codigoActualizar)?.estado
+                                            ).map((opcion) => (
+                                                <option key={opcion} value={opcion}>
+                                                    {opcion}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
+                            </form>
+                            <div className='modal-btn'>
+                                <button className="btn btn-success" onClick={actualizarEspacio}>
+                                    Actualizar
+                                </button>
+                                <button className="btn btn-secondary" onClick={handleUpdateModalToggle}>
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <button className='btn-eliminar' onClick={handleDeleteModalToggle}>Eliminar</button>
+
+                {/* Modal para eliminar */}
+                {showDeleteModal && (
+                    <div className="modal-backdrop">
+                        <div className="modal-content">
+                            <h3 className='text-center'>ELIMINAR ESPACIO</h3>
+                            <form>
+                                <div>
+                                    <label>Seleccionar Espacio Ocupado:</label>
+                                    <select
+                                        value={codigoEliminar}
+                                        onChange={(e) => setCodigoEliminar(e.target.value)}
+                                        required
+                                    >
+                                        <option value="">Seleccionar</option>
+                                        {espaciosOcupados.map((espacio) => (
+                                            <option key={espacio.codigo} value={espacio.codigo}>
+                                                {espacio.codigo}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </form>
+                            <div className='modal-btn'>
+                                <button className="btn btn-danger" onClick={eliminarEspacio}>
+                                    Eliminar
+                                </button>
+                                <button className="btn btn-secondary" onClick={handleDeleteModalToggle}>
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <table className="table table-primary table-hover table-bordered border-primary text-center tabla-espacios">
