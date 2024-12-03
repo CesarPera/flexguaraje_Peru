@@ -15,25 +15,27 @@ function Reportes() {
 
     return (
         <div className="reportes-page"> {/* NO TOCAR NI MIRAR LA CLASE "reportes-page" */}
-            <h2>Reportes</h2>
+            <h2>Reportes - PRONTO ABIERTO</h2>
+            {/* 
             <div className="reporte-container">
-                <div className="trabajador-info">
-                    <p><strong>Nombre:</strong> {trabajador.nombre}</p>
-                    <p><strong>Puesto:</strong> {trabajador.puesto}</p>
-                    <p><strong>ID:</strong> {trabajador.id}</p>
-                    <p><strong>Fecha de Ingreso:</strong> {trabajador.fechaIngreso}</p>
-                </div>
-                <div className="reportes">
-                    <h3>Historial de Reportes</h3>
-                    {trabajador.reportes.map((reporte) => (
-                        <div key={reporte.id} className="reporte-item">
-                            <h4>{reporte.titulo}</h4>
-                            <p><strong>Fecha:</strong> {reporte.fecha}</p>
-                            <p>{reporte.descripcion}</p>
+                            <div className="trabajador-info">
+                                <p><strong>Nombre:</strong> {trabajador.nombre}</p>
+                                <p><strong>Puesto:</strong> {trabajador.puesto}</p>
+                                <p><strong>ID:</strong> {trabajador.id}</p>
+                                <p><strong>Fecha de Ingreso:</strong> {trabajador.fechaIngreso}</p>
+                            </div>
+                            <div className="reportes">
+                                <h3>Historial de Reportes</h3>
+                                {trabajador.reportes.map((reporte) => (
+                                    <div key={reporte.id} className="reporte-item">
+                                        <h4>{reporte.titulo}</h4>
+                                        <p><strong>Fecha:</strong> {reporte.fecha}</p>
+                                        <p>{reporte.descripcion}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    ))}
-                </div>
-            </div>
+            */}
         </div>
     );
 }
