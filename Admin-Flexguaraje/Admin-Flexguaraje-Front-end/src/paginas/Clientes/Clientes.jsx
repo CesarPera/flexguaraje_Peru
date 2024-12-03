@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react';
 import './Clientes.css'
+import { Link } from "react-router-dom";
 
 
 function Clientes() {
@@ -25,9 +26,9 @@ function Clientes() {
 
     const manejarNuevoCliente = () => {
         if (nuevoCliente.nombre.trim() && nuevoCliente.email.trim() && nuevoCliente.telefono.trim() && nuevoCliente.dni.trim()) {
-            const nuevoClienteConId = { 
-                id: clientes.length + 1, 
-                ...nuevoCliente 
+            const nuevoClienteConId = {
+                id: clientes.length + 1,
+                ...nuevoCliente
             };
             setClientes([...clientes, nuevoClienteConId]);
             setNuevoCliente({ nombre: "", email: "", telefono: "", dni: "" });
@@ -84,7 +85,7 @@ function Clientes() {
                                         .filter(solicitud => solicitud.clienteId === cliente.id)
                                         .map(solicitud => (
                                             <li key={solicitud.id}>
-                                                {solicitud.solicitud} - 
+                                                {solicitud.solicitud} -
                                                 <span className={`estado-${solicitud.estado}`}>
                                                     {solicitud.estado}
                                                 </span>
