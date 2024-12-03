@@ -4,10 +4,13 @@ import './Servicios.css';
 function Servicios() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({
+        id: '',
         nombres: '',
         DNI: '',
         codigoBoleta: '',
+        metodoPago: '',
         costo: '',
+        fechaPago: '',
         fechaInicio: '',
         fechaFinal: '',
     });
@@ -25,10 +28,13 @@ function Servicios() {
             setEditingBoletaId(boleta.id);
         } else {
             setFormData({
+                id: '',
                 nombres: '',
                 DNI: '',
                 codigoBoleta: '',
+                metodoPago: '',
                 costo: '',
+                fechaPago: '',
                 fechaInicio: '',
                 fechaFinal: '',
             });
@@ -43,9 +49,9 @@ function Servicios() {
     };
 
     const handleSaveBoleta = () => {
-        const { nombres, DNI, codigoBoleta, costo, fechaInicio, fechaFinal } = formData;
+        const { id, nombres, DNI, codigoBoleta, metodoPago, costo, fechaPago, fechaInicio, fechaFinal } = formData;
 
-        if (!nombres || !DNI || !codigoBoleta || !costo || !fechaInicio || !fechaFinal) {
+        if (!id || !nombres || !DNI || !codigoBoleta || !metodoPago || !costo || !fechaPago || !fechaInicio || !fechaFinal) {
             alert('Por favor, completa todos los campos obligatorios.');
             return;
         }
@@ -58,7 +64,7 @@ function Servicios() {
             );
             alert(`La boleta de ${formData.nombres} ha sido actualizada.`);
         } else {
-            setBoletas([...boletas, { id: boletas.length + 1, ...formData }]);
+            setBoletas([...boletas, { id, ...formData }]);
             alert(`La boleta para ${formData.nombres} ha sido guardada exitosamente.`);
         }
         handleCloseModal();
@@ -89,12 +95,13 @@ function Servicios() {
                     <div className={`modal-content ${editingBoletaId ? 'edit-mode' : 'add-mode'}`}>
                         <h3>{editingBoletaId ? 'Editar Boleta' : 'Datos del Cliente'}</h3>
                         <form>
-                            <label>Código de Boleta:</label>
+                            <label>ID:</label>
                             <input
                                 type="text"
-                                name="codigoBoleta"
-                                value={formData.codigoBoleta}
+                                name="id"
+                                value={formData.id}
                                 onChange={handleInputChange}
+                                disabled={!!editingBoletaId} 
                             />
 
                             <label>DNI:</label>
@@ -113,7 +120,33 @@ function Servicios() {
                                 onChange={handleInputChange}
                             />
 
-                            <label>Pago:</label>
+                            <label>Código de Boleta:</label>
+                            <input
+                                type="text"
+                                name="codigoBoleta"
+                                value={formData.codigoBoleta}
+                                onChange={handleInputChange}
+                            />
+
+                            <label>Fecha de Pago:</label>
+                            <input
+                                type="date"
+                                name="fechaPago"
+                                value={formData.fechaPago}
+                                onChange={handleInputChange}
+                            />
+
+                            <label>Método de Pago:</label>
+                            <select
+                                name="metodoPago"
+                                value={formData.metodoPago}
+                                onChange={handleInputChange}
+                            >
+                    
+                                <option value="efectivo">Efectivo</option>
+                            </select>
+
+                            <label>Costo (Monto de Pago):</label>
                             <input
                                 type="number"
                                 name="costo"
@@ -121,7 +154,7 @@ function Servicios() {
                                 onChange={handleInputChange}
                             />
 
-                            <label>Fecha de Inicio:</label>
+                            <label>Fecha de Inicio del Alquiler:</label>
                             <input
                                 type="date"
                                 name="fechaInicio"
@@ -129,7 +162,7 @@ function Servicios() {
                                 onChange={handleInputChange}
                             />
 
-                            <label>Fecha Final:</label>
+                            <label>Fecha Final del Alquiler:</label>
                             <input
                                 type="date"
                                 name="fechaFinal"
@@ -150,45 +183,56 @@ function Servicios() {
                 </div>
             )}
 
-<table className="boletas-table text-center">
-    <thead>
-        <tr>
-            <th className="table-atributos">ATRIBUTOS</th>
-            <th className="table-datos">DATOS</th>
-        </tr>
-    </thead>
-    <tbody>
-        {boletas.map((boleta, index) => (
-            <React.Fragment key={index}>
-                <tr>
-                    <td className="highlight-column">Código de Boleta</td>
-                    <td>{boleta.codigoBoleta}</td>
-                </tr>
-                <tr>
-                    <td className="highlight-column">DNI</td>
-                    <td>{boleta.DNI}</td>
-                </tr>
-                <tr>
-                    <td className="highlight-column">Nombres</td>
-                    <td>{boleta.nombres}</td>
-                </tr>
-                <tr>
-                    <td className="highlight-column">Costo</td>
-                    <td>{boleta.costo}</td>
-                </tr>
-                <tr>
-                    <td className="highlight-column">Fecha Inicio</td>
-                    <td>{boleta.fechaInicio}</td>
-                </tr>
-                <tr>
-                    <td className="highlight-column">Fecha Final</td>
-                    <td>{boleta.fechaFinal}</td>
-                </tr>
-            </React.Fragment>
-        ))}
-    </tbody>
-</table>
-
+            <table className="boletas-table text-center">
+                <thead>
+                    <tr>
+                        <th className="table-atributos">ATRIBUTOS</th>
+                        <th className="table-datos">DATOS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {boletas.map((boleta, index) => (
+                        <React.Fragment key={index}>
+                            <tr>
+                                <td className="highlight-column">ID</td>
+                                <td>{boleta.id}</td>
+                            </tr>
+                            <tr>
+                                <td className="highlight-column">Código de Boleta</td>
+                                <td>{boleta.codigoBoleta}</td>
+                            </tr>
+                            <tr>
+                                <td className="highlight-column">DNI</td>
+                                <td>{boleta.DNI}</td>
+                            </tr>
+                            <tr>
+                                <td className="highlight-column">Nombres</td>
+                                <td>{boleta.nombres}</td>
+                            </tr>
+                            <tr>
+                                <td className="highlight-column">Costo</td>
+                                <td>{boleta.costo}</td>
+                            </tr>
+                            <tr>
+                                <td className="highlight-column">Fecha de Pago</td>
+                                <td>{boleta.fechaPago}</td>
+                            </tr>
+                            <tr>
+                                <td className="highlight-column">Fecha Inicio</td>
+                                <td>{boleta.fechaInicio}</td>
+                            </tr>
+                            <tr>
+                                <td className="highlight-column">Fecha Final</td>
+                                <td>{boleta.fechaFinal}</td>
+                            </tr>
+                            <tr>
+                                <td className="highlight-column">Método de Pago</td>
+                                <td>{boleta.metodoPago}</td>
+                            </tr>
+                        </React.Fragment>
+                    ))}
+                </tbody>
+            </table>
 
             <div className="table-actions">
                 <button className="btn-update" onClick={() => handleOpenModal()}>
