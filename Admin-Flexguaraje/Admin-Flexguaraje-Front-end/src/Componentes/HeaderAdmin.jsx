@@ -9,7 +9,8 @@ function HeaderAdmin() {
                 <h1>
                     <Link to="/">Flexguaraje Perú</Link>
                 </h1>
-                <button>Cerrar Sesión</button>
+
+                {/*<button>Cerrar Sesión</button>*/}
             </header>
         </>
     );

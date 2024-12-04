@@ -126,7 +126,7 @@ button:hover {
   display: none;
 
   /* Negro con opacidad */
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.9);
 
   /* Asegurarse de que esté debajo de los elementos fijos */
   z-index: 0;
