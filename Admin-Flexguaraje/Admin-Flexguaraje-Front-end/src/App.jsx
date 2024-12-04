@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // Aquí definimos las páginas (pueden ser otros componentes)
 import Clientes from './paginas/Clientes/Clientes';
-import SolicitudesClientes from './paginas/Clientes/solicitudesClientes';
+import SolicitudesClientes from './paginas/Clientes/SolicitudesClientes';
 import Espacios from './paginas/Espacios/Espacios';
 import Servicios from './paginas/Servicios/Servicios';
 import Reportes from './paginas/Reportes/Reportes';

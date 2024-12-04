@@ -9,61 +9,187 @@
 /* RECUERDA QUE TODO LOS CSS ESTAN VINCULADO AL PARECER, NO ES COMO EN HTML O JSP QUE ES UNO SOLO EL CSS PERO EN AQUI EN TODO JUNTO EN UNO SOLO EL CSS, QUISE SEPARAR EL ESTILO PARA QUE ASI CADA UNO TENGA SU PROPIO ESTILO PERO NOSE PUDO, PROXIMAMENTE BUSCARE Y INVESTIGARE PARA HACER ESO XD */
 
 /* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
-
 .clientes-page {
     padding: 20px;
-    font-family: Arial, sans-serif;
-}
-
-.tabla-clientes {
-    width: 100%;
-    border-collapse: collapse;
+  }
+  
+  .formulario-busqueda {
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 20px;
-}
-
-.tabla-clientes th, .tabla-clientes td {
-    border: 1px solid #3b27d2;
-    padding: 8px;
-    text-align: left;
-}
-
-.tabla-clientes th {
-    background-color: #7577df;
-    font-weight: bold;
-}
-
-.estado-pendiente {
-    color: orange;
-}
-
-.estado-completado {
-    color: green;
-}
-
-.seccion-nuevo-cliente {
-    margin-top: 20px;
-}
-
-.seccion-nuevo-cliente input {
-    padding: 8px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-}
-
-.seccion-nuevo-cliente button {
-    padding: 8px 12px;
+  }
+  
+  .formulario-busqueda select,
+  .formulario-busqueda input {
+    padding: 10px;
+    width: 48%;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .boton-abrir-formulario {
+    padding: 10px 20px;
     background-color: #6a5acd;
     color: white;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
-}
-
-.seccion-nuevo-cliente button:hover {
-    background-color: #5a4cb5;
-}
-
-select {
-    margin-left: 10px;
-    padding: 5px;
+    margin-top: 20px;
+    display: block;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .boton-abrir-formulario:hover {
+    background-color: #4e3c9c;
+  }
+  
+  .formulario-flotante {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .formulario-contenido {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: aparecer 0.3s ease-in-out;
+  }
+  
+  @keyframes aparecer {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  .formulario-contenido label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .formulario-contenido input,
+  .formulario-contenido select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .botones {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .formulario-contenido button {
+    background-color: #6a5acd;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
     cursor: pointer;
-}
+    font-size: 14px;
+    width: 48%;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .formulario-contenido button:hover {
+    background-color: #4e3c9c;
+  }
+  
+  .formulario-contenido button:nth-child(2) {
+    background-color: #ff4c4c;
+  }
+  
+  .formulario-contenido button:nth-child(2):hover {
+    background-color: #cc0000;
+  }
+  .formulario-dos-columnas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  
+  .boton-buscar {
+    padding: 10px 15px;
+    background-color: #6a5acd;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .boton-buscar:hover {
+    background-color: #4e3c9c;
+  }
+    /* HAY HAY */
+    .clientes-page {
+        padding: 20px;
+      }
+      
+      .formulario-busqueda {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      
+      .formulario-busqueda input,
+      .formulario-busqueda select {
+        padding: 10px;
+        width: 48%;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      
+      .boton-buscar {
+        padding: 10px 20px;
+        background-color: #6a5acd;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+      
+      .boton-buscar:hover {
+        background-color: #4e3c9c;
+      }
+      
+      .boton-abrir-formulario {
+        padding: 10px 20px;
+        background-color: #6a5acd;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        display: block;
+        margin: 20px auto;
+      }
+      
+      .boton-abrir-formulario:hover {
+        background-color: #4e3c9c;
+      }
+      
