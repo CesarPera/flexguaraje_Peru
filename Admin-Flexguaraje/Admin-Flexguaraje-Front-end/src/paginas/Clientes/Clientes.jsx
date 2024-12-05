@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react';
-
 import './Clientes.css'
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom"; // Usar react-router para redirección.
@@ -23,13 +22,9 @@ function Clientes() {
   });
 
   const [busqueda, setBusqueda] = useState("");
-<<<<<<< Updated upstream
   const [tipoBusqueda, setTipoBusqueda] = useState("dni"); // 'dni' o 'nombre'
   const navigate = useNavigate();
 
-=======
-  
->>>>>>> Stashed changes
   const manejarNuevoCliente = () => {
     if (Object.values(nuevoCliente).every((campo) => campo.trim())) {
       const nuevoClienteConId = {
@@ -56,7 +51,6 @@ function Clientes() {
     }
   };
 
-<<<<<<< Updated upstream
   const buscarCliente = () => {
     if (!busqueda) {
       alert("Por favor ingrese un valor de búsqueda.");
@@ -67,15 +61,6 @@ function Clientes() {
       state: { busqueda, tipoBusqueda },
     });
   };
-=======
-  // Función de búsqueda
-  const buscarCliente = (e) => {
-    setBusqueda(e.target.value);
-  };
-
- 
-
->>>>>>> Stashed changes
 
     return (
         <div className="clientes-page"> {/*NO TOCAR NI MIRAR LA CLASE "clientes-page"*/}
@@ -83,7 +68,6 @@ function Clientes() {
 
             {/* Tabla de Datos de Clientes */}
             <div className="formulario-busqueda">
-<<<<<<< Updated upstream
         <select
           value={tipoBusqueda}
           onChange={(e) => setTipoBusqueda(e.target.value)}
@@ -105,19 +89,6 @@ function Clientes() {
            </button>
       </div>
 
-=======
-        <input
-          type="text"
-          placeholder="Buscar por DNI o Nombre Completo"
-          value={busqueda}
-          onChange={buscarCliente}
-        />
-      </div>
-
-    
-
-      {/* Botón para Mostrar Formulario */}
->>>>>>> Stashed changes
       <button
         className="boton-abrir-formulario"
         onClick={() => setMostrarFormulario(true)}
@@ -125,34 +96,20 @@ function Clientes() {
         Añadir Cliente
       </button>
 
-<<<<<<< Updated upstream
-=======
-      {/* Formulario Flotante */}
->>>>>>> Stashed changes
       {mostrarFormulario && (
         <div className="formulario-flotante">
           <div className="formulario-contenido">
             <h3>Añadir Nuevo Cliente</h3>
-<<<<<<< Updated upstream
             {/* Formulario */}
             <label>Nombre</label>
             <input
               type="text"
-=======
-            <label >Nombre</label>
-            <input
-              type="text"            
->>>>>>> Stashed changes
               value={nuevoCliente.nombre}
               onChange={(e) =>
                 setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })
               }
             />
-<<<<<<< Updated upstream
             <label>Apellido</label>
-=======
-            <label >Apellido</label>
->>>>>>> Stashed changes
             <input
               type="text"
               value={nuevoCliente.apellido}
@@ -160,25 +117,15 @@ function Clientes() {
                 setNuevoCliente({ ...nuevoCliente, apellido: e.target.value })
               }
             />
-<<<<<<< Updated upstream
             <label>Edad</label>
             <input
               type="number"
-=======
-            <label >Edad</label>
-            <input
-              type="number"             
->>>>>>> Stashed changes
               value={nuevoCliente.edad}
               onChange={(e) =>
                 setNuevoCliente({ ...nuevoCliente, edad: e.target.value })
               }
             />
-<<<<<<< Updated upstream
             <label>Correo</label>
-=======
-            <label >Correo</label>
->>>>>>> Stashed changes
             <input
               type="email"
               value={nuevoCliente.correo}
@@ -186,19 +133,7 @@ function Clientes() {
                 setNuevoCliente({ ...nuevoCliente, correo: e.target.value })
               }
             />
-<<<<<<< Updated upstream
             <label>DNI</label>
-=======
-            <label >Fecha de Inicio</label>
-            <input
-              type="date"
-              value={nuevoCliente.fechaInicio}
-              onChange={(e) =>
-                setNuevoCliente({ ...nuevoCliente, fechaInicio: e.target.value })
-              }
-            />
-            <label >DNI</label>
->>>>>>> Stashed changes
             <input
               type="text"
               value={nuevoCliente.dni}
@@ -215,55 +150,12 @@ function Clientes() {
               <option value="Empresa">Empresa</option>
               <option value="Persona">Persona</option>
             </select>
-<<<<<<< Updated upstream
 
-=======
-            <label >Dirección</label>
-            <input
-              type="text"
-              value={nuevoCliente.direccion}
-              onChange={(e) =>
-                setNuevoCliente({ ...nuevoCliente, direccion: e.target.value })
-              }
-            />
-            <label >Provincia</label>
-            <input
-              type="text"
-              value={nuevoCliente.provincia}
-              onChange={(e) =>
-                setNuevoCliente({ ...nuevoCliente, provincia: e.target.value })
-              }
-            />
-            <label >Teléfono</label>
-            <input
-              type="text"
-              value={nuevoCliente.telefono}
-              onChange={(e) =>
-                setNuevoCliente({ ...nuevoCliente, telefono: e.target.value })
-              }
-            />
-            <label >Fecha de Nacimiento</label>
-            <input
-              type="date"
-              value={nuevoCliente.fechaNacimiento}
-              onChange={(e) =>
-                setNuevoCliente({
-                  ...nuevoCliente,
-                  fechaNacimiento: e.target.value,
-                })
-              }
-            />
->>>>>>> Stashed changes
             <button onClick={manejarNuevoCliente}>Añadir</button>
             <button onClick={() => setMostrarFormulario(false)}>Cancelar</button>
           </div>
         </div>
       )}
-<<<<<<< Updated upstream
-=======
-
-      
->>>>>>> Stashed changes
     </div>
   );
 }
