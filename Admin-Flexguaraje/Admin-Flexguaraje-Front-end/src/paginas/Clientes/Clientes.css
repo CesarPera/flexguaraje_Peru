@@ -11,6 +11,7 @@
 /* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
 .clientes-page {
     padding: 20px;
+<<<<<<< Updated upstream
   }
   
   .formulario-busqueda {
@@ -30,11 +31,41 @@
   
   .boton-abrir-formulario {
     padding: 10px 20px;
+=======
+    font-family: Arial, sans-serif;
+  } 
+  .formulario-busqueda {
+    margin-bottom: 20px;
+  } 
+  .formulario-busqueda input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  } 
+  .tabla-clientes {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  } 
+  .tabla-clientes th, .tabla-clientes td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  } 
+  .tabla-clientes th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  } 
+  .boton-abrir-formulario {
+    padding: 10px 15px;
+>>>>>>> Stashed changes
     background-color: #6a5acd;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+<<<<<<< Updated upstream
     margin-top: 20px;
     display: block;
     width: 200px;
@@ -46,12 +77,20 @@
     background-color: #4e3c9c;
   }
   
+=======
+    border-radius: 5px;
+  } 
+  .boton-abrir-formulario:hover {
+    background-color: #5a4cb5;
+  } 
+>>>>>>> Stashed changes
   .formulario-flotante {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+<<<<<<< Updated upstream
     background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
@@ -88,10 +127,25 @@
     color: #333;
   }
   
+=======
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  } 
+  .formulario-contenido {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 500px;
+  }  
+>>>>>>> Stashed changes
   .formulario-contenido input,
   .formulario-contenido select {
     width: 100%;
     padding: 10px;
+<<<<<<< Updated upstream
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -193,3 +247,18 @@
         background-color: #4e3c9c;
       }
       
+=======
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }  
+  .vista-previa {
+    margin-top: 30px;
+  } 
+  .vista-cliente {
+    margin-bottom: 20px;
+  }
+  .vista-cliente p {
+    margin: 5px 0;
+  }  
+>>>>>>> Stashed changes
