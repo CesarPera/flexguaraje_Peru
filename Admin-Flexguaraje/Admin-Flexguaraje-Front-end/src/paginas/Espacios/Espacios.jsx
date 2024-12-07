@@ -1,21 +1,32 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Espacios.css';
+import EspacioBD from './Servicios/EspacioBD';
+
 
 function Espacios() {
     // Datos iniciales con 20 espacios disponibles
-    const [datos, setDatos] = useState(
-        Array.from({ length: 20 }, (_, index) => ({
-            id: index + 1,
-            codigo: `E${index + 1}`,
-            dni: '',
-            nombre: '',
-            contacto: '',
-            inicio: '',
-            final: '',
-            estado: 'DISPONIBLE',
-        }))
-    );
+    const [Espacios, setEspacios] = useState([]);
+
+    const fetchEspacios = async () => {
+        try {
+            const response = await EspacioBD.getAllEspacios();
+            // Verifica que la respuesta sea un array
+            if (Array.isArray(response.data)) {
+                setEspacios(response.data);
+            } else {
+                console.error('La respuesta no es un array:', response.data);
+            }
+        } catch (error) {
+            console.error('Error al cargar los espacios:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchEspacios();
+    }, []);
+
+
 
     const [filtroEstado, setFiltroEstado] = useState('');
     const [showModal, setShowModal] = useState(false);
@@ -30,7 +41,7 @@ function Espacios() {
         inicio: '',
         final: '',
         espacio: '',
-        estado: 'DISPONIBLE',
+        estado: 'Disponible',
     });
 
     const [codigoActualizar, setCodigoActualizar] = useState('');
@@ -39,12 +50,12 @@ function Espacios() {
 
 
 
-    const espaciosDisponibles = datos.filter((dato) => dato.estado === 'DISPONIBLE');
-    const espaciosActualizables = datos.filter(
-        (dato) => dato.estado === 'DISPONIBLE' || dato.estado === 'OCUPADO' || dato.estado === 'MANTENIMIENTO'
+    const espaciosDisponibles = Espacios.filter((dato) => dato.estado === 'Disponible');
+    const espaciosActualizables = Espacios.filter(
+        (dato) => dato.estado === 'Disponible' || dato.estado === 'Ocupado' || dato.estado === 'Mantenimiento'
     );
 
-    const espaciosOcupados = datos.filter((dato) => dato.estado === 'OCUPADO');
+    const espaciosOcupados = Espacios.filter((dato) => dato.estado === 'Ocupado');
 
     const handleModalToggle = () => setShowModal(!showModal);
     const handleUpdateModalToggle = () => setShowUpdateModal(!showUpdateModal);
@@ -59,12 +70,12 @@ function Espacios() {
     const agregarEspacio = () => {
         const nuevoDato = {
             ...nuevoEspacio,
-            id: datos.length + 1,
+            id: Espacios.length + 1,
             codigo: nuevoEspacio.espacio,
-            estado: 'OCUPADO',
+            estado: 'Ocupado',
         };
 
-        setDatos((prevDatos) =>
+        setEspacios((prevDatos) =>
             prevDatos.map((dato) =>
                 dato.codigo === nuevoEspacio.espacio
                     ? { ...dato, ...nuevoDato }
@@ -72,7 +83,7 @@ function Espacios() {
             )
         );
         setShowModal(false);
-        setNuevoEspacio({ dni: '', nombre: '', contacto: '', inicio: '', final: '', espacio: '', estado: 'DISPONIBLE' });
+        setNuevoEspacio({ dni: '', nombre: '', contacto: '', inicio: '', final: '', espacio: '', estado: 'Disponible' });
     };
 
     const actualizarEspacio = () => {
@@ -81,7 +92,7 @@ function Espacios() {
             return;
         }
 
-        setDatos((prevDatos) =>
+        setEspacios((prevDatos) =>
             prevDatos.map((dato) =>
                 dato.codigo === codigoActualizar ? { ...dato, estado: nuevoEstado } : dato
             )
@@ -93,18 +104,18 @@ function Espacios() {
 
     const opcionesEstado = (estadoActual) => {
         switch (estadoActual) {
-            case 'DISPONIBLE':
-            case 'OCUPADO':
-                return ['MANTENIMIENTO'];
-            case 'MANTENIMIENTO':
-                return ['DISPONIBLE'];
+            case 'Disponible':
+            case 'Ocupado':
+                return ['Mantenimiento'];
+            case 'Mantenimiento':
+                return ['Disponible'];
             default:
                 return [];
         }
     };
 
     const eliminarEspacio = () => {
-        setDatos((prevDatos) =>
+        setEspacios((prevDatos) =>
             prevDatos.map((dato) =>
                 dato.codigo === codigoEliminar
                     ? {
@@ -114,7 +125,7 @@ function Espacios() {
                         contacto: '',
                         inicio: '',
                         final: '',
-                        estado: 'DISPONIBLE',
+                        estado: 'Disponible',
                     }
                     : dato
             )
@@ -124,8 +135,8 @@ function Espacios() {
     };
 
     const datosFiltrados = filtroEstado
-        ? datos.filter((dato) => dato.estado === filtroEstado)
-        : datos;
+        ? Espacios.filter((dato) => dato.estado === filtroEstado)
+        : Espacios;
 
     return (
         <div className="espacios-page">
@@ -343,8 +354,8 @@ function Espacios() {
                 </thead>
                 <tbody>
                     {datosFiltrados.map((dato) => (
-                        <tr key={dato.id}>
-                            <th scope="row">{dato.codigo}</th>
+                        <tr key={dato.idEspacio}>
+                            <th scope="row">{dato.codigoEspacio}</th>
                             <td>{dato.dni}</td>
                             <td>{dato.nombre}</td>
                             <td>{dato.contacto}</td>

@@ -1,83 +1,201 @@
-CREATE DATABASE BD;
-GO
+CREATE DATABASE flexguaraje_peru_BD;
+USE flexguaraje_peru_BD;
 
-USE BD;
-GO
-
-CREATE TABLE Cliente (
-    id_cliente INT IDENTITY(1,1) PRIMARY KEY,
+CREATE TABLE cliente (
+    id_cliente INT PRIMARY KEY,
+    dni VARCHAR(15) NOT NULL UNIQUE,
     nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL DEFAULT '',
-    telefono VARCHAR(15),
-    DNI VARCHAR(15) NOT NULL DEFAULT '',
-    email VARCHAR(100),
-    direccion VARCHAR(255)
-);
----- 10 DATOS INSERTATOS PARA LA TABLA CLIENTE---------
-INSERT INTO Cliente (nombre, apellido, telefono, DNI, email, direccion) VALUES
-('Juan', 'Pérez', '987654321', '12345678', 'juan.perez@example.com', 'Av. Los Pinos 123'),
-('María', 'Gómez', '987654322', '87654321', 'maria.gomez@example.com', 'Calle Las Flores 456'),
-('Carlos', 'Ramírez', '987654323', '45678912', 'carlos.ramirez@example.com', 'Jr. Los Cedros 789'),
-('Ana', 'Torres', '987654324', '65432187', 'ana.torres@example.com', 'Av. La Marina 101'),
-('Luis', 'Sánchez', '987654325', '32145698', 'luis.sanchez@example.com', 'Calle El Sol 102'),
-('Laura', 'Díaz', '987654326', '98712345', 'laura.diaz@example.com', 'Jr. Los Claveles 103'),
-('José', 'Morales', '987654327', '12349876', 'jose.morales@example.com', 'Av. El Milagro 104'),
-('Elena', 'Cruz', '987654328', '56781234', 'elena.cruz@example.com', 'Calle Los Laureles 105'),
-('Pedro', 'Vega', '987654329', '78965432', 'pedro.vega@example.com', 'Jr. Los Álamos 106'),
-('Claudia', 'Fuentes', '987654330', '45612387', 'claudia.fuentes@example.com', 'Av. El Bosque 107');
-
-
-
-
-
-CREATE TABLE Espacio (
-    id_espacio INT IDENTITY(1,1) PRIMARY KEY,
-    estado VARCHAR(20) NOT NULL,
-    fecha_inicio_alquiler DATE, 
-    fecha_fin_alquiler DATE,
-    codigo_espacio VARCHAR(50) NOT NULL  
+    apellido VARCHAR(100) NOT NULL,
+    telefono VARCHAR(15) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    Nota VARCHAR(255) DEFAULT 'Sin Discapacidad',
+    CONSTRAINT CHK_DNI_Format CHECK (LENGTH(dni) = 8 AND dni NOT LIKE '%[^0-9]%'),
+	CONSTRAINT CHK_Telefono_Format CHECK (LENGTH(telefono) = 9 AND telefono NOT LIKE '%[^0-9]%')
 );
 
------20 DATOS INSERTADOS PARA LA TABLA ESPACIO----
-
-INSERT INTO Espacio (estado, fecha_inicio_alquiler, fecha_fin_alquiler, codigo_espacio) VALUES
-('Disponible', NULL, NULL, 'ESP-001'),
-('Alquilado', '2024-11-01', '2024-11-15', 'ESP-002'),
-('Reservado', '2024-12-01', '2024-12-10', 'ESP-003'),
-('Disponible', NULL, NULL, 'ESP-004'),
-('Alquilado', '2024-10-20', '2024-11-05', 'ESP-005'),
-('Mantenimiento', NULL, NULL, 'ESP-006'),
-('Disponible', NULL, NULL, 'ESP-007'),
-('Alquilado', '2024-11-10', '2024-11-25', 'ESP-008'),
-('Disponible', NULL, NULL, 'ESP-009'),
-('Reservado', '2024-12-05', '2024-12-15', 'ESP-010'),
-('Disponible', NULL, NULL, 'ESP-011'),
-('Alquilado', '2024-10-01', '2024-10-15', 'ESP-012'),
-('Mantenimiento', NULL, NULL, 'ESP-013'),
-('Disponible', NULL, NULL, 'ESP-014'),
-('Alquilado', '2024-11-20', '2024-12-01', 'ESP-015'),
-('Disponible', NULL, NULL, 'ESP-016'),
-('Reservado', '2024-12-15', '2024-12-25', 'ESP-017'),
-('Disponible', NULL, NULL, 'ESP-018'),
-('Mantenimiento', NULL, NULL, 'ESP-019'),
-('Disponible', NULL, NULL, 'ESP-020');
+#10 DATOS INSERTATOS PARA LA TABLA CLIENTE---------
+INSERT INTO cliente (id_cliente, dni, nombre, apellido, telefono, email, Nota)
+VALUES
+(1, '12345678', 'Carlos', 'Perez', '987654321', 'carlos.perez@mail.com', 'Sin Discapacidad'),
+(2, '87654321', 'MarÃ­a', 'Lopez', '912345678', 'maria.lopez@mail.com', 'Sin Discapacidad'),
+(3, '23456789', 'Juan', 'Gonzalez', '987123456', 'juan.gonzalez@mail.com', 'Requiere asistencia.'),
+(4, '34567890', 'Ana', 'Ramirez', '912345987', 'ana.ramirez@mail.com', ''),
+(5, '45678901', 'Luis', 'Diaz', '987456123', 'luis.diaz@mail.com', 'Sin Discapacidad'),
+(6, '56789012', 'Sofia', 'Torres', '912456789', 'sofia.torres@mail.com', 'Sin Discapacidad'),
+(7, '67890123', 'Miguel', 'Castro', '987789123', 'miguel.castro@mail.com', 'Usa silla de ruedas.'),
+(8, '78901234', 'Lucia', 'Flores', '912789456', 'lucia.flores@mail.com', 'Sin Discapacidad'),
+(9, '89012345', 'Jose', 'Morales', '987987654', 'jose.morales@mail.com', ''),
+(10, '90123456', 'Andrea', 'Vargas', '912987321', 'andrea.vargas@mail.com', 'Problemas de visiÃ³n.');
 
 
 
 
 
-CREATE TABLE Factura (
-    id_factura INT IDENTITY(1,1) PRIMARY KEY,
+
+
+CREATE TABLE espacio (
+    id_espacio INT PRIMARY KEY,
+    codigo_espacio VARCHAR(10) NOT NULL UNIQUE,
+    estado VARCHAR(20) NOT NULL DEFAULT 'Disponible',
+    CONSTRAINT valores_estado CHECK (estado IN ('Disponible', 'Ocupado','Mantenimiento'))
+);
+
+#20 DATOS INSERTADOS PARA LA TABLA ESPACIO----
+INSERT INTO espacio (id_espacio, codigo_espacio, estado)
+VALUES
+(1, 'E001', 'Disponible'),
+(2, 'E002', 'Disponible'),
+(3, 'E003', 'Disponible'),
+(4, 'E004', 'Disponible'),
+(5, 'E005', 'Disponible'),
+(6, 'E006', 'Disponible'),
+(7, 'E007', 'Disponible'),
+(8, 'E008', 'Disponible'),
+(9, 'E009', 'Disponible'),
+(10, 'E010', 'Disponible'),
+(11, 'E011', 'Mantenimiento'),
+(12, 'E012', 'Mantenimiento'),
+(13, 'E013', 'Disponible'),
+(14, 'E014', 'Disponible'),
+(15, 'E015', 'Disponible'),
+(16, 'E016', 'Disponible'),
+(17, 'E017', 'Disponible'),
+(18, 'E018', 'Disponible'),
+(19, 'E019', 'Disponible'),
+(20, 'E020', 'Disponible');
+
+#TRIGGER ALQUILERES
+DELIMITER $$
+CREATE TRIGGER trg_actualizar_estado_alquiler
+AFTER INSERT ON alquileres
+FOR EACH ROW
+BEGIN
+    UPDATE espacio
+    SET estado = 'Ocupado'
+    WHERE id_espacio = NEW.id_espacio;
+END $$
+DELIMITER ;
+
+
+
+
+
+
+
+CREATE TABLE alquileres (
+	id_alquiler INT PRIMARY KEY,
     id_cliente INT NOT NULL,
     id_espacio INT NOT NULL,
-    fecha_emision DATE NOT NULL,
-    monto_total DECIMAL(10, 2) NOT NULL,
-    detalle NVARCHAR(MAX),
-    CONSTRAINT FK_Factura_Cliente FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente),
-    CONSTRAINT FK_Factura_Espacio FOREIGN KEY (id_espacio) REFERENCES Espacio(id_espacio)
+    fecha_inicio_alquiler DATE NOT NULL,
+    fecha_fin_alquiler DATE NOT NULL,
+    CONSTRAINT FK_Alquiler_Cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
+    CONSTRAINT FK_Alquiler_Espacio FOREIGN KEY (id_espacio) REFERENCES espacio(id_espacio),
+    CONSTRAINT UQ_Espacio_Alquilado UNIQUE (id_espacio, fecha_inicio_alquiler, fecha_fin_alquiler),
+    CONSTRAINT CHK_Fechas_Alquiler CHECK (fecha_inicio_alquiler <= fecha_fin_alquiler)
 );
 
--------------- CONSULTAS --------- 
+# TRIGGER ALQUILERES
+DELIMITER $$
+CREATE TRIGGER trg_validar_fecha_inicio
+BEFORE INSERT ON alquileres
+FOR EACH ROW
+BEGIN
+    IF NEW.fecha_inicio_alquiler > CURRENT_DATE THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La fecha de inicio del alquiler no puede ser futura.';
+    END IF;
+END $$
+DELIMITER ;
+
+# TRIGGER ALQUILERES ACTUALIZAR
+DELIMITER $$
+
+CREATE TRIGGER trg_validar_fecha_inicio_update
+BEFORE UPDATE ON alquileres
+FOR EACH ROW
+BEGIN
+    IF NEW.fecha_inicio_alquiler > CURRENT_DATE THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La fecha de inicio del alquiler no puede ser futura.';
+    END IF;
+END $$
+
+DELIMITER ;
+
+#10 datos de alquileres
+INSERT INTO alquileres (id_alquiler, id_cliente, id_espacio, fecha_inicio_alquiler, fecha_fin_alquiler)
+VALUES
+(1, 1, 1, '2024-01-01', '2024-01-31'),
+(2, 2, 2, '2024-02-01', '2024-02-28'),
+(3, 3, 3, '2024-03-01', '2024-03-31'),
+(4, 4, 4, '2024-04-01', '2024-04-30'),
+(5, 5, 5, '2024-05-01', '2024-05-31'),
+(6, 6, 6, '2024-06-01', '2024-06-30'),
+(7, 7, 7, '2024-07-01', '2024-07-31'),
+(8, 8, 8, '2024-08-01', '2024-08-31'),
+(9, 9, 9, '2024-09-01', '2024-09-30'),
+(10, 10, 10, '2024-10-01', '2024-10-31');
+
+
+
+
+
+
+
+CREATE TABLE boleta (
+    id_boleta INT PRIMARY KEY,
+    id_alquiler INT NOT NULL,
+    fecha_emision DATE NOT NULL,
+    monto_pagar DECIMAL(10, 2) NOT NULL,
+    CONSTRAINT FK_bolera_Alquiler FOREIGN KEY (id_alquiler) REFERENCES alquileres(id_alquiler),
+    CONSTRAINT CHK_Monto_boleta CHECK (monto_pagar > 0),
+    CONSTRAINT UQ_boleta_Unica UNIQUE (id_alquiler, fecha_emision)
+);
+
+#TRIGGER BOLETA
+DELIMITER $$
+
+CREATE TRIGGER trg_validar_fecha_boleta
+BEFORE INSERT ON boleta
+FOR EACH ROW
+BEGIN
+    IF NEW.fecha_emision > CURRENT_DATE THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La fecha de emisiÃ³n de la boleta no puede ser futura.';
+    END IF;
+END $$
+
+DELIMITER ;
+
+# ACTUALIZAR BOLETA EN UNA FECHA FUTURA NO PODRA TIENE QUE SER HOY
+DELIMITER $$
+
+CREATE TRIGGER trg_validar_fecha_boleta_update
+BEFORE UPDATE ON boleta
+FOR EACH ROW
+BEGIN
+    IF NEW.fecha_emision > CURRENT_DATE THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La fecha de emisiÃ³n de la boleta no puede ser futura.';
+    END IF;
+END $$
+
+DELIMITER ;
+
+
+
+
+
+
+
+#-------------- CONSULTAS --------- 
 SELECT * FROM Cliente; 
-SELECT * FROM Espacio; 
-SELECT * FROM Factura;
+SELECT * FROM Espacio;
+SELECT * FROM alquileres;
+SELECT * FROM boleta;
+
+SHOW CREATE TABLE espacio;
+
+ALTER TABLE espacio DROP CONSTRAINT CHK_Espacio_Disponible;
+
+UPDATE cliente set nota = 'Sin Discapacidad' WHERE id_cliente = 9;
