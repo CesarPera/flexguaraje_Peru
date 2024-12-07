@@ -8,13 +8,15 @@ function Clientes() {
     const [clientes, setClientes] = useState([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [nuevoCliente, setNuevoCliente] = useState({
+    tipo: "Empresa",
     nombre: "",
     apellido: "",
     edad: "",
     correo: "",
     fechaInicio: "",
     dni: "",
-    tipo: "Empresa", // Empresa o Persona
+    ruc: "",
+    nombreEmpresa: "",
     direccion: "",
     provincia: "",
     telefono: "",
@@ -22,7 +24,7 @@ function Clientes() {
   });
 
   const [busqueda, setBusqueda] = useState("");
-  const [tipoBusqueda, setTipoBusqueda] = useState("dni"); // 'dni' o 'nombre'
+  const [tipoBusqueda, setTipoBusqueda] = useState("dni");
   const navigate = useNavigate();
 
   const manejarNuevoCliente = () => {
@@ -33,13 +35,15 @@ function Clientes() {
       };
       setClientes([...clientes, nuevoClienteConId]);
       setNuevoCliente({
+        tipo: "Empresa",
         nombre: "",
         apellido: "",
         edad: "",
         correo: "",
         fechaInicio: "",
         dni: "",
-        tipo: "Empresa",
+        ruc: "",
+        nombreEmpresa: "",
         direccion: "",
         provincia: "",
         telefono: "",
@@ -56,7 +60,6 @@ function Clientes() {
       alert("Por favor ingrese un valor de búsqueda.");
       return;
     }
-
     navigate("/solicitudesclientes", {
       state: { busqueda, tipoBusqueda },
     });
@@ -75,18 +78,19 @@ function Clientes() {
           <option value="dni">Buscar por DNI</option>
           <option value="nombre">Buscar por Nombre Completo</option>
         </select>
-
         <input
           type="text"
-          placeholder={`Buscar por ${tipoBusqueda === "dni" ? "DNI" : "Nombre Completo"}`}
+          placeholder={`Buscar por ${
+            tipoBusqueda === "dni" ? "DNI" : "Nombre Completo"
+          }`}
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
         <button className="boton-buscar" onClick={buscarCliente}>
-            <Link to="/clientes/solicitudes">
-                <span className="full-label animate">Espacios</span>
-           </Link> 
-           </button>
+          <Link to="/clientes/solicitudes">
+            <span className="full-label animate">Buscar</span>
+          </Link>
+        </button>
       </div>
 
       <button
@@ -100,59 +104,138 @@ function Clientes() {
         <div className="formulario-flotante">
           <div className="formulario-contenido">
             <h3>Añadir Nuevo Cliente</h3>
-            {/* Formulario */}
-            <label>Nombre</label>
-            <input
-              type="text"
-              value={nuevoCliente.nombre}
-              onChange={(e) =>
-                setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })
-              }
-            />
-            <label>Apellido</label>
-            <input
-              type="text"
-              value={nuevoCliente.apellido}
-              onChange={(e) =>
-                setNuevoCliente({ ...nuevoCliente, apellido: e.target.value })
-              }
-            />
-            <label>Edad</label>
-            <input
-              type="number"
-              value={nuevoCliente.edad}
-              onChange={(e) =>
-                setNuevoCliente({ ...nuevoCliente, edad: e.target.value })
-              }
-            />
-            <label>Correo</label>
-            <input
-              type="email"
-              value={nuevoCliente.correo}
-              onChange={(e) =>
-                setNuevoCliente({ ...nuevoCliente, correo: e.target.value })
-              }
-            />
-            <label>DNI</label>
-            <input
-              type="text"
-              value={nuevoCliente.dni}
-              onChange={(e) =>
-                setNuevoCliente({ ...nuevoCliente, dni: e.target.value })
-              }
-            />
-            <select
-              value={nuevoCliente.tipo}
-              onChange={(e) =>
-                setNuevoCliente({ ...nuevoCliente, tipo: e.target.value })
-              }
-            >
-              <option value="Empresa">Empresa</option>
-              <option value="Persona">Persona</option>
-            </select>
+            <div className="formulario-campos"> {/* Contenedor con desplazamiento vertical */}
+              <label>Tipo de Cliente</label>
+              <select
+                value={nuevoCliente.tipo}
+                onChange={(e) =>
+                  setNuevoCliente({ ...nuevoCliente, tipo: e.target.value })
+                }
+              >
+                <option value="Empresa">Empresa</option>
+                <option value="Persona">Persona</option>
+              </select>
 
-            <button onClick={manejarNuevoCliente}>Añadir</button>
-            <button onClick={() => setMostrarFormulario(false)}>Cancelar</button>
+              {nuevoCliente.tipo === "Persona" ? (
+                <>
+                  <label>Nombre</label>
+                  <input
+                    type="text"
+                    value={nuevoCliente.nombre}
+                    onChange={(e) =>
+                      setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })
+                    }
+                  />
+                  <label>Apellido</label>
+                  <input
+                    type="text"
+                    value={nuevoCliente.apellido}
+                    onChange={(e) =>
+                      setNuevoCliente({
+                        ...nuevoCliente,
+                        apellido: e.target.value,
+                      })
+                    }
+                  />
+                  <label>DNI</label>
+                  <input
+                    type="text"
+                    value={nuevoCliente.dni}
+                    onChange={(e) =>
+                      setNuevoCliente({ ...nuevoCliente, dni: e.target.value })
+                    }
+                  />
+                  <label>Edad</label>
+                  <input
+                    type="number"
+                    value={nuevoCliente.edad}
+                    onChange={(e) =>
+                      setNuevoCliente({ ...nuevoCliente, edad: e.target.value })
+                    }
+                  />
+                  <label>Fecha de Nacimiento</label>
+                  <input
+                    type="date"
+                    value={nuevoCliente.fechaNacimiento}
+                    onChange={(e) =>
+                      setNuevoCliente({ ...nuevoCliente, fechaNacimiento: e.target.value })
+                    }
+                  />
+                </>
+              ) : (
+                <>
+                  <label>Nombre de la Empresa</label>
+                  <input
+                    type="text"
+                    value={nuevoCliente.nombreEmpresa}
+                    onChange={(e) =>
+                      setNuevoCliente({
+                        ...nuevoCliente,
+                        nombreEmpresa: e.target.value,
+                      })
+                    }
+                  />
+                  <label>RUC</label>
+                  <input
+                    type="text"
+                    value={nuevoCliente.ruc}
+                    onChange={(e) =>
+                      setNuevoCliente({ ...nuevoCliente, ruc: e.target.value })
+                    }
+                  />
+                  <label>Dirección</label>
+                  <input
+                    type="text"
+                    value={nuevoCliente.direccion}
+                    onChange={(e) =>
+                      setNuevoCliente({
+                        ...nuevoCliente,
+                        direccion: e.target.value,
+                      })
+                    }
+                  />
+                </>
+              )}
+
+              <label>Correo</label>
+              <input
+                type="email"
+                value={nuevoCliente.correo}
+                onChange={(e) =>
+                  setNuevoCliente({ ...nuevoCliente, correo: e.target.value })
+                }
+              />
+              <label>Teléfono</label>
+              <input
+                type="text"
+                value={nuevoCliente.telefono}
+                onChange={(e) =>
+                  setNuevoCliente({ ...nuevoCliente, telefono: e.target.value })
+                }
+              />
+              <label>Provincia</label>
+              <input
+                type="text"
+                value={nuevoCliente.provincia}
+                onChange={(e) =>
+                   setNuevoCliente({ ...nuevoCliente, provincia: e.target.value })
+                }
+              />
+
+               <label>Fecha de Inicio</label>
+               <input
+                 type="date"
+                 value={nuevoCliente.fechaInicio}
+                 onChange={(e) =>
+                   setNuevoCliente({ ...nuevoCliente, fechaInicio: e.target.value })
+                }
+                />
+            </div>
+
+            <div className="formulario-botones">
+              <button onClick={manejarNuevoCliente}>Añadir</button>
+              <button onClick={() => setMostrarFormulario(false)}>Cancelar</button>
+            </div>
           </div>
         </div>
       )}

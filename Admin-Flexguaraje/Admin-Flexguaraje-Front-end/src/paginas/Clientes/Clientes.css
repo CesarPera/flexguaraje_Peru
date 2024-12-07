@@ -9,82 +9,103 @@
 /* RECUERDA QUE TODO LOS CSS ESTAN VINCULADO AL PARECER, NO ES COMO EN HTML O JSP QUE ES UNO SOLO EL CSS PERO EN AQUI EN TODO JUNTO EN UNO SOLO EL CSS, QUISE SEPARAR EL ESTILO PARA QUE ASI CADA UNO TENGA SU PROPIO ESTILO PERO NOSE PUDO, PROXIMAMENTE BUSCARE Y INVESTIGARE PARA HACER ESO XD */
 
 /* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
-.clientes-page {
-    padding: 20px;
-  }
-  
+
+/* Búsqueda */
+/* Clientes.css */
+
+  /* Estilo del formulario de búsqueda */
   .formulario-busqueda {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
     margin-bottom: 20px;
   }
   
   .formulario-busqueda select,
   .formulario-busqueda input {
     padding: 10px;
-    width: 48%;
-    font-size: 16px;
+    border-radius: 4px;
     border: 1px solid #ccc;
-    border-radius: 5px;
   }
   
-  .boton-abrir-formulario {
+  .formulario-busqueda button {
     padding: 10px 20px;
-    background-color: #6a5acd;
+    background-color: #6a5acd; /* Color lilac */
     color: white;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
-    display: block;
-    width: 200px;
-    margin-left: auto;
-    margin-right: auto;
+    border-radius: 4px;
+  }
+  
+  .formulario-busqueda button:hover {
+    background-color: #5b4b9e;
+  }
+  
+  .boton-buscar {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Estilo del botón para abrir el formulario */
+  .boton-abrir-formulario {
+    padding: 10px 20px;
+    background-color: #6a5acd; /* Color lilac */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 20px;
   }
   
   .boton-abrir-formulario:hover {
-    background-color: #4e3c9c;
+    background-color: #5b4b9e;
   }
   
+  /* Estilo del formulario flotante */
   .formulario-flotante {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Alineación del formulario desde la parte superior */
+    padding-top: 50px; /* Un espacio para que el formulario no quede pegado a la parte superior */
     z-index: 1000;
+    overflow: auto; /* Permite el desplazamiento si el formulario es largo */
   }
   
   .formulario-contenido {
     background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    position: relative;
-    animation: aparecer 0.3s ease-in-out;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+    max-height: 80vh; /* Limita la altura máxima del formulario a un 80% de la ventana */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden; /* Evita que el contenido desborde del formulario */
   }
   
-  @keyframes aparecer {
-    from {
-      transform: scale(0.8);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
+  /* Contenedor con desplazamiento vertical dentro del formulario */
+  .formulario-contenido .formulario-campos {
+    max-height: 60vh; /* Limita la altura del contenedor de los campos */
+    overflow-y: auto; /* Añade desplazamiento vertical cuando los campos exceden el espacio */
+    margin-bottom: 20px; /* Separación para los botones */
+  }
+  
+  .formulario-contenido h3 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    color: #333;
   }
   
   .formulario-contenido label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
+    margin: 10px 0 5px;
+    font-size: 14px;
     color: #333;
   }
   
@@ -94,102 +115,42 @@
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 4px;
   }
   
-  .botones {
-    display: flex;
-    justify-content: space-between;
+  .formulario-contenido input[type="email"] {
+    margin-bottom: 20px;
   }
   
   .formulario-contenido button {
-    background-color: #6a5acd;
+    padding: 10px 20px;
+    background-color: #6a5acd; /* Color lilac */
     color: white;
     border: none;
-    padding: 10px;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
-    width: 48%;
-    transition: background-color 0.2s ease-in-out;
+    margin-right: 10px;
   }
   
   .formulario-contenido button:hover {
-    background-color: #4e3c9c;
+    background-color: #5b4b9e;
   }
   
-  .formulario-contenido button:nth-child(2) {
-    background-color: #ff4c4c;
+  .formulario-contenido button:last-child {
+    background-color: #ccc;
   }
   
-  .formulario-contenido button:nth-child(2):hover {
-    background-color: #cc0000;
-  }
-  .formulario-dos-columnas {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+  .formulario-contenido button:last-child:hover {
+    background-color: #aaa;
   }
   
-  .boton-buscar {
-    padding: 10px 15px;
-    background-color: #6a5acd;
+  /* Estilo para los enlaces dentro de los botones */
+  .boton-buscar a {
     color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    text-decoration: none;
   }
   
-  .boton-buscar:hover {
-    background-color: #4e3c9c;
+  .boton-buscar a:hover {
+    text-decoration: underline;
   }
-    /* HAY HAY */
-    .clientes-page {
-        padding: 20px;
-      }
-      
-      .formulario-busqueda {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-      }
-      
-      .formulario-busqueda input,
-      .formulario-busqueda select {
-        padding: 10px;
-        width: 48%;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-      
-      .boton-buscar {
-        padding: 10px 20px;
-        background-color: #6a5acd;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-left: 10px;
-      }
-      
-      .boton-buscar:hover {
-        background-color: #4e3c9c;
-      }
-      
-      .boton-abrir-formulario {
-        padding: 10px 20px;
-        background-color: #6a5acd;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        display: block;
-        margin: 20px auto;
-      }
-      
-      .boton-abrir-formulario:hover {
-        background-color: #4e3c9c;
-      }
-      
+  
