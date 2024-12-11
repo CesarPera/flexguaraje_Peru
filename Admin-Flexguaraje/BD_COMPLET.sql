@@ -145,13 +145,15 @@ VALUES
 CREATE TABLE boleta (
     id_boleta INT PRIMARY KEY,
     id_alquiler INT NOT NULL,
-    fecha_emision DATE NOT NULL,
+    DNI VARCHAR(20) NOT NULL,
+    codigoBoleta VARCHAR(50) NOT NULL,
+    espacioAdquirido VARCHAR(50) NOT NULL
     monto_pagar DECIMAL(10, 2) NOT NULL,
     CONSTRAINT FK_bolera_Alquiler FOREIGN KEY (id_alquiler) REFERENCES alquileres(id_alquiler),
-    CONSTRAINT CHK_Monto_boleta CHECK (monto_pagar > 0),
-    CONSTRAINT UQ_boleta_Unica UNIQUE (id_alquiler, fecha_emision)
+    CONSTRAINT CHK_Monto_boleta CHECK (monto_pagar > 0)
 );
 
+ALTER TABLE boleta DROP COLUMN fecha_emision;
 #TRIGGER BOLETA
 DELIMITER $$
 
