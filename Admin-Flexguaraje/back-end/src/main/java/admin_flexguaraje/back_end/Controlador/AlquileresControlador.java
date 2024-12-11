@@ -20,6 +20,7 @@ public class AlquileresControlador {
     @Autowired
     private AlquileresNegocio alquileresNegocio;
 
+    // Endpoint para listar todos los alquileres
     @GetMapping("/listaralquileres")
     public ResponseEntity<List<Alquileres>> listarAlquileres() {
         List<Alquileres> alquileres = alquileresNegocio.listarAlquileres();

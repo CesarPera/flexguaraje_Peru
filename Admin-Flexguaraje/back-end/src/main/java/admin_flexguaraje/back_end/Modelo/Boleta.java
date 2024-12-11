@@ -12,7 +12,7 @@ public class Boleta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_boleta")
-    private Long idBoleta;
+    private int idBoleta;
 
     @ManyToOne
     @JoinColumn(name = "id_alquiler", nullable = false, foreignKey = @ForeignKey(name = "FK_boleta_Alquiler"))
@@ -30,11 +30,11 @@ public class Boleta {
     @Column(name = "monto_pagar", nullable = false, precision = 10, scale = 2)
     private BigDecimal montoPagar;
 
-    public Long getIdBoleta() {
+    public int getIdBoleta() {
         return idBoleta;
     }
 
-    public void setIdBoleta(Long idBoleta) {
+    public void setIdBoleta(int idBoleta) {
         this.idBoleta = idBoleta;
     }
 
