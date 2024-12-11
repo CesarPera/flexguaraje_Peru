@@ -13,20 +13,9 @@ public class Boleta {
     @Column(name = "id_boleta")
     private int idBoleta;
 
-<<<<<<< Updated upstream
     @ManyToOne
     @JoinColumn(name = "id_alquiler", nullable = false, foreignKey = @ForeignKey(name = "FK_bolera_Alquiler"))
     private Alquileres alquileres;
-=======
-    @Column(name = "id_alquiler", nullable = false)
-    private int idAlquiler;
-
-    @Column(name = "codigo_boleta", nullable = false, length = 30)
-    private String codigoBoleta;
-
-    @Column(name = "metodo_pago", nullable = false, length = 30)
-    private String metodoPago;
->>>>>>> Stashed changes
 
     @Column(name = "codigo_boleta", nullable = false, length = 30)
     private String codigoBoleta;
@@ -37,7 +26,6 @@ public class Boleta {
     @Column(name = "fecha_emision", nullable = false)
     private Date fechaEmision;
 
-<<<<<<< Updated upstream
     public int getIdBoleta() {
         return idBoleta;
     }
@@ -89,12 +77,6 @@ public class Boleta {
     @Column(name = "monto_pagar", nullable = false, precision = 10, scale = 2)
     private BigDecimal montoPagar;
 
-=======
-    @Column(name = "monto_pagar", nullable = false, precision = 10, scale = 2)
-    private BigDecimal montoPagar;
-
-    // Validación personalizada
->>>>>>> Stashed changes
     @PrePersist
     @PreUpdate
     private void validarDatos() {
