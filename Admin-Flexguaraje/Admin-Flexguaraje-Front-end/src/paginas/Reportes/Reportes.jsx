@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Reportes.css';
 
 function Reportes() {
+
     const [espacios, setEspacios] = useState([
         { id: 1, codigo: 'A123', dni: '75117638', nombre: 'Cesar Daniel Carhuas Aldana', descripcion: 'Problema con el espacio A123', estado: 'DISPONIBLE' },
         { id: 2, codigo: 'B456', dni: '45678912', nombre: 'María Pérez', descripcion: 'Espacio en uso por mantenimiento', estado: 'OCUPADO' },
@@ -21,8 +22,8 @@ function Reportes() {
         if (nuevoReporte.codigo && nuevoReporte.dni && nuevoReporte.nombre && nuevoReporte.descripcion) {
             setEspacios([
                 ...espacios,
-                { 
-                    ...nuevoReporte, 
+                {
+                    ...nuevoReporte,
                     id: espacios.length + 1 // Generamos un id único
                 }
             ]);
@@ -42,7 +43,7 @@ function Reportes() {
         const reporteActualizado = espacios.find((espacio) => espacio.id === id);
         if (reporteActualizado) {
             const nuevoEstado = reporteActualizado.estado === 'DISPONIBLE' ? 'OCUPADO' : 'DISPONIBLE';
-            setEspacios(espacios.map((espacio) => 
+            setEspacios(espacios.map((espacio) =>
                 espacio.id === id ? { ...espacio, estado: nuevoEstado } : espacio
             ));
         }
@@ -54,9 +55,9 @@ function Reportes() {
 
     return (
         <div className="reportes-page">
-            <h1>Gestión de Reportes</h1>
+            <h1>Reportes - Pronto estaria habilitado.</h1>
 
-            {/* Formulario para agregar nuevo reporte */}
+            {/* por el momento no 
             <div className="form-container">
                 <input
                     type="text"
@@ -93,7 +94,7 @@ function Reportes() {
                 <button onClick={agregarReporte}>Agregar Reporte</button>
             </div>
 
-            {/* Tabla de reportes */}
+            {/* Tabla de reportes 
             <table className="table-container">
                 <thead>
                     <tr>
@@ -137,6 +138,7 @@ function Reportes() {
                     ))}
                 </tbody>
             </table>
+            */}
         </div>
     );
 }
