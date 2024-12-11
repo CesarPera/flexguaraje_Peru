@@ -5,10 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EspacioRepositorio extends JpaRepository<Espacio, Long> {
-    Espacio findByCodigoEspacio(String codigoEspacio);
-
+    Optional<Espacio> findByCodigoEspacio(String codigoEspacio); // Método para buscar por código
     List<Espacio> findByEstado(String estado);
 }
