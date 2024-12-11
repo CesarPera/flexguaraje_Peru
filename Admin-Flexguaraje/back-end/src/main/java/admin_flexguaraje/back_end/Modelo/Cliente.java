@@ -1,7 +1,7 @@
 package admin_flexguaraje.back_end.Modelo;
 
-
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "cliente",
@@ -30,6 +30,10 @@ public class Cliente {
 
     @Column(name = "nota", length = 255)
     private String nota = "Sin Discapacidad";
+
+    // Relación uno a muchos con la entidad Alquileres
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Alquileres> alquileres;
 
     // Getters y Setters
     public Long getIdCliente() {
@@ -86,6 +90,14 @@ public class Cliente {
 
     public void setNota(String nota) {
         this.nota = nota;
+    }
+
+    public List<Alquileres> getAlquileres() {
+        return alquileres;
+    }
+
+    public void setAlquileres(List<Alquileres> alquileres) {
+        this.alquileres = alquileres;
     }
 
     // Validación personalizada
