@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from 'react';
 import './Espacios.css';
 import EspacioBD from './BASE_DE_DATOS/EspacioBD';
