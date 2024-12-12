@@ -27,6 +27,12 @@ VALUES
 (9, '89012345', 'Jose', 'Morales', '987987654', 'jose.morales@mail.com', ''),
 (10, '90123456', 'Andrea', 'Vargas', '912987321', 'andrea.vargas@mail.com', 'Problemas de visión.');
 
+
+
+
+
+
+
 CREATE TABLE espacio (
     id_espacio INT PRIMARY KEY,
     codigo_espacio VARCHAR(10) NOT NULL UNIQUE,
@@ -137,20 +143,17 @@ VALUES
 
 
 CREATE TABLE boleta (
-    id_boleta INT auto_increment PRIMARY KEY,
+    id_boleta INT PRIMARY KEY,
     id_alquiler INT NOT NULL,
-    foreign key (id_alquiler) references alquileres(id_alquiler),
-    codigo_boleta VARCHAR(30) NOT NULL,
-    metodo_pago VARCHAR(30) NOT NULL,
-    fecha_emision DATE NOT NULL,
+    DNI VARCHAR(20) NOT NULL,
+    codigoBoleta VARCHAR(50) NOT NULL,
+    espacioAdquirido VARCHAR(50) NOT NULL
     monto_pagar DECIMAL(10, 2) NOT NULL,
-    CONSTRAINT FK_boleta_Alquiler FOREIGN KEY (id_alquiler) REFERENCES alquileres(id_alquiler),
-    CONSTRAINT CHK_Monto_boleta CHECK (monto_pagar > 0),
-    CONSTRAINT UQ_boleta_Unica UNIQUE (id_alquiler, fecha_emision)
+    CONSTRAINT FK_bolera_Alquiler FOREIGN KEY (id_alquiler) REFERENCES alquileres(id_alquiler),
+    CONSTRAINT CHK_Monto_boleta CHECK (monto_pagar > 0)
 );
 
-
-drop table boleta;
+ALTER TABLE boleta DROP COLUMN fecha_emision;
 #TRIGGER BOLETA
 DELIMITER $$
 
@@ -183,8 +186,7 @@ DELIMITER ;
 
 
 
-INSERT INTO boleta
-VALUES ('1', '1', 'B001', 'Efectivo', '2024-12-11', '300');
+
 
 
 
