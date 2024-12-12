@@ -17,11 +17,4 @@ public class BoletaControlador {
 
     @Autowired
     private BoletaNegocio boletaNegocio;
-
-    @GetMapping("/listarboleta")
-    public ResponseEntity<List<Boleta>> listarBoletas() {
-        List<Boleta> alquileres = boletaNegocio.listarBoleta();
-        return new ResponseEntity<>(alquileres, HttpStatus.OK);
-    }
-
 }
