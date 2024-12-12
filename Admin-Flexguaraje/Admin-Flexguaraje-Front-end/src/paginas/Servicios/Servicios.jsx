@@ -96,7 +96,7 @@ function Servicios() {
             <h2 className="title-servicios">Servicios de Boleta</h2>
             <div className="center-button-container">
                 <button className="btn-add" onClick={() => handleOpenModal()}>
-                    Generar Boletas
+                    Generar Datos
                 </button>
             </div>
 

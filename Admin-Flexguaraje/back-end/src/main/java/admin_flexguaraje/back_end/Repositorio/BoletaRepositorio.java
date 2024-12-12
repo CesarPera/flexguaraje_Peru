@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface    BoletaRepositorio extends JpaRepository<Boleta, Long> {
+public interface BoletaRepositorio extends JpaRepository<Boleta, Long> {
     Optional<Boleta> findByDni(String dni);
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/boletas")
-public class    BoletaControlador {
+public class BoletaControlador {
 
     @Autowired
     private BoletaNegocio boletaNegocio;
