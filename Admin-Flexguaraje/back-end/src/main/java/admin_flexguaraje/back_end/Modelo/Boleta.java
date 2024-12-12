@@ -6,7 +6,7 @@ import java.util.Date;
 @Entity
 @Table(name = "boleta",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_alquiler", "codigo_boleta"}))
-public class Boleta {
+public class    Boleta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
