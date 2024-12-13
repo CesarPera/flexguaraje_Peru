@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from 'react';
 import './Espacios.css';
+import Swal from 'sweetalert2';
 import EspacioBD from './BASE_DE_DATOS/EspacioBD';
 import AlquileresBD from './BASE_DE_DATOS/AlquileresBD';
 
@@ -125,7 +126,6 @@ function Espacios() {
             );
 
             const response = await AlquileresBD.agregarAlquiler(alquiler);
-            console.log("Respuesta del servidor:", response.data);
 
             setAlquileres((prevAlquileres) => [
                 ...prevAlquileres,
@@ -142,15 +142,46 @@ function Espacios() {
                 espacio: '',
                 estado: 'Disponible',
             });
+
+            // Mostrar SweetAlert en el centro
+            Swal.fire({
+                position: "center", // Centrado
+                icon: "success",
+                title: "¡Alquiler agregado con éxito!",
+                showConfirmButton: false,
+                timer: 3000,
+            });
         } catch (error) {
-            console.error("Error al agregar el alquiler:", error);
+            let errorMessage = "Por favor, inténtalo nuevamente."; // Mensaje genérico
+
+            // Si el error tiene una respuesta detallada del servidor, mostramos eso
+            if (error.response && error.response.data) {
+                errorMessage = error.response.data.message || "Ha ocurrido un error desconocido.";
+            } else if (error.message) {
+                // Si el error tiene un mensaje específico, lo mostramos
+                errorMessage = error.message;
+            }
+
+            // Mostrar SweetAlert con el mensaje de error detallado
+            Swal.fire({
+                position: "center", // Centrado
+                icon: "error",
+                title: "Error al agregar el alquiler",
+                text: errorMessage,
+                showConfirmButton: true,
+            });
         }
     };
 
     // actualizar alquiler
     const actualizarAlquiler = async () => {
         if (!codigoActualizar || !dniCliente || !inicioAlquiler || !finAlquiler) {
-            alert('Por favor completa todos los campos.');
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Por favor completa todos los campos.",
+                showConfirmButton: true,
+            });
             return;
         }
 
@@ -181,9 +212,23 @@ function Espacios() {
             );
 
             setShowUpdateModal(false);
+
+            // Mostrar SweetAlert de éxito
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Alquiler actualizado correctamente",
+                showConfirmButton: false,
+                timer: 3000,
+            });
         } catch (error) {
-            console.error("Error al actualizar el alquiler:", error);
-            alert('Error al actualizar el alquiler.');
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error al actualizar el alquiler",
+                text: error.response?.data?.message || "Por favor, inténtalo nuevamente.",
+                showConfirmButton: true,
+            });
         }
     };
 
@@ -194,14 +239,17 @@ function Espacios() {
 
     const actualizarEstado = async () => {
         if (!codigoActualizar || !nuevoEstado) {
-            alert('Por favor selecciona un espacio y un nuevo estado.');
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Por favor selecciona un espacio y un nuevo estado.",
+                showConfirmButton: true,
+            });
             return;
         }
 
         try {
             const response = await AlquileresBD.actualizarEstadoEspacio(codigoActualizar, nuevoEstado);
-            console.log("Estado actualizado:", response.data);
-
             setEspacios((prevDatos) =>
                 prevDatos.map((dato) =>
                     dato.codigoEspacio === codigoActualizar ? { ...dato, estado: nuevoEstado } : dato
@@ -209,9 +257,21 @@ function Espacios() {
             );
 
             setShowUpdateModal(false);
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Estado actualizado correctamente",
+                showConfirmButton: false,
+                timer: 3000,
+            });
         } catch (error) {
-            console.error("Error al actualizar el estado del espacio:", error);
-            alert('Error al actualizar el estado del espacio.');
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Error al actualizar el estado",
+                text: error.response?.data?.message || "Por favor, inténtalo nuevamente.",
+                showConfirmButton: true,
+            });
         }
     };
 
@@ -231,34 +291,66 @@ function Espacios() {
 
     const EliminarAlquiler = async () => {
         if (!codigoEliminar) {
-            alert('Por favor selecciona un espacio para eliminar.');
+            Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Por favor selecciona un espacio para eliminar.",
+                showConfirmButton: true,
+            });
             return;
         }
-
-        console.log("Código seleccionado para eliminar:", codigoEliminar);
 
         const espacioEliminar = Espacios.find(espacio => espacio.codigoEspacio === codigoEliminar);
 
         if (espacioEliminar) {
-            console.log("Espacio a eliminar:", espacioEliminar);
 
-            setEspacios(prevEspacios =>
-                prevEspacios.map(espacio =>
-                    espacio.codigoEspacio === codigoEliminar
-                        ? { ...espacio, estado: 'Disponible', dni: '', nombre: '', contacto: '', inicio: '', final: '' }
-                        : espacio
-                )
-            );
+            Swal.fire({
+                title: "¿Estás seguro de eliminar este alquiler?",
+                text: "Esta acción no se puede deshacer.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar",
+                reverseButtons: true,
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    // Proceder con la eliminación
+                    try {
+                        // Actualizar estado de espacio a 'Disponible' y borrar datos del cliente
+                        setEspacios(prevEspacios =>
+                            prevEspacios.map(espacio =>
+                                espacio.codigoEspacio === codigoEliminar
+                                    ? { ...espacio, estado: 'Disponible', dni: '', nombre: '', contacto: '', inicio: '', final: '' }
+                                    : espacio
+                            )
+                        );
 
-            try {
-                await AlquileresBD.eliminarAlquilerBD(codigoEliminar);
-                console.log("Alquiler eliminado con éxito.");
-            } catch (error) {
-                console.error("Error al eliminar el alquiler:", error);
-            }
+                        // Llamada a la API para eliminar el alquiler
+                        await AlquileresBD.eliminarAlquilerBD(codigoEliminar);
 
-            setShowDeleteModal(false);
-            setCodigoEliminar('');
+                        // Mostrar SweetAlert de éxito después de eliminar
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Alquiler eliminado correctamente.",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+
+                        // Cerrar el modal y limpiar el código de eliminación
+                        setShowDeleteModal(false);
+                        setCodigoEliminar('');
+                    } catch (error) {
+                        Swal.fire({
+                            position: "center",
+                            icon: "error",
+                            title: "Error al eliminar el alquiler.",
+                            text: error.response?.data?.message || "Por favor, inténtalo nuevamente.",
+                            showConfirmButton: true,
+                        });
+                    }
+                }
+            });
         } else {
             console.log("No se encontró el espacio con el código proporcionado.");
         }
