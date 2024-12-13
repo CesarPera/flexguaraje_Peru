@@ -17,7 +17,12 @@ import java.util.List;
 @Service
 public class AlquileresNegocio {
     @Autowired
-    private AlquileresRepositorio AlquileresRepositorio;
+    private final AlquileresRepositorio AlquileresRepositorio;
+
+    @Autowired
+    public AlquileresNegocio(AlquileresRepositorio AlquileresRepositorio) {
+        this.AlquileresRepositorio = AlquileresRepositorio;
+    }
 
     @Autowired
     private EspacioRepositorio espacioRepositorio; // Repositorio de la tabla Espacio
