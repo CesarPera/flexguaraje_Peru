@@ -191,8 +191,6 @@ DELIMITER ;
 
 
 #-------------- CONSULTAS --------- 
-USE flexguaraje_peru_BD;
-
 SELECT * FROM Cliente; 
 SELECT * FROM Espacio;
 SELECT * FROM alquileres;
@@ -202,28 +200,4 @@ SHOW CREATE TABLE espacio;
 
 ALTER TABLE espacio DROP CONSTRAINT CHK_Espacio_Disponible;
 
-UPDATE espacio set estado = 'Ocupado' WHERE id_espacio = 1;
-
-ALTER TABLE alquileres MODIFY id_alquiler BIGINT AUTO_INCREMENT;
-
-
-
-SELECT 
-    e.codigo_espacio AS codigoEspacio,
-    e.estado AS estado,
-    c.dni AS dni,
-    CONCAT(c.nombre, ' ', c.apellido) AS nombre,
-    c.telefono AS telefono,
-    a.fecha_inicio_alquiler AS fechaInicioAlquiler,
-    a.fecha_fin_alquiler AS fechaFinAlquiler
-FROM 
-    espacio e
-LEFT JOIN 
-    alquileres a ON e.id_espacio = a.id_espacio
-LEFT JOIN 
-    cliente c ON a.id_cliente = c.id_cliente;
-
-
-
-
-
+UPDATE cliente set nota = 'Sin Discapacidad' WHERE id_cliente = 9;
