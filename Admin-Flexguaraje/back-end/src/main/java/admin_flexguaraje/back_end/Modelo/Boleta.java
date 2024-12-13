@@ -1,7 +1,8 @@
 package admin_flexguaraje.back_end.Modelo;
+
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "boleta",
@@ -14,8 +15,8 @@ public class Boleta {
     private int idBoleta;
 
     @ManyToOne
-    @JoinColumn(name = "id_alquiler", nullable = false, foreignKey = @ForeignKey(name = "FK_bolera_Alquiler"))
-    private Alquileres alquileres;
+    @JoinColumn(name = "id_alquiler", nullable = false, foreignKey = @ForeignKey(name = "FK_boleta_Alquiler"))
+    private Alquileres alquileres; // Cambiar de List<Alquileres> a Alquileres
 
     @Column(name = "codigo_boleta", nullable = false, length = 30)
     private String codigoBoleta;
@@ -24,7 +25,10 @@ public class Boleta {
     private String metodoPago;
 
     @Column(name = "fecha_emision", nullable = false)
-    private Date fechaEmision;
+    private LocalDate fechaEmision; // Cambiado a LocalDate
+
+    @Column(name = "monto_pagar", nullable = false, precision = 10, scale = 2)
+    private BigDecimal montoPagar;
 
     public int getIdBoleta() {
         return idBoleta;
@@ -58,11 +62,11 @@ public class Boleta {
         this.metodoPago = metodoPago;
     }
 
-    public Date getFechaEmision() {
+    public LocalDate getFechaEmision() {
         return fechaEmision;
     }
 
-    public void setFechaEmision(Date fechaEmision) {
+    public void setFechaEmision(LocalDate fechaEmision) {
         this.fechaEmision = fechaEmision;
     }
 
@@ -73,9 +77,6 @@ public class Boleta {
     public void setMontoPagar(BigDecimal montoPagar) {
         this.montoPagar = montoPagar;
     }
-
-    @Column(name = "monto_pagar", nullable = false, precision = 10, scale = 2)
-    private BigDecimal montoPagar;
 
     @PrePersist
     @PreUpdate
