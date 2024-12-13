@@ -18,17 +18,22 @@ import java.util.Map;
 public class AlquileresControlador {
 
     @Autowired
-    private AlquileresNegocio alquileresNegocio;
+    private final AlquileresNegocio alquileresNegocio;
+
+    @Autowired
+    public AlquileresControlador(AlquileresNegocio alquileresNegocio) {
+        this.alquileresNegocio = alquileresNegocio;
+    }
 
     // Endpoint para listar todos los alquileres
-    @GetMapping("/listaralquileres")
+    @GetMapping("/listar_alquileres")
     public ResponseEntity<List<Alquileres>> listarAlquileres() {
-        List<Alquileres> alquileres = alquileresNegocio.listarAlquileres();
-        return new ResponseEntity<>(alquileres, HttpStatus.OK);
+        List<Alquileres> listaAlquileres = alquileresNegocio.listarAlquileres();
+        return ResponseEntity.ok(listaAlquileres);
     }
 
     // Endpoint para agregar un cliente a un espacio y realizar un alquiler
-    @PostMapping("/agregaralquileres")
+    @PostMapping("/agregar_alquileres")
     public ResponseEntity<Object> agregarClienteAlEspacio(@RequestBody Map<String, Object> body) {
         try {
             // Verificar si los valores son nulos
@@ -77,7 +82,7 @@ public class AlquileresControlador {
         }
     }
 
-    @PutMapping("/actualizarestado")
+    @PutMapping("/actualizar_estado")
     public ResponseEntity<Object> actualizarEstadoEspacio(@RequestBody Map<String, Object> body) {
         try {
             // Verificar parámetros
@@ -97,7 +102,7 @@ public class AlquileresControlador {
         }
     }
 
-    @PutMapping("/actualizaralquiler")
+    @PutMapping("/actualizar_alquiler")
     public ResponseEntity<Object> actualizarClienteEnAlquiler(@RequestBody Map<String, Object> body) {
         try {
             // Verificar parámetros
@@ -124,7 +129,7 @@ public class AlquileresControlador {
         }
     }
 
-    @DeleteMapping("/eliminaralquiler")
+    @DeleteMapping("/eliminar_alquiler")
     public ResponseEntity<Object> eliminarAlquilerPorCodigoEspacio(@RequestBody Map<String, String> body) {
         try {
             // Verificar si el código de espacio fue proporcionado
@@ -141,6 +146,4 @@ public class AlquileresControlador {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
-
-
 }

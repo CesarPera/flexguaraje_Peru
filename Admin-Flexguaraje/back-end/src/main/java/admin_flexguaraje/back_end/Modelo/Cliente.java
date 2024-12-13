@@ -1,5 +1,6 @@
 package admin_flexguaraje.back_end.Modelo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class Cliente {
 
     // Relación uno a muchos con la entidad Alquileres
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
     private List<Alquileres> alquileres;
 
     // Getters y Setters
