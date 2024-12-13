@@ -1,7 +1,9 @@
 package admin_flexguaraje.back_end.Modelo;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity
@@ -37,7 +39,6 @@ public class Cliente {
     @JsonBackReference
     private List<Alquileres> alquileres;
 
-    // Getters y Setters
     public Long getIdCliente() {
         return idCliente;
     }
