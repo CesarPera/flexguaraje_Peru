@@ -1,6 +1,6 @@
 package admin_flexguaraje.back_end.Modelo;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -8,7 +8,6 @@ import java.time.LocalDate;
 @Table(name = "alquileres",
         uniqueConstraints = @UniqueConstraint(columnNames = {"id_espacio", "fecha_inicio_alquiler", "fecha_fin_alquiler"}))
 public class Alquileres {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_alquiler")
@@ -17,7 +16,6 @@ public class Alquileres {
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente", nullable = false,
             foreignKey = @ForeignKey(name = "FK_Alquiler_Cliente"))
-    @JsonManagedReference
     private Cliente cliente;
 
     @ManyToOne(optional = false)
