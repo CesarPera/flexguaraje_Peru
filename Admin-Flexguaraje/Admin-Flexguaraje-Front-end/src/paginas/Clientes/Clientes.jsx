@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './Clientes.css';
 import { useNavigate } from "react-router-dom"; // Usar react-router para redirección.
-import ClientesBD from './Base_datos/ClientesBD';
+import { listarClientes, agregarCliente } from './ClienteNegocio';
 function Clientes() {
     const [clientes, setClientes] = useState([]);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
