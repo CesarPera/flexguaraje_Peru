@@ -26,21 +26,20 @@
     border-radius: 4px;
     border: 1px solid #ccc;
 }
-
-.formulario-busqueda button {
+.boton-buscar {
     padding: 10px 20px;
-    background-color: #6a5acd; /* Color lilac */
+    background-color: #00bfff; /* Color celeste */
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 4px;
 }
 
-.formulario-busqueda button:hover {
-    background-color: #5b4b9e;
+.boton-buscar:hover {
+    background-color: #009acd; /* Celeste oscuro al pasar el mouse */
 }
 
-/* Estilo del botón para abrir el formulario */
+/* Botón para abrir el formulario */
 .boton-abrir-formulario {
     padding: 10px 20px;
     background-color: #6a5acd; /* Color lilac */
@@ -55,7 +54,7 @@
     background-color: #5b4b9e;
 }
 
-/* Estilo del formulario flotante */
+/* Formulario flotante */
 .formulario-flotante {
     position: fixed;
     top: 0;
@@ -65,10 +64,10 @@
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Alineación del formulario desde la parte superior */
-    padding-top: 50px; /* Un espacio para que el formulario no quede pegado a la parte superior */
+    align-items: flex-start;
+    padding-top: 50px;
     z-index: 1000;
-    overflow: auto; /* Permite el desplazamiento si el formulario es largo */
+    overflow: auto;
 }
 
 .formulario-contenido {
@@ -77,16 +76,15 @@
     border-radius: 8px;
     width: 400px;
     max-width: 90%;
-    max-height: 80vh; /* Limita la altura máxima del formulario a un 80% de la ventana */
+    max-height: 80vh;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    overflow: hidden; /* Evita que el contenido desborde del formulario */
+    overflow: hidden;
 }
 
-/* Contenedor con desplazamiento vertical dentro del formulario */
-.formulario-contenido .formulario-campos {
-    max-height: 60vh; /* Limita la altura del contenedor de los campos */
-    overflow-y: auto; /* Añade desplazamiento vertical cuando los campos exceden el espacio */
-    margin-bottom: 20px; /* Separación para los botones */
+.formulario-campos {
+    max-height: 60vh;
+    overflow-y: auto;
+    margin-bottom: 20px;
 }
 
 .formulario-contenido h3 {
@@ -111,12 +109,8 @@
     border-radius: 4px;
 }
 
-.formulario-contenido input[type="email"] {
-    margin-bottom: 20px;
-}
-
-/* Botones de acción */
-.formulario-contenido .btn-aceptar {
+/* Botones de acción dentro del formulario */
+.annadir {
     padding: 10px 20px;
     background-color: #28a745; /* Color verde */
     color: white;
@@ -126,11 +120,11 @@
     margin-right: 10px;
 }
 
-.formulario-contenido .btn-aceptar:hover {
-    background-color: #218838; /* Verde claro al presionar */
+.annadir:hover {
+    background-color: #218838;
 }
 
-.formulario-contenido .btn-cancelar {
+.cancelar {
     padding: 10px 20px;
     background-color: #dc3545; /* Color rojo */
     color: white;
@@ -139,52 +133,6 @@
     cursor: pointer;
 }
 
-.formulario-contenido .btn-cancelar:hover {
-    background-color: #c82333; /* Rojo claro al presionar */
-}
-
-.formulario-contenido button:last-child {
-    background-color: #ccc;
-}
-
-.formulario-contenido button:last-child:hover {
-    background-color: #aaa;
-}
-
-/* Estilo para los enlaces dentro de los botones */
-.boton-buscar a {
-    color: white;
-    text-decoration: none;
-}
-
-.boton-buscar a:hover {
-    text-decoration: underline;
-}
-
-/* Estilos para los botones */
-.annadir {
-    padding: 10px 20px;
-    background-color: #28a745; /* Verde */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 10px;
-}
-
-.annadir:hover {
-    background-color: #218838; /* Verde claro */
-}
-
-.cancelar {
-    padding: 10px 20px;
-    background-color: #dc3545; /* Rojo */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
 .cancelar:hover {
-    background-color: #c82333; /* Rojo claro */
+    background-color: #c82333;
 }

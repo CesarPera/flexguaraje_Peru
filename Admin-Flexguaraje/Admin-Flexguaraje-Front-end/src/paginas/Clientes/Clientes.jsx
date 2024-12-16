@@ -1,107 +1,66 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react';
 import './Clientes.css';
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom"; // Usar react-router para redirección.
 
 function Clientes() {
     const [clientes, setClientes] = useState([]);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [nuevoCliente, setNuevoCliente] = useState({
-        tipo: "Empresa",
         nombre: "",
         apellido: "",
+        dni: "",
+        fechaNacimiento: "",
         edad: "",
         correo: "",
-        fechaInicio: "",
-        dni: "",
-        ruc: "",
-        nombreEmpresa: "",
-        direccion: "",
-        provincia: "",
         telefono: "",
-        fechaNacimiento: "",
+        direccion: "",
+        notas: "",
     });
 
     const [busqueda, setBusqueda] = useState("");
     const [tipoBusqueda, setTipoBusqueda] = useState("dni");
     const navigate = useNavigate();
 
+    const manejarCambio = (e, campo) => {
+        setNuevoCliente({ ...nuevoCliente, [campo]: e.target.value });
+    };
+
+    const manejarBusquedaCambio = (e) => {
+        setBusqueda(e.target.value);
+    };
+
     const manejarNuevoCliente = () => {
-        // Validar campos dependiendo del tipo de cliente
-        if (nuevoCliente.tipo === "Persona") {
-            // Validar los campos obligatorios para Persona
-            if (
-                nuevoCliente.nombre.trim() &&
-                nuevoCliente.apellido.trim() &&
-                nuevoCliente.dni.trim() &&
-                nuevoCliente.edad.trim() &&
-                nuevoCliente.fechaNacimiento.trim() &&
-                nuevoCliente.correo.trim() &&
-                nuevoCliente.telefono.trim() &&
-                nuevoCliente.provincia.trim() &&
-                nuevoCliente.fechaInicio.trim()
-            ) {
-                const nuevoClienteConId = {
-                    id: clientes.length + 1,
-                    ...nuevoCliente,
-                };
-                setClientes([...clientes, nuevoClienteConId]);
-                setNuevoCliente({
-                    tipo: "Empresa",
-                    nombre: "",
-                    apellido: "",
-                    edad: "",
-                    correo: "",
-                    fechaInicio: "",
-                    dni: "",
-                    ruc: "",
-                    nombreEmpresa: "",
-                    direccion: "",
-                    provincia: "",
-                    telefono: "",
-                    fechaNacimiento: "",
-                });
-                setMostrarFormulario(false);
-            } else {
-                alert("Por favor, completa todos los campos de la Persona.");
-            }
-        } else if (nuevoCliente.tipo === "Empresa") {
-            // Validar los campos obligatorios para Empresa
-            if (
-                nuevoCliente.nombreEmpresa.trim() &&
-                nuevoCliente.ruc.trim() &&
-                nuevoCliente.direccion.trim() &&
-                nuevoCliente.correo.trim() &&
-                nuevoCliente.telefono.trim() &&
-                nuevoCliente.provincia.trim() &&
-                nuevoCliente.fechaInicio.trim()
-            ) {
-                const nuevoClienteConId = {
-                    id: clientes.length + 1,
-                    ...nuevoCliente,
-                };
-                setClientes([...clientes, nuevoClienteConId]);
-                setNuevoCliente({
-                    tipo: "Empresa",
-                    nombre: "",
-                    apellido: "",
-                    edad: "",
-                    correo: "",
-                    fechaInicio: "",
-                    dni: "",
-                    ruc: "",
-                    nombreEmpresa: "",
-                    direccion: "",
-                    provincia: "",
-                    telefono: "",
-                    fechaNacimiento: "",
-                });
-                setMostrarFormulario(false);
-            } else {
-                alert("Por favor, completa todos los campos de la Empresa.");
-            }
+        const { nombre, apellido, dni, fechaNacimiento, edad, correo, telefono, direccion } = nuevoCliente;
+
+        if (!nombre || !apellido || !dni || !fechaNacimiento || !edad || !correo || !telefono || !direccion) {
+            alert("Por favor, completa todos los campos requeridos.");
+            return;
         }
+
+        if (isNaN(dni) || isNaN(edad)) {
+            alert("El DNI y la edad deben ser valores numéricos.");
+            return;
+        }
+
+        const nuevoClienteConId = {
+            id: clientes.length + 1,
+            ...nuevoCliente,
+        };
+
+        setClientes([...clientes, nuevoClienteConId]);
+        setNuevoCliente({
+            nombre: "",
+            apellido: "",
+            dni: "",
+            fechaNacimiento: "",
+            edad: "",
+            correo: "",
+            telefono: "",
+            direccion: "",
+            notas: "", // Reiniciar el campo de notas extras
+        });
+        setMostrarFormulario(false);
     };
 
     const buscarCliente = () => {
@@ -109,8 +68,9 @@ function Clientes() {
             alert("Por favor ingrese un valor de búsqueda.");
             return;
         }
+
         navigate("/solicitudesclientes", {
-            state: { busqueda, tipoBusqueda },
+            state: { busqueda, tipoBusqueda, clientes },
         });
     };
 
@@ -131,15 +91,14 @@ function Clientes() {
                     type="text"
                     placeholder={`Buscar por ${tipoBusqueda === "dni" ? "DNI" : "Nombre Completo"}`}
                     value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
+                    onChange={manejarBusquedaCambio}
                 />
                 <button className="boton-buscar" onClick={buscarCliente}>
-                    <Link to="/clientes/solicitudes">
-                        <span className="full-label animate">Buscar</span>
-                    </Link>
+                    Buscar
                 </button>
             </div>
 
+            {/* Botón para añadir cliente */}
             <button
                 className="boton-abrir-formulario"
                 onClick={() => setMostrarFormulario(true)}
@@ -147,83 +106,77 @@ function Clientes() {
                 Añadir Cliente
             </button>
 
+            {/* Formulario flotante */}
             {mostrarFormulario && (
                 <div className="formulario-flotante">
                     <div className="formulario-contenido">
-                        <h3 className='text-center'>Añadir Nuevo Cliente:</h3>
-                        <div className="formulario-campos"> {/* Contenedor con desplazamiento vertical */}
+                        <h3 className="text-center">Añadir Nuevo Cliente:</h3>
+                        <div className="formulario-campos">
                             <label>Nombres:</label>
                             <input
                                 type="text"
                                 value={nuevoCliente.nombre}
-                                onChange={(e) =>
-                                    setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })
-                                }
+                                onChange={(e) => manejarCambio(e, "nombre")}
                             />
                             <label>Apellidos:</label>
                             <input
                                 type="text"
                                 value={nuevoCliente.apellido}
-                                onChange={(e) =>
-                                    setNuevoCliente({
-                                        ...nuevoCliente,
-                                        apellido: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => manejarCambio(e, "apellido")}
                             />
-                            <label>Dni:</label>
+                            <label>DNI:</label>
                             <input
                                 type="text"
                                 value={nuevoCliente.dni}
-                                onChange={(e) =>
-                                    setNuevoCliente({ ...nuevoCliente, dni: e.target.value })
-                                }
+                                onChange={(e) => manejarCambio(e, "dni")}
                             />
                             <label>Fecha de Nacimiento:</label>
                             <input
                                 type="date"
                                 value={nuevoCliente.fechaNacimiento}
-                                onChange={(e) =>
-                                    setNuevoCliente({ ...nuevoCliente, fechaNacimiento: e.target.value })
-                                }
+                                onChange={(e) => manejarCambio(e, "fechaNacimiento")}
                             />
                             <label>Edad:</label>
                             <input
                                 type="number"
                                 value={nuevoCliente.edad}
-                                onChange={(e) =>
-                                    setNuevoCliente({ ...nuevoCliente, edad: e.target.value })
-                                }
+                                onChange={(e) => manejarCambio(e, "edad")}
                             />
-                            <label>Correo Electronico:</label>
+                            <label>Correo Electrónico:</label>
                             <input
                                 type="email"
                                 value={nuevoCliente.correo}
-                                onChange={(e) =>
-                                    setNuevoCliente({ ...nuevoCliente, correo: e.target.value })
-                                }
+                                onChange={(e) => manejarCambio(e, "correo")}
                             />
                             <label>Teléfono:</label>
                             <input
                                 type="text"
                                 value={nuevoCliente.telefono}
-                                onChange={(e) =>
-                                    setNuevoCliente({ ...nuevoCliente, telefono: e.target.value })
-                                }
+                                onChange={(e) => manejarCambio(e, "telefono")}
                             />
                             <label>Dirección:</label>
                             <input
                                 type="text"
-                                value={nuevoCliente.provincia}
-                                onChange={(e) =>
-                                    setNuevoCliente({ ...nuevoCliente, provincia: e.target.value })
-                                }
+                                value={nuevoCliente.direccion}
+                                onChange={(e) => manejarCambio(e, "direccion")}
+                            />
+                            {/* Campo nuevo para Notas Extras */}
+                            <label>Notas Extras:</label>
+                            <textarea
+                                value={nuevoCliente.notas}
+                                onChange={(e) => manejarCambio(e, "notas")}
+                                placeholder="Agregar notas adicionales sobre el cliente (opcional)."
+                                rows="3"
                             />
                         </div>
 
                         <div className="formulario-botones">
-                            <button className='annadir' onClick={manejarNuevoCliente}>Añadir</button>
-                            <button className='cancelar' onClick={() => setMostrarFormulario(false)}>Cancelar</button>
+                            <button className="annadir" onClick={manejarNuevoCliente}>
+                                Añadir
+                            </button>
+                            <button className="cancelar" onClick={() => setMostrarFormulario(false)}>
+                                Cancelar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -231,5 +184,6 @@ function Clientes() {
         </div>
     );
 }
+
 
 export default Clientes;

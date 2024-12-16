@@ -24,7 +24,7 @@ function App() {
           <Routes>
             <Route path="/" element={<ContenidoInicio />} /> {/* Página por defecto */}
             <Route path="/clientes" element={<Clientes />} />
-            <Route path="/clientes/solicitudes" element={<SolicitudesClientes />} />
+            <Route path="/solicitudesclientes" element={<SolicitudesClientes />} />
             <Route path="/espacios" element={<Espacios />} />
             <Route path="/servicios" element={<Servicios />} />
             <Route path="/reportes" element={<Reportes />} />
