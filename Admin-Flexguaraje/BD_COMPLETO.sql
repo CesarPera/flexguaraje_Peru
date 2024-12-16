@@ -100,9 +100,33 @@ CREATE TABLE boleta (
     CONSTRAINT UQ_boleta_Unica UNIQUE (id_alquiler, fecha_emision)
 );
 
+# DATOSSSSSSSSSSSS DE LA BOLETAAAAAAAA
+INSERT INTO boleta
+VALUES ('1', '1', 'B001', 'Efectivo', '2024-12-11', '300');
+
 # ---------- CONSULTASSSSSSSSSS -----------
+use flexguaraje_peru;
 select * from cliente;
 select * from espacio;
 select * from alquileres;
 select * from boleta;
+
+# PARA MI TABLA DE ALQUILER, VISUALIZAR LOS DATOS COMPLETOS
+SELECT 
+    e.codigo_espacio AS codigoEspacio,
+    e.estado AS estado,
+    c.dni AS dni,
+    CONCAT(c.nombre, ' ', c.apellido) AS nombre,
+    c.telefono AS telefono,
+    a.fecha_inicio_alquiler AS fechaInicioAlquiler,
+    a.fecha_fin_alquiler AS fechaFinAlquiler
+FROM 
+    espacio e
+LEFT JOIN 
+    alquileres a ON e.id_espacio = a.id_espacio
+LEFT JOIN 
+    cliente c ON a.id_cliente = c.id_cliente;
+    
+
+
 
