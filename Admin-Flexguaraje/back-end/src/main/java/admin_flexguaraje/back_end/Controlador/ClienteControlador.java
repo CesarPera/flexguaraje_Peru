@@ -9,19 +9,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/clientes")
+@RequestMapping("/clientes")
 @CrossOrigin(origins = "*")
 public class ClienteControlador {
     @Autowired
     private ClienteNegocio clienteNegocio;
 
-    @GetMapping
+    @GetMapping ("/listarcliente")
     public List<Cliente> listarClientes() {
-        return ClienteNegocio.obtenerClientes();
+        return clienteNegocio.obtenerClientes();
     }
 
     @PostMapping
     public Cliente agregarCliente(@RequestBody Cliente cliente) {
-        return clienteNegocio.agregarCliente(clientes);
+        return clienteNegocio.agregarCliente(cliente);
     }
 }

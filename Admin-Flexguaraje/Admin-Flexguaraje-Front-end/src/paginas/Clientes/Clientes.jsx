@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './Clientes.css';
 import { useNavigate } from "react-router-dom"; // Usar react-router para redirección.
-//import { listarClientes, agregarCliente } from './ClienteNegocio';
+import { listarClientes, agregarCliente } from './ClienteNegocio';
 function Clientes() {
     const [clientes, setClientes] = useState([]);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -22,13 +22,14 @@ function Clientes() {
     const [tipoBusqueda, setTipoBusqueda] = useState("dni");
     const navigate = useNavigate();
 
-    //useEffect(() => {
-       // const fetchClientes = async () => {
-        //    const data = await listarClientes();
-         //   setClientes(data);
-       // };
-       // fetchClientes();
-   // }, []);   //recien
+    // eslint-disable-next-line no-undef
+    useEffect(() => {
+        const fetchClientes = async () => {
+            const data = await listarClientes();
+            setClientes(data);
+        };
+        fetchClientes();
+    }, []);   //recien
 
     const manejarCambio = (e, campo) => {
         setNuevoCliente({ ...nuevoCliente, [campo]: e.target.value });
@@ -38,7 +39,7 @@ function Clientes() {
         setBusqueda(e.target.value);
     };
 
-    const manejarNuevoCliente = () => {
+    const manejarNuevoCliente = async () => {
         const { nombre, apellido, dni, fechaNacimiento, edad, correo, telefono, direccion } = nuevoCliente;
 
         if (!nombre || !apellido || !dni || !fechaNacimiento || !edad || !correo || !telefono || !direccion) {
@@ -51,8 +52,8 @@ function Clientes() {
             return;
         }
 
-// const response = await agregarCliente(nuevoCliente);
-       // setClientes([...clientes, response]);    //recien
+    const response = await agregarCliente(nuevoCliente);
+        setClientes([...clientes, response]);    //recien
 
         const nuevoClienteConId = {
             id: clientes.length + 1,
