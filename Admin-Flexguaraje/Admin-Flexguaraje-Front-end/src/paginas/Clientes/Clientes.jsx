@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './Clientes.css';
 import { useNavigate } from "react-router-dom"; // Usar react-router para redirección.
-
+//import { listarClientes, agregarCliente } from './ClienteNegocio';
 function Clientes() {
     const [clientes, setClientes] = useState([]);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -21,6 +21,14 @@ function Clientes() {
     const [busqueda, setBusqueda] = useState("");
     const [tipoBusqueda, setTipoBusqueda] = useState("dni");
     const navigate = useNavigate();
+
+    //useEffect(() => {
+       // const fetchClientes = async () => {
+        //    const data = await listarClientes();
+         //   setClientes(data);
+       // };
+       // fetchClientes();
+   // }, []);   //recien
 
     const manejarCambio = (e, campo) => {
         setNuevoCliente({ ...nuevoCliente, [campo]: e.target.value });
@@ -42,6 +50,9 @@ function Clientes() {
             alert("El DNI y la edad deben ser valores numéricos.");
             return;
         }
+
+// const response = await agregarCliente(nuevoCliente);
+       // setClientes([...clientes, response]);    //recien
 
         const nuevoClienteConId = {
             id: clientes.length + 1,

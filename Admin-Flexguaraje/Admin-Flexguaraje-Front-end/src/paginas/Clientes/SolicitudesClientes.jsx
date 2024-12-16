@@ -21,7 +21,7 @@ function SolicitudesClientes() {
 
   return (
       <div className='solicitud-page'>
-          <h2>VISTA PREVIA</h2>
+          <h2>Lista de Clientes</h2>
           <table>
               <thead>
                   <tr>
