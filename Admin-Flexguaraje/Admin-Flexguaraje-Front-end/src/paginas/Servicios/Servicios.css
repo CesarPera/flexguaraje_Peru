@@ -5,16 +5,13 @@
     flex-grow: 1;
 }
 
-/*EDITARRRR O AGREGAR TODOOOO DEBAJO DE ESTA LINEAAAAAAAAAAAAAAA */
-/* RECUERDA QUE TODO LOS CSS ESTAN VINCULADO AL PARECER, NO ES COMO EN HTML O JSP QUE ES UNO SOLO EL CSS PERO EN AQUI EN TODO JUNTO EN UNO SOLO EL CSS, QUISE SEPARAR EL ESTILO PARA QUE ASI CADA UNO TENGA SU PROPIO ESTILO PERO NOSE PUDO, PROXIMAMENTE BUSCARE Y INVESTIGARE PARA HACER ESO XD */
-
-/* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
+/* Tabla de Boletas */
 .boletas-table {
-    width: 60%; 
-    margin: 0 auto; 
+    width: 80%; 
     margin: 20px auto 0;
     border-collapse: collapse; 
 }
+
 .boletas-table th,
 .boletas-table td {
     border: 1px solid #efe8e8;
@@ -30,9 +27,7 @@
 .boletas-table .columna {
     background-color: #cdd1d1; 
     color: rgb(9, 9, 9);
-
 }
-
 
 .boletas-table th {
     background-color: #727472; 
@@ -41,31 +36,35 @@
     text-align: center;
 }
 
-
-.table-actions {
-    margin-top: 20px;
-    text-align: center;
+/* Estilo de los botones de acción */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
 }
 
-
-
-.table-actions button {
-    padding: 10px 20px;
+.actions button {
+    flex: 1;
+    padding: 8px 16px; /* Botones más pequeños */
+    font-size: 14px;    /* Fuente más pequeña */
     border: none;
-    border-radius: 5px;
+    border-radius: 20px; /* Bordes más redondeados */
     cursor: pointer;
-    font-size: 16px;
-    margin: 5px;
-    transition: background-color 0.3s, color 0.3s;
+    transition: all 0.3s ease; /* Transición suave */
+    box-shadow: 0 4px 8px rgba(221, 94, 94, 0.1); /* Sombra sutil */
 }
 
+/* Botones de acción */
 .btn-generate {
     background-color: #4CAF50; 
     color: white;
+    border-radius: 20px; 
+    
 }
 
 .btn-generate:hover {
-    background-color: #3fb861; 
+    background-color: #3fb861;
+    box-shadow: 0 6px 12px rgba(241, 238, 238, 0.2); /* Sombra más pronunciada */
 }
 
 .btn-update {
@@ -73,9 +72,9 @@
     color: white;
 }
 
-
 .btn-update:hover {
-    background-color: #56a4e3; 
+    background-color: #56a4e3;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .btn-delete {
@@ -85,11 +84,10 @@
 
 .btn-delete:hover {
     background-color: #d32f2f; /* Rojo más oscuro */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-
-
-
+/* Modal */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -145,43 +143,48 @@
     background-color: #316397;
 }
 
+/* Botón para agregar boleta */
 .btn-add {
     background-color: #4CAF50;
     margin-left: 10px;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 20px; /* Bordes redondeados */
+    padding: 8px 16px; /* Tamaño más pequeño */
     cursor: pointer;
     text-align: center;
+    transition: all 0.3s ease;
 }
 
 .btn-add:hover {
     background-color: #3fb861;
-} 
-
-.center-button-container {
-    display: flex;
-    justify-content: center; /* Centra el botón horizontalmente */
-    align-items: center;     /* Centra el botón verticalmente */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Efecto de sombra al pasar el mouse */
 }
 
-.title-servicios{
+/* Estilos del título */
+.title-servicios {
     font-size: 40px;
     font-family: sans-serif;
     font-weight: bold;
     text-align: center;
     width: 500px;
-    margin: 30px auto 30px auto;
+    margin: 30px auto;
     color: #333;
     vertical-align: middle;
 }
 
+/* Estilos de las tablas de datos */
 .table-atributos {
-    width: 200px;
+    width: 500px;
 }
 
-.table-datos{
+.table-datos {
     width: 230px;
 }
 
-
+.center-button-container {
+    display: flex;
+    justify-content: center; /* Centra el botón horizontalmente */
+    align-items: center;     /* Centra el botón verticalmente */
+    border-radius: 20px; 
+} 

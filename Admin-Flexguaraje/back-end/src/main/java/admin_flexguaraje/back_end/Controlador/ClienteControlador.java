@@ -6,7 +6,11 @@ import admin_flexguaraje.back_end.Negocio.ClienteNegocio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.http.ResponseEntity;
+
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/clientes")
@@ -20,8 +24,14 @@ public class ClienteControlador {
         return clienteNegocio.obtenerClientes();
     }
 
-    @PostMapping
-    public Cliente agregarCliente(@RequestBody Cliente cliente) {
-        return clienteNegocio.agregarCliente(cliente);
+    @PostMapping("/agregar")
+    public ResponseEntity<String> agregarCliente(@RequestBody Cliente cliente) {
+        Cliente nuevoCliente = clienteNegocio.agregarCliente(cliente);
+        return ResponseEntity.ok("Cliente agregado correctamente con ID: " + nuevoCliente.getIdCliente());
     }
+
+
+
+    // Buscar cliente por DNI desde el cuerpo
+    
 }
