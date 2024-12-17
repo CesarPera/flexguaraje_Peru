@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './Servicios.css';
 
 
+
+
 function Servicios() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({
@@ -226,7 +228,105 @@ function Servicios() {
                 </button>
             </div>
         </div>
-    );
-}
+
+  )}
+
+            {/* Tabla de servicios */}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {servicios.map((servicio) => (
+                        <tr key={servicio.codigoServicio}>
+                            <td>{servicio.nombre}</td>
+                            <td>{servicio.descripcion}</td>
+                            <td>{servicio.precio}</td>
+                            <td>
+                                <button onClick={() => setShowUpdateModal(true)}>Actualizar</button>
+                                <button onClick={() => setShowDeleteModal(true)}>Eliminar</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {/* Modal de actualización */}
+            {showUpdateModal && (
+                <div className="modal-backdrop">
+                    <div className="modal-content">
+                        <h3>ACTUALIZAR SERVICIO</h3>
+                        <form>
+                            <div>
+                                <label>Nombre:</label>
+                                <input
+                                    type="text"
+                                    name="nombre"
+                                    value={nuevoServicio.nombre}
+                                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, nombre: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label>Descripción:</label>
+                                <input
+                                    type="text"
+                                    name="descripcion"
+                                    value={nuevoServicio.descripcion}
+                                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, descripcion: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label>Precio:</label>
+                                <input
+                                    type="number"
+                                    name="precio"
+                                    value={nuevoServicio.precio}
+                                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, precio: e.target.value })}
+                                    required
+                                />
+                            </div>
+                        </form>
+                        <div className="modal-btn">
+                            <button className="btn btn-success" onClick={actualizarServicio}>Actualizar</button>
+                            <button className="btn btn-secondary" onClick={() => setShowUpdateModal(false)}>Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de eliminación */}
+            {showDeleteModal && (
+                <div className="modal-backdrop">
+                    <div className="modal-content">
+                        <h3>ELIMINAR SERVICIO</h3>
+                        <div>
+                            <label>Seleccionar Servicio:</label>
+                            <select
+                                value={codigoEliminar}
+                                onChange={(e) => setCodigoEliminar(e.target.value)}
+                                required
+                            >
+                                <option value="">Seleccionar</option>
+                                {servicios.map((servicio) => (
+                                    <option key={servicio.codigoServicio} value={servicio.codigoServicio}>
+                                        {servicio.nombre}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="modal-btn">
+                            <button className="btn btn-danger" onClick={eliminarServicio}>Eliminar</button>
+                            <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
 export default Servicios;
