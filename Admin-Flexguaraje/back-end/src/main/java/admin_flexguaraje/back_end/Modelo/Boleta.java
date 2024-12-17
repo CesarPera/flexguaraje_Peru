@@ -12,7 +12,7 @@ public class Boleta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_boleta")
-    private int idBoleta;
+    private Long idBoleta;
 
     @ManyToOne
     @JoinColumn(name = "id_alquiler", nullable = false, foreignKey = @ForeignKey(name = "FK_boleta_Alquiler"))
@@ -30,11 +30,11 @@ public class Boleta {
     @Column(name = "monto_pagar", nullable = false, precision = 10, scale = 2)
     private BigDecimal montoPagar;
 
-    public int getIdBoleta() {
+    public Long getIdBoleta() {
         return idBoleta;
     }
 
-    public void setIdBoleta(int idBoleta) {
+    public void setIdBoleta(Long idBoleta) {
         this.idBoleta = idBoleta;
     }
 
@@ -80,7 +80,7 @@ public class Boleta {
 
     @PrePersist
     @PreUpdate
-    private void validarDatos() {
+    public void validarDatos() {
         if (montoPagar == null || montoPagar.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("El monto a pagar debe ser mayor a 0.");
         }
