@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClienteNegocio {
@@ -20,4 +21,9 @@ public class ClienteNegocio {
     public Cliente agregarCliente(Cliente cliente) {
         return clienteRepositorio.save(cliente);
     }
+    public Optional<Cliente> buscarPorDni(String dni) {
+        Optional<Optional<Cliente>> cliente = Optional.ofNullable(clienteRepositorio.findByDni(dni));
+        return cliente.orElse(null);
+    }
+
 }
