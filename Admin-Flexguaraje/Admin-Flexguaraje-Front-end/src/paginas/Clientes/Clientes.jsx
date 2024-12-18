@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Clientes.css';
 import { useNavigate } from 'react-router-dom'; // Usar react-router para redirección
 import ClientesBD from './BASE DE DATOS/ClientesBD';
+import Swal from 'sweetalert2';
 
 function Clientes() {
     // variablessssssssssssssssssssssss de formulario
@@ -28,7 +29,11 @@ function Clientes() {
 
     const handleAñadirCliente = () => {
         if (!nuevoCliente.dni || !nuevoCliente.nombre || !nuevoCliente.apellido || !nuevoCliente.telefono || !nuevoCliente.email) {
-            alert('Por favor, completa todos los campos requeridos.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, completa todos los campos requeridos.'
+            });
             return;
         }
 
@@ -39,7 +44,12 @@ function Clientes() {
 
         ClientesBD.crearCliente(clienteConNotaPredeterminada)
             .then((response) => {
-                alert('Cliente creado exitosamente.');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Cliente creado exitosamente.',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
                 setMostrarFormulario(false);
                 setNuevoCliente({
                     dni: '',
@@ -53,29 +63,82 @@ function Clientes() {
             })
             .catch((error) => {
                 console.error('Error al crear cliente:', error);
-                alert('Hubo un error al crear el cliente. Por favor, intenta nuevamente.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al crear cliente',
+                    text: 'Hubo un error al crear el cliente. Por favor, intenta nuevamente.'
+                });
             });
     };
 
     // funcion para poder buscar al cliente por nombre completo o DNI
     const handleBuscarCliente = () => {
         if (!busqueda) {
-            alert('Por favor, ingresa un DNI o un nombre para la búsqueda.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campo vacío',
+                text: 'Por favor, ingresa un DNI o un nombre para la búsqueda.',
+                showConfirmButton: false,
+                timer: 3000
+            });
             return;
         }
+
+        // Mostrar alerta de "Buscando cliente..."
+        const loadingAlert = Swal.fire({
+            title: 'Buscando cliente...',
+            text: 'Por favor, espere.',
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // Establecemos un tiempo mínimo de 2 segundos para mostrar la alerta de carga
+        const timeout = setTimeout(() => {
+            // Si la búsqueda tarda más de 2 segundos, mantenemos la alerta visible
+            loadingAlert.show();
+        }, 2000); // Ajusta este tiempo a 2 segundos
 
         // Realizar la búsqueda usando la clase ClientesBD
         ClientesBD.buscarCliente(tipoBusqueda, busqueda)
             .then((response) => {
                 const cliente = response.data;
-                // Pasar los datos del cliente a la página de SolicitudesClientes
-                navigate('/solicitudesclientes', { state: { cliente } });
+                // Limpiar el temporizador si la búsqueda es rápida
+                clearTimeout(timeout);
+                loadingAlert.close();  // Cerrar la alerta de carga
+
+                if (cliente) {
+                    // Pasar los datos del cliente a la página de SolicitudesClientes
+                    navigate('/solicitudesclientes', { state: { cliente } });
+                } else {
+                    // Cliente no encontrado, mostrar alerta de error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cliente no encontrado',
+                        text: 'No se encontró el cliente. Verifica que el DNI o el nombre esté correctamente escrito.',
+                        showConfirmButton: false,
+                        timer: 3000 // Tiempo para el mensaje de error
+                    });
+                }
             })
             .catch((error) => {
                 console.error('Error al buscar cliente:', error);
-                alert('No se encontró el cliente.');
+                clearTimeout(timeout); // Limpiar el temporizador en caso de error
+                loadingAlert.close(); // Cerrar la alerta de carga
+
+                // Alerta de error en caso de fallo en el servidor o en la conexión
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al buscar cliente',
+                    text: 'Hubo un error al intentar buscar el cliente. Por favor, intenta de nuevo más tarde.',
+                    showConfirmButton: false,
+                    timer: 3000 // Tiempo para el mensaje de error
+                });
             });
     };
+
 
     return (
         <div className="clientes-page">
