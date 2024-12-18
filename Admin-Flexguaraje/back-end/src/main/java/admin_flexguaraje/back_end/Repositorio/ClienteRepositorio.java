@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ClienteRepositorio extends JpaRepository<Cliente, Long> {
-    public Cliente findByDni(String dni);
+    Optional<Cliente> findByDni(String dni);
 }
