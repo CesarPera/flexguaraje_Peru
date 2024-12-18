@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Servicios.css';
-
+import BoletasBD from './BASE DE DATOS/BoletasBD';
+import AlquileresBD from '../Espacios/BASE_DE_DATOS/AlquileresBD';
 
 function Servicios() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,17 +13,60 @@ function Servicios() {
         fechaPago: '',
         espacioAdquirido: '',
     });
-    const [editingBoletaIndex, setEditingBoletaIndex] = useState(null);
     const [boletas, setBoletas] = useState([]);
+    const [alquileres, setAlquileres] = useState([]);
+    const [editingBoletaIndex, setEditingBoletaIndex] = useState(null);
 
-    // Obtener la fecha actual en formato YYYY-MM-DD
-    const getCurrentDate = () => {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+    // Cargar boletas al iniciar la página
+    const fetchBoleta = async () => {
+        try {
+            const response = await BoletasBD.getAllBoletas();
+            console.log("Boletas recibidas:", response.data); // Verifica los datos de boletas
+            setBoletas(response.data);
+        } catch (error) {
+            console.error("Error al cargar las boletas:", error);
+        }
     };
+    
+    const fetchAlquileres = async () => {
+        try {
+            const response = await AlquileresBD.getAllAlquileres();
+            console.log("Alquileres recibidos:", response.data); // Verifica los datos de alquileres
+            setAlquileres(response.data);
+        } catch (error) {
+            console.error("Error al cargar los alquileres:", error);
+        }
+    };
+    
+
+    // Combinación de boletas y alquileres
+    const BoletasCombinados = boletas.map((boleta) => {
+        const alquiler = alquileres.find(
+            (alquiler) => alquiler.id_alquiler === boleta.id_alquiler
+        );
+
+        const cliente = alquiler ? alquiler.id_cliente : null;
+        const clienteData = cliente ? alquileres.find(a => a.id_cliente === cliente).cliente : {};
+
+        const codigoEspacio = alquiler ? alquiler.id_espacio : '';
+        const combinedBoleta = {
+            ...boleta,
+            dni: clienteData.dni || '',
+            codigoespacio: codigoEspacio,
+            fechaPago: boleta.fecha_emision,
+            metodo: boleta.metodo_pago,
+            montoPagar: boleta.monto_pagar,
+        };
+
+        console.log(combinedBoleta); // Verifica los datos combinados
+        return combinedBoleta;
+    });
+
+
+    useEffect(() => {
+        fetchBoleta();
+        fetchAlquileres();
+    }, []);  // Solo se ejecuta al montar el componente
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -39,7 +83,7 @@ function Servicios() {
                 codigoBoleta: '',
                 metodoPago: '',
                 costo: '',
-                fechaPago: getCurrentDate(), // Establece la fecha actual
+                fechaPago: new Date().toISOString().split('T')[0],
                 espacioAdquirido: '',
             });
             setEditingBoletaIndex(null);
@@ -47,44 +91,40 @@ function Servicios() {
         setIsModalOpen(true);
     };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-        setEditingBoletaIndex(null);
-    };
+    const handleCloseModal = () => setIsModalOpen(false);
 
     const handleSaveBoleta = () => {
-        const { DNI, codigoBoleta, metodoPago, costo, fechaPago, espacioAdquirido } = formData;
-
-        if (
-            !DNI.trim() ||
-            !codigoBoleta.trim() ||
-            !metodoPago.trim() ||
-            !costo ||
-            !fechaPago.trim() ||
-            !espacioAdquirido.trim()
-        ) {
-            alert('Por favor, completa todos los campos obligatorios.');
-            return;
-        }
+        const boleta = {
+            dni: formData.DNI,
+            codigoBoleta: formData.codigoBoleta,
+            metodoPago: formData.metodoPago,
+            montoPagar: formData.costo,
+            fechaEmision: formData.fechaPago,
+            codigoEspacio: formData.espacioAdquirido,
+        };
 
         if (editingBoletaIndex !== null) {
-            setBoletas((prevBoletas) =>
-                prevBoletas.map((boleta, index) =>
-                    index === editingBoletaIndex ? { ...formData } : boleta
-                )
-            );
-            alert(`La boleta ha sido actualizada.`);
+            BoletasBD.actualizarBoleta(boleta) // Actualizar boleta en el backend
+                .then(() => {
+                    const updatedBoletas = [...boletas];
+                    updatedBoletas[editingBoletaIndex] = boleta; // Actualiza el estado local
+                    setBoletas(updatedBoletas);
+                    alert("Boleta actualizada exitosamente.");
+                    handleCloseModal();
+                })
+                .catch((error) => {
+                    alert("Error al actualizar la boleta: " + error.message);
+                });
         } else {
-            setBoletas([...boletas, { ...formData }]);
-            alert(`La boleta ha sido guardada exitosamente.`);
-        }
-        handleCloseModal();
-    };
-
-    const handleDeleteBoleta = (index) => {
-        if (window.confirm('¿Estás seguro de que deseas eliminar esta boleta?')) {
-            setBoletas((prevBoletas) => prevBoletas.filter((_, i) => i !== index));
-            alert('La boleta ha sido eliminada.');
+            BoletasBD.agregarBoleta(boleta)
+                .then((response) => {
+                    setBoletas([...boletas, response.data]);
+                    alert("Boleta agregada exitosamente.");
+                    handleCloseModal();
+                })
+                .catch((error) => {
+                    alert("Error al agregar la boleta: " + error.message);
+                });
         }
     };
 
@@ -95,136 +135,97 @@ function Servicios() {
     return (
         <div className="servicios-page">
             <h2 className="title-servicios">Servicios de Boleta</h2>
+
+            {/* Contenedor para centrar el botón */}
             <div className="center-button-container">
-                <button className="btn-add" onClick={() => handleOpenModal()}>
-                    Generar Datos
+                {/* Botón para abrir el modal y generar boletas */}
+                <button className="btn-generate" onClick={() => handleOpenModal()}>
+                    Generar Boletas
                 </button>
             </div>
 
             {isModalOpen && (
                 <div className="modal-overlay">
-                    <div className={`modal-content ${editingBoletaIndex !== null ? 'edit-mode' : 'add-mode'}`}>
-                        <h3>{editingBoletaIndex !== null ? 'Editar Boleta' : 'Datos del Cliente'}</h3>
+                    <div className="modal-content">
+                        <h3>{editingBoletaIndex !== null ? 'Editar Boleta' : 'Generar Boleta'}</h3>
                         <form>
-                            <label>Código de Boleta:</label>
-                            <input
-                                type="text"
-                                name="codigoBoleta"
-                                value={formData.codigoBoleta}
-                                onChange={handleInputChange}
-                            />
-
-                            <label>DNI:</label>
-                            <input
-                                type="text"
-                                name="DNI"
-                                value={formData.DNI}
-                                onChange={handleInputChange}
-                            />
-
-                            <label>Espacio Adquirido:</label>
-                            <input
-                                type="text"
-                                name="espacioAdquirido"
-                                value={formData.espacioAdquirido}
-                                onChange={handleInputChange}
-                            />
-
-                            <label>Fecha de Pago:</label>
-                            <input
-                                type="date"
-                                name="fechaPago"
-                                value={formData.fechaPago}
-                                onChange={handleInputChange}
-                            />
-
-                            <label>Método de Pago:</label>
-                            <select
-                                name="metodoPago"
-                                value={formData.metodoPago}
-                                onChange={handleInputChange}
-                            >
-                                <option value="">Seleccione</option>
-                                <option value="efectivo">Efectivo</option>
-                            </select>
-
-                            <label>Monto de Pago:</label>
-                            <input
-                                type="number"
-                                name="costo"
-                                value={formData.costo}
-                                onChange={handleInputChange}
-                            />
-
-                            <div className="modal-actions">
-                                <button type="button" onClick={handleSaveBoleta}>
-                                    {editingBoletaIndex !== null ? 'Actualizar' : 'Guardar'}
-                                </button>
-                                <button type="button" onClick={handleCloseModal}>
-                                    Cancelar
-                                </button>
+                            <div className="form-group">
+                                <label>Código de Boleta:</label>
+                                <input type="text" name="codigoBoleta" value={formData.codigoBoleta} onChange={handleInputChange} />
+                            </div>
+                            <div className="form-group">
+                                <label>DNI:</label>
+                                <input type="text" name="DNI" value={formData.DNI} onChange={handleInputChange} />
+                            </div>
+                            <div className="form-group">
+                                <label>Espacio Adquirido:</label>
+                                <input type="text" name="espacioAdquirido" value={formData.espacioAdquirido} onChange={handleInputChange} />
+                            </div>
+                            <div className="form-group">
+                                <label>Fecha de Pago:</label>
+                                <input type="date" name="fechaPago" value={formData.fechaPago} onChange={handleInputChange} />
+                            </div>
+                            <div className="form-group">
+                                <label>Método de Pago:</label>
+                                <select name="metodoPago" value={formData.metodoPago} onChange={handleInputChange}>
+                                    <option value="">Seleccione</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta">Tarjeta</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Monto de Pago:</label>
+                                <input type="number" name="costo" value={formData.costo} onChange={handleInputChange} />
                             </div>
                         </form>
+                        <div className="modal-actions">
+                            <button type="button" className="btn-save" onClick={handleSaveBoleta}>
+                                {editingBoletaIndex !== null ? 'Actualizar' : 'Generar'}
+                            </button>
+                            <button type="button" className="btn-cancel" onClick={handleCloseModal}>
+                                Cancelar
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
 
-            <table className="boletas-table text-center">
+            <table className="boletas-table">
                 <thead>
                     <tr>
-                        <th className="table-atributos">ATRIBUTOS</th>
-                        <th className="table-datos">DATOS</th>
+                        <th>Código de Boleta</th>
+                        <th>DNI</th>
+                        <th>Espacio</th>
+                        <th>Fecha</th>
+                        <th>Método</th>
+                        <th>Monto</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {boletas.map((boleta, index) => (
-                        <React.Fragment key={index}>
-                            <tr>
-                                <td className="highlight-column">Código de Boleta</td>
-                                <td>{boleta.codigoBoleta}</td>
-                            </tr>
-                            <tr>
-                                <td className="highlight-column">DNI</td>
-                                <td>{boleta.DNI}</td>
-                            </tr>
-                            <tr>
-                                <td className="highlight-column">Costo</td>
-                                <td>{boleta.costo}</td>
-                            </tr>
-                            <tr>
-                                <td className="highlight-column">Fecha de Pago</td>
-                                <td>{boleta.fechaPago}</td>
-                            </tr>
-                            <tr>
-                                <td className="highlight-column">Método de Pago</td>
-                                <td>{boleta.metodoPago}</td>
-                            </tr>
-                            <tr>
-                                <td className="highlight-column">Espacio Adquirido</td>
-                                <td>{boleta.espacioAdquirido}</td>
-                            </tr>
-                        </React.Fragment>
+                    {BoletasCombinados.map((dato, index) => (
+                        <tr key={`${dato.codigoBoleta}-${dato.dni}-${dato.codigoespacio}-${index}`}>
+                            <td>{dato.codigoBoleta}</td>
+                            <td>{dato.dni}</td>
+                            <td>{dato.codigoespacio}</td>
+                            <td>{dato.fechaPago}</td>
+                            <td>{dato.metodo}</td>
+                            <td>{dato.montoPagar}</td>
+                            <td className="actions">
+                                <button className="btn-update" onClick={() => handleOpenModal(dato, dato.codigoBoleta)}>
+                                    Actualizar
+                                </button>
+                                <button className="btn-generate" onClick={handleGenerateTablePDF}>
+                                    Generar PDF
+                                </button>
+                            </td>
+                        </tr>
                     ))}
+
+
                 </tbody>
             </table>
-
-            <div className="table-actions">
-                <button className="btn-update" onClick={() => handleOpenModal()}>
-                    Actualizar
-                </button>
-                <button
-                    className="btn-delete"
-                    onClick={() => {
-                        const index = prompt('Ingrese el índice de la boleta a eliminar:');
-                        if (index !== null && !isNaN(index)) handleDeleteBoleta(Number(index));
-                    }}
-                >
-                    Eliminar
-                </button>
-                <button className="btn-generate" onClick={handleGenerateTablePDF}>
-                    Generar PDF
-                </button>
-            </div>
         </div>
     );
 }

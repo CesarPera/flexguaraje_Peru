@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/boletas")
 public class BoletaControlador {
@@ -90,6 +90,29 @@ public class BoletaControlador {
             return ResponseEntity.ok(respuesta);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/eliminarboleta")
+    public ResponseEntity<?> eliminarBoleta(@RequestBody Map<String, String> body) {
+        try {
+            // Extraer valores desde el cuerpo de la solicitud
+            String dni = body.get("dni");
+            String codigoBoleta = body.get("codigoBoleta");
+
+            // Validación
+            if (dni == null || codigoBoleta == null) {
+                return ResponseEntity.badRequest().body("El 'dni' y 'codigoBoleta' son obligatorios.");
+            }
+
+            // Llamar al servicio
+            String respuesta = boletaNegocio.eliminarBoleta(dni, codigoBoleta);
+
+            return ResponseEntity.ok(respuesta);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la boleta.");
         }
     }
 }

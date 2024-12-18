@@ -95,5 +95,16 @@ public class BoletaNegocio {
         boletaRepositorio.save(boleta);
         return "Boleta actualizada correctamente.";
     }
+    @Transactional
+    public String eliminarBoleta(String dni, String codigoBoleta) {
+        // Verificar si la boleta existe
+        Boleta boleta = boletaRepositorio.findByAlquileresClienteDniAndCodigoBoleta(dni, codigoBoleta)
+                .orElseThrow(() -> new RuntimeException("Boleta no encontrada con DNI: " + dni + " y Código: " + codigoBoleta));
+
+        // Eliminar la boleta
+        boletaRepositorio.deleteByAlquileresClienteDniAndCodigoBoleta(dni, codigoBoleta);
+
+        return "Boleta eliminada correctamente";
+    }
 }
 

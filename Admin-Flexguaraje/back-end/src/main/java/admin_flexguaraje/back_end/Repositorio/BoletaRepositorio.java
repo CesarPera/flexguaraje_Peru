@@ -10,5 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface BoletaRepositorio extends JpaRepository<Boleta, Long> {
-    Optional<Boleta> findFirstByAlquileresAndCodigoBoleta(Alquileres alquiler, String codigoBoleta);}
+    Optional<Boleta> findFirstByAlquileresAndCodigoBoleta(Alquileres alquiler, String codigoBoleta);
+    Optional<Boleta> findByAlquileresClienteDniAndCodigoBoleta(String dni, String codigoBoleta);
+    void deleteByAlquileresClienteDniAndCodigoBoleta(String dni, String codigoBoleta);}
 
