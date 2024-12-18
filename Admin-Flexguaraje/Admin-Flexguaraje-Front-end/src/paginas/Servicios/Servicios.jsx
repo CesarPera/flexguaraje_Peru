@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './Servicios.css';
 import BoletasBD from './BASE DE DATOS/BoletasBD';
-import AlquileresBD from '../Espacios/BASE_DE_DATOS/AlquileresBD';
+import { jsPDF } from "jspdf";
+import "jspdf-autotable"; // Asegúrate de importar esta librería
 
 function Servicios() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,59 +15,16 @@ function Servicios() {
         espacioAdquirido: '',
     });
     const [boletas, setBoletas] = useState([]);
-    const [alquileres, setAlquileres] = useState([]);
     const [editingBoletaIndex, setEditingBoletaIndex] = useState(null);
 
     // Cargar boletas al iniciar la página
-    const fetchBoleta = async () => {
-        try {
-            const response = await BoletasBD.getAllBoletas();
-            console.log("Boletas recibidas:", response.data); // Verifica los datos de boletas
-            setBoletas(response.data);
-        } catch (error) {
-            console.error("Error al cargar las boletas:", error);
-        }
-    };
-    
-    const fetchAlquileres = async () => {
-        try {
-            const response = await AlquileresBD.getAllAlquileres();
-            console.log("Alquileres recibidos:", response.data); // Verifica los datos de alquileres
-            setAlquileres(response.data);
-        } catch (error) {
-            console.error("Error al cargar los alquileres:", error);
-        }
-    };
-    
-
-    // Combinación de boletas y alquileres
-    const BoletasCombinados = boletas.map((boleta) => {
-        const alquiler = alquileres.find(
-            (alquiler) => alquiler.id_alquiler === boleta.id_alquiler
-        );
-
-        const cliente = alquiler ? alquiler.id_cliente : null;
-        const clienteData = cliente ? alquileres.find(a => a.id_cliente === cliente).cliente : {};
-
-        const codigoEspacio = alquiler ? alquiler.id_espacio : '';
-        const combinedBoleta = {
-            ...boleta,
-            dni: clienteData.dni || '',
-            codigoespacio: codigoEspacio,
-            fechaPago: boleta.fecha_emision,
-            metodo: boleta.metodo_pago,
-            montoPagar: boleta.monto_pagar,
-        };
-
-        console.log(combinedBoleta); // Verifica los datos combinados
-        return combinedBoleta;
-    });
-
-
     useEffect(() => {
-        fetchBoleta();
-        fetchAlquileres();
-    }, []);  // Solo se ejecuta al montar el componente
+        BoletasBD.getAllBoletas()
+            .then((response) => {
+                setBoletas(response.data);
+            })
+            .catch((error) => alert("Error al cargar boletas: " + error.message));
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -104,10 +62,10 @@ function Servicios() {
         };
 
         if (editingBoletaIndex !== null) {
-            BoletasBD.actualizarBoleta(boleta) // Actualizar boleta en el backend
+            BoletasBD.actualizarBoleta(boleta) 
                 .then(() => {
                     const updatedBoletas = [...boletas];
-                    updatedBoletas[editingBoletaIndex] = boleta; // Actualiza el estado local
+                    updatedBoletas[editingBoletaIndex] = boleta;
                     setBoletas(updatedBoletas);
                     alert("Boleta actualizada exitosamente.");
                     handleCloseModal();
@@ -128,17 +86,40 @@ function Servicios() {
         }
     };
 
-    const handleGenerateTablePDF = () => {
-        alert('La funcionalidad de generar PDF estará aquí.');
+    // Función para generar el PDF
+    const handleGenerateTablePDF = (boleta) => {
+        const doc = new jsPDF();
+        
+        // Título del PDF
+        doc.setFontSize(18);
+        doc.text("Boleta de Pago", 14, 20);
+        
+        // Contenido de la boleta
+        const tableData = [
+            ["Código de Boleta", boleta.codigoBoleta],
+            ["DNI", boleta.dni],
+            ["Espacio Adquirido", boleta.codigoEspacio],
+            ["Fecha de Pago", boleta.fechaEmision],
+            ["Método de Pago", boleta.metodoPago],
+            ["Monto de Pago", boleta.montoPagar]
+        ];
+        
+        // Usando autotable para agregar la tabla
+        doc.autoTable({
+            head: [["Detalle", "Información"]],
+            body: tableData,
+            startY: 30, // Establece el inicio de la tabla
+        });
+
+        // Guardar el PDF
+        doc.save(`${boleta.codigoBoleta}.pdf`);
     };
 
     return (
         <div className="servicios-page">
             <h2 className="title-servicios">Servicios de Boleta</h2>
 
-            {/* Contenedor para centrar el botón */}
             <div className="center-button-container">
-                {/* Botón para abrir el modal y generar boletas */}
                 <button className="btn-generate" onClick={() => handleOpenModal()}>
                     Generar Boletas
                 </button>
@@ -170,8 +151,6 @@ function Servicios() {
                                 <select name="metodoPago" value={formData.metodoPago} onChange={handleInputChange}>
                                     <option value="">Seleccione</option>
                                     <option value="Efectivo">Efectivo</option>
-                                    <option value="Tarjeta">Tarjeta</option>
-                                    <option value="Transferencia">Transferencia</option>
                                 </select>
                             </div>
                             <div className="form-group">
@@ -204,26 +183,24 @@ function Servicios() {
                     </tr>
                 </thead>
                 <tbody>
-                    {BoletasCombinados.map((dato, index) => (
-                        <tr key={`${dato.codigoBoleta}-${dato.dni}-${dato.codigoespacio}-${index}`}>
-                            <td>{dato.codigoBoleta}</td>
-                            <td>{dato.dni}</td>
-                            <td>{dato.codigoespacio}</td>
-                            <td>{dato.fechaPago}</td>
-                            <td>{dato.metodo}</td>
-                            <td>{dato.montoPagar}</td>
+                    {boletas.map((boleta, index) => (
+                        <tr key={index}>
+                            <td>{boleta.codigoBoleta}</td>
+                            <td>{boleta.dni}</td>
+                            <td>{boleta.codigoEspacio}</td>
+                            <td>{boleta.fechaEmision}</td>
+                            <td>{boleta.metodoPago}</td>
+                            <td>{boleta.montoPagar}</td>
                             <td className="actions">
-                                <button className="btn-update" onClick={() => handleOpenModal(dato, dato.codigoBoleta)}>
+                                <button className="btn-update" onClick={() => handleOpenModal(boleta, index)}>
                                     Actualizar
                                 </button>
-                                <button className="btn-generate" onClick={handleGenerateTablePDF}>
+                                <button className="btn-generate" onClick={() => handleGenerateTablePDF(boleta)}>
                                     Generar PDF
                                 </button>
                             </td>
                         </tr>
                     ))}
-
-
                 </tbody>
             </table>
         </div>
