@@ -21,9 +21,6 @@ public class ClienteNegocio {
     public Cliente agregarCliente(Cliente cliente) {
         return clienteRepositorio.save(cliente);
     }
-    public Optional<Cliente> buscarPorDni(String dni) {
-        Optional<Optional<Cliente>> cliente = Optional.ofNullable(clienteRepositorio.findByDni(dni));
-        return cliente.orElse(null);
-    }
+
 
 }

@@ -33,17 +33,5 @@ public class ClienteControlador {
 
 
     // Buscar cliente por DNI desde el cuerpo
-    @PostMapping("/buscar")
-    public ResponseEntity<?> buscarClientePorDni(@RequestBody Map<String, String> request) {
-        String dni = request.get("dni");
-        if (dni == null || dni.isEmpty()) {
-            return ResponseEntity.badRequest().body("El DNI es obligatorio en el cuerpo de la solicitud.");
-        }
-        Optional<Cliente> cliente = clienteNegocio.buscarPorDni(dni);
-        if (cliente.isPresent()) {
-            return ResponseEntity.ok(cliente);
-        } else {
-            return ResponseEntity.status(404).body("Cliente con DNI " + dni + " no encontrado.");
-        }
-    }
+    
 }
