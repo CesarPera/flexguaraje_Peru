@@ -95,16 +95,17 @@ function Servicios() {
 
         // Título del PDF
         doc.setFontSize(18);
-        doc.text("Boleta de Pago", 14, 20);
+        doc.text("Flexguaraje Peru - Boleta de pago", 14, 20);
 
         // Contenido de la boleta
         const tableData = [
             ["Código de Boleta", boleta.codigoBoleta],
-            ["DNI", boleta.dni],
-            ["Espacio Adquirido", boleta.codigoEspacio],
-            ["Fecha de Pago", boleta.fechaEmision],
+            ["DNI del Cliente", boleta.alquileres?.cliente?.dni],
+            ["Nombre Completo", `${boleta.alquileres?.cliente?.nombre} ${boleta.alquileres?.cliente?.apellido}`],
+            ["Espacio Alquilado", boleta.alquileres?.espacio?.codigoEspacio],
+            ["Fecha de Emisión", boleta.fechaEmision],
             ["Método de Pago", boleta.metodoPago],
-            ["Monto de Pago", boleta.montoPagar]
+            ["Monto de Pago", `S/ ${boleta.montoPagar}`],
         ];
 
         // Usando autotable para agregar la tabla
@@ -117,6 +118,7 @@ function Servicios() {
         // Guardar el PDF
         doc.save(`${boleta.codigoBoleta}.pdf`);
     };
+
 
     return (
         <div className="servicios-page">
@@ -186,7 +188,7 @@ function Servicios() {
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className='text-center'>
                     {boletas.map((boleta, index) => (
                         <tr key={index}>
                             <td>{boleta.codigoBoleta}</td>
@@ -195,7 +197,7 @@ function Servicios() {
                             <td>{boleta.alquileres?.espacio?.codigoEspacio}</td>
                             <td>{boleta.fechaEmision}</td>
                             <td>{boleta.metodoPago}</td>
-                            <td>{boleta.montoPagar}</td>
+                            <td>S/ {boleta.montoPagar}</td>
                             <td className="actions">
                                 <button className="btn-generate" onClick={() => handleGenerateTablePDF(boleta)}>Generar PDF</button>
                             </td>

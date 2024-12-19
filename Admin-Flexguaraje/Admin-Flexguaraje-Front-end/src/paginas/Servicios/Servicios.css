@@ -7,9 +7,9 @@
 
 /* Tabla de Boletas */
 .boletas-table {
-    width: 80%; 
+    width: 80%;
     margin: 20px auto 0;
-    border-collapse: collapse; 
+    border-collapse: collapse;
 }
 
 .boletas-table th,
@@ -17,22 +17,23 @@
     border: 1px solid #efe8e8;
     padding: 5px;
     text-align: left;
+    text-align: center;
 }
 
 .boletas-table .highlight-column {
-    background-color: #b1b5b5; 
-    color: rgb(9, 9, 9); 
+    background-color: #b1b5b5;
+    color: rgb(9, 9, 9);
 }
 
 .boletas-table .columna {
-    background-color: #cdd1d1; 
+    background-color: #cdd1d1;
     color: rgb(9, 9, 9);
 }
 
 .boletas-table th {
-    background-color: #727472; 
-    color: white; 
-    padding: 10px; 
+    background-color: #727472;
+    color: white;
+    padding: 10px;
     text-align: center;
 }
 
@@ -45,30 +46,36 @@
 
 .actions button {
     flex: 1;
-    padding: 8px 16px; /* Botones más pequeños */
-    font-size: 14px;    /* Fuente más pequeña */
+    padding: 8px 16px;
+    /* Botones más pequeños */
+    font-size: 14px;
+    /* Fuente más pequeña */
     border: none;
-    border-radius: 20px; /* Bordes más redondeados */
+    border-radius: 20px;
+    /* Bordes más redondeados */
     cursor: pointer;
-    transition: all 0.3s ease; /* Transición suave */
-    box-shadow: 0 4px 8px rgba(221, 94, 94, 0.1); /* Sombra sutil */
+    transition: all 0.3s ease;
+    /* Transición suave */
+    box-shadow: 0 4px 8px rgba(221, 94, 94, 0.1);
+    /* Sombra sutil */
 }
 
 /* Botones de acción */
 .btn-generate {
-    background-color: #4CAF50; 
+    background-color: #4CAF50;
     color: white;
-    border-radius: 20px; 
-    
+    border-radius: 20px;
+
 }
 
 .btn-generate:hover {
     background-color: #3fb861;
-    box-shadow: 0 6px 12px rgba(241, 238, 238, 0.2); /* Sombra más pronunciada */
+    box-shadow: 0 6px 12px rgba(241, 238, 238, 0.2);
+    /* Sombra más pronunciada */
 }
 
 .btn-update {
-    background-color: #3677e1; 
+    background-color: #3677e1;
     color: white;
 }
 
@@ -78,12 +85,14 @@
 }
 
 .btn-delete {
-    background-color: #f44336; /* Rojo */
+    background-color: #f44336;
+    /* Rojo */
     color: white;
 }
 
 .btn-delete:hover {
-    background-color: #d32f2f; /* Rojo más oscuro */
+    background-color: #d32f2f;
+    /* Rojo más oscuro */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
@@ -94,7 +103,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(160, 157, 157, 0.893); 
+    background-color: rgba(160, 157, 157, 0.893);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -105,11 +114,11 @@
     background-color: white;
     padding: 20px;
     border-radius: 8px;
-    width: 400px; 
+    width: 400px;
     max-width: 90%;
-    max-height: 90vh; 
-    overflow-y: auto; 
-    position: relative; 
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
 }
 
 .modal-content label {
@@ -149,8 +158,10 @@
     margin-left: 10px;
     color: white;
     border: none;
-    border-radius: 20px; /* Bordes redondeados */
-    padding: 8px 16px; /* Tamaño más pequeño */
+    border-radius: 20px;
+    /* Bordes redondeados */
+    padding: 8px 16px;
+    /* Tamaño más pequeño */
     cursor: pointer;
     text-align: center;
     transition: all 0.3s ease;
@@ -158,7 +169,8 @@
 
 .btn-add:hover {
     background-color: #3fb861;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Efecto de sombra al pasar el mouse */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Efecto de sombra al pasar el mouse */
 }
 
 /* Estilos del título */
@@ -184,7 +196,9 @@
 
 .center-button-container {
     display: flex;
-    justify-content: center; /* Centra el botón horizontalmente */
-    align-items: center;     /* Centra el botón verticalmente */
-    border-radius: 20px; 
-} 
+    justify-content: center;
+    /* Centra el botón horizontalmente */
+    align-items: center;
+    /* Centra el botón verticalmente */
+    border-radius: 20px;
+}
