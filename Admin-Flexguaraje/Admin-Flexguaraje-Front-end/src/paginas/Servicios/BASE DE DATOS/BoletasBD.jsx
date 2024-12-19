@@ -9,7 +9,7 @@ class BoletasBD {
     getAllBoletas() {
         return axios.get(LISTAR_BOLETAS_BD_API_URL);
     }
-
+ 
     agregarBoleta(boleta) {
         return axios.post(AGREGAR_BOLETAS_BD_API_URL, boleta);
     }

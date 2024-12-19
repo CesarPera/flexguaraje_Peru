@@ -62,10 +62,13 @@ function Servicios() {
         };
 
         if (editingBoletaIndex !== null) {
-            BoletasBD.actualizarBoleta(boleta) 
+            BoletasBD.actualizarBoleta(boleta)
                 .then(() => {
                     const updatedBoletas = [...boletas];
-                    updatedBoletas[editingBoletaIndex] = boleta;
+                    updatedBoletas[editingBoletaIndex] = {
+                        ...boletas[editingBoletaIndex],
+                        ...boletaData
+                    };
                     setBoletas(updatedBoletas);
                     alert("Boleta actualizada exitosamente.");
                     handleCloseModal();
@@ -89,11 +92,11 @@ function Servicios() {
     // Función para generar el PDF
     const handleGenerateTablePDF = (boleta) => {
         const doc = new jsPDF();
-        
+
         // Título del PDF
         doc.setFontSize(18);
         doc.text("Boleta de Pago", 14, 20);
-        
+
         // Contenido de la boleta
         const tableData = [
             ["Código de Boleta", boleta.codigoBoleta],
@@ -103,7 +106,7 @@ function Servicios() {
             ["Método de Pago", boleta.metodoPago],
             ["Monto de Pago", boleta.montoPagar]
         ];
-        
+
         // Usando autotable para agregar la tabla
         doc.autoTable({
             head: [["Detalle", "Información"]],
@@ -174,10 +177,11 @@ function Servicios() {
                 <thead>
                     <tr>
                         <th>Código de Boleta</th>
-                        <th>DNI</th>
-                        <th>Espacio</th>
-                        <th>Fecha</th>
-                        <th>Método</th>
+                        <th>DNI del Cliente</th>
+                        <th>Nombre Completo</th>
+                        <th>Espacio Alquilado</th>
+                        <th>Fecha de Emisión</th>
+                        <th>Método de Pago</th>
                         <th>Monto</th>
                         <th>Acciones</th>
                     </tr>
@@ -186,18 +190,14 @@ function Servicios() {
                     {boletas.map((boleta, index) => (
                         <tr key={index}>
                             <td>{boleta.codigoBoleta}</td>
-                            <td>{boleta.dni}</td>
-                            <td>{boleta.codigoEspacio}</td>
+                            <td>{boleta.alquileres?.cliente?.dni}</td>
+                            <td>{`${boleta.alquileres?.cliente?.nombre} ${boleta.alquileres?.cliente?.apellido}`}</td>
+                            <td>{boleta.alquileres?.espacio?.codigoEspacio}</td>
                             <td>{boleta.fechaEmision}</td>
                             <td>{boleta.metodoPago}</td>
                             <td>{boleta.montoPagar}</td>
                             <td className="actions">
-                                <button className="btn-update" onClick={() => handleOpenModal(boleta, index)}>
-                                    Actualizar
-                                </button>
-                                <button className="btn-generate" onClick={() => handleGenerateTablePDF(boleta)}>
-                                    Generar PDF
-                                </button>
+                                <button className="btn-generate" onClick={() => handleGenerateTablePDF(boleta)}>Generar PDF</button>
                             </td>
                         </tr>
                     ))}
