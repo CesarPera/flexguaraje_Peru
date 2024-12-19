@@ -3,6 +3,8 @@ import './Servicios.css';
 import BoletasBD from './BASE DE DATOS/BoletasBD';
 import { jsPDF } from "jspdf";
 import "jspdf-autotable"; // Asegúrate de importar esta librería
+import Swal from 'sweetalert2'; // Importa SweetAlert2
+
 
 function Servicios() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,7 +36,6 @@ function Servicios() {
     const handleOpenModal = (boleta = null, index = null) => {
         if (boleta) {
             setFormData(boleta);
-            setEditingBoletaIndex(index);
         } else {
             setFormData({
                 DNI: '',
@@ -44,7 +45,6 @@ function Servicios() {
                 fechaPago: new Date().toISOString().split('T')[0],
                 espacioAdquirido: '',
             });
-            setEditingBoletaIndex(null);
         }
         setIsModalOpen(true);
     };
@@ -61,32 +61,43 @@ function Servicios() {
             codigoEspacio: formData.espacioAdquirido,
         };
 
-        if (editingBoletaIndex !== null) {
-            BoletasBD.actualizarBoleta(boleta)
-                .then(() => {
-                    const updatedBoletas = [...boletas];
-                    updatedBoletas[editingBoletaIndex] = {
-                        ...boletas[editingBoletaIndex],
-                        ...boletaData
-                    };
-                    setBoletas(updatedBoletas);
-                    alert("Boleta actualizada exitosamente.");
-                    handleCloseModal();
-                })
-                .catch((error) => {
-                    alert("Error al actualizar la boleta: " + error.message);
-                });
-        } else {
-            BoletasBD.agregarBoleta(boleta)
-                .then((response) => {
-                    setBoletas([...boletas, response.data]);
-                    alert("Boleta agregada exitosamente.");
-                    handleCloseModal();
-                })
-                .catch((error) => {
-                    alert("Error al agregar la boleta: " + error.message);
-                });
-        }
+        // Cerrar el modal antes de mostrar la alerta
+        handleCloseModal();
+
+        // Mostrar alerta de confirmación
+        Swal.fire({
+            title: '¿Está seguro de agregar esta boleta?',
+            text: `Se agregará la boleta con código ${boleta.codigoBoleta} para el cliente ${boleta.dni}.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, agregar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, proceder con la acción
+                BoletasBD.agregarBoleta(boleta)
+                    .then((response) => {
+                        setBoletas([...boletas, response.data]);
+
+                        // Mostrar alerta de éxito sin retraso
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Boleta Generada',
+                            text: `La boleta con código ${boleta.codigoBoleta} ha sido agregada.`,
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+
+                    })
+                    .catch((error) => {
+                        Swal.fire("Error", "Error al agregar la boleta: " + error.message, "error");
+                    });
+            } else {
+                // Si el usuario cancela, no hacer nada
+                Swal.fire("Cancelado", "La boleta no fue agregada.", "error");
+            }
+        });
     };
 
     // Función para generar el PDF
@@ -117,6 +128,14 @@ function Servicios() {
 
         // Guardar el PDF
         doc.save(`${boleta.codigoBoleta}.pdf`);
+
+        Swal.fire({
+            icon: 'success',
+            title: 'PDF Generado',
+            text: `El PDF de la boleta ${boleta.codigoBoleta} se ha generado correctamente.`,
+            timer: 3000,
+            showConfirmButton: false,  // Oculta el botón de confirmación
+        });
     };
 
 
