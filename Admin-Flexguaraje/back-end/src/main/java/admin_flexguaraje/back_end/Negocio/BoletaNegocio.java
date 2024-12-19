@@ -70,7 +70,7 @@ public class BoletaNegocio {
     }
 
     @Transactional
-    public String actualizarBoleta(String dni, String codigoBoleta, String codigoEspacio, BigDecimal montoPagar, LocalDate fechaEmision) {
+    public String actualizarBoleta(String dni, String codigoBoleta, String codigoEspacio, BigDecimal montoPagar, LocalDate fechaEmision, String metodoPago) {
         // Buscar cliente por DNI
         Cliente cliente = clienteRepositorio.findByDni(dni);
         if (cliente == null) {
@@ -90,11 +90,14 @@ public class BoletaNegocio {
         // Actualizar boleta
         boleta.setMontoPagar(montoPagar);
         boleta.setFechaEmision(fechaEmision);
+        boleta.setMetodoPago(metodoPago);  // Actualizamos el método de pago
 
         // Guardar la boleta actualizada
         boletaRepositorio.save(boleta);
         return "Boleta actualizada correctamente.";
     }
+
+
     @Transactional
     public String eliminarBoleta(String dni, String codigoBoleta) {
         // Verificar si la boleta existe

@@ -24,8 +24,8 @@ public class BoletaControlador {
 
     @GetMapping("/listarboleta")
     public ResponseEntity<List<Boleta>> listarBoletas() {
-        List<Boleta> boleta = boletaNegocio.listarBoleta();
-        return new ResponseEntity<>(boleta, HttpStatus.OK);
+        List<Boleta> listarboleta = boletaNegocio.listarBoleta();
+        return ResponseEntity.ok(listarboleta);
     }
 
     @PostMapping("/agregarboletas")
@@ -77,6 +77,7 @@ public class BoletaControlador {
             String codigoEspacio = (String) body.get("codigoEspacio");
             BigDecimal montoPagar = new BigDecimal((String) body.get("montoPagar"));  // O (Double) dependiendo del formato
             LocalDate fechaEmision = LocalDate.parse((String) body.get("fechaEmision"));
+            String metodoPago = (String) body.get("metodoPago");  // Extraemos el método de pago
 
             // Llamar al servicio para actualizar la boleta
             String respuesta = boletaNegocio.actualizarBoleta(
@@ -84,7 +85,8 @@ public class BoletaControlador {
                     codigoBoleta,
                     codigoEspacio,
                     montoPagar,
-                    fechaEmision
+                    fechaEmision,
+                    metodoPago
             );
 
             return ResponseEntity.ok(respuesta);
@@ -92,6 +94,7 @@ public class BoletaControlador {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
+
 
     @DeleteMapping("/eliminarboleta")
     public ResponseEntity<?> eliminarBoleta(@RequestBody Map<String, String> body) {
