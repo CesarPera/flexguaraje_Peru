@@ -6,7 +6,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "cliente",
-        uniqueConstraints = @UniqueConstraint(columnNames = "dni"))
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "dni"),
+                @UniqueConstraint(columnNames = "email")
+        })
 public class Cliente {
 
     @Id
@@ -14,19 +17,19 @@ public class Cliente {
     @Column(name = "id_cliente")
     private Long idCliente;
 
-    @Column(name = "dni", nullable = false, unique = true, length = 15)
+    @Column(name = "dni", nullable = false, unique = true, length = 8)
     private String dni;
 
-    @Column(name = "nombre", nullable = false, length = 100)
+    @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
 
-    @Column(name = "apellido", nullable = false, length = 100)
+    @Column(name = "apellido", nullable = false, length = 50)
     private String apellido;
 
-    @Column(name = "telefono", nullable = false, length = 15)
+    @Column(name = "telefono", nullable = false, length = 9)
     private String telefono;
 
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(name = "email", nullable = false, length = 50)
     private String email;
 
     @Column(name = "nota", length = 255)

@@ -4,17 +4,18 @@ use flexguaraje_peru;
 #TABLA CLIENTESSSSSSSSSSSS
 CREATE TABLE cliente (
     id_cliente INT auto_increment PRIMARY KEY,
-    dni VARCHAR(15) NOT NULL UNIQUE,
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    telefono VARCHAR(15) NOT NULL,
-    email VARCHAR(100) NOT NULL,
+    dni VARCHAR(8) NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    telefono VARCHAR(9) NOT NULL,
+    email VARCHAR(50) NOT NULL,
     Nota VARCHAR(255) DEFAULT 'Sin Discapacidad',
+    CONSTRAINT UQ_dni UNIQUE (dni),
+	CONSTRAINT UQ_email UNIQUE (email),
     CONSTRAINT CHK_DNI_Format CHECK (LENGTH(dni) = 8 AND dni NOT LIKE '%[^0-9]%'),
 	CONSTRAINT CHK_Telefono_Format CHECK (LENGTH(telefono) = 9 AND telefono NOT LIKE '%[^0-9]%')
 );
 
-#TABLA CLIENTESSSSSSSSSSSSSSSSSSSSS ---- DATOSSSSSSSSSSSSSSS
 INSERT INTO cliente (id_cliente, dni, nombre, apellido, telefono, email, Nota)
 VALUES
 (1, '12345678', 'Carlos', 'Perez', '987654321', 'carlos.perez@mail.com', 'Sin Discapacidad'),
@@ -31,24 +32,25 @@ VALUES
 #TABLA ESPACIOSSSSS
 CREATE TABLE espacio (
     id_espacio INT auto_increment PRIMARY KEY,
-    codigo_espacio VARCHAR(10) NOT NULL UNIQUE,
-    estado VARCHAR(20) NOT NULL DEFAULT 'Disponible',
-    CONSTRAINT valores_estado CHECK (estado IN ('Disponible', 'Ocupado','Mantenimiento'))
+    codigo_espacio VARCHAR(30) NOT NULL,
+    estado VARCHAR(15) NOT NULL DEFAULT 'Disponible',
+    CONSTRAINT valores_estado CHECK (estado IN ('Disponible', 'Ocupado','Mantenimiento')),
+    CONSTRAINT UQ_codigo_espacio UNIQUE (codigo_espacio)
 );
 
 #TABLA ESPACIOS - DATOSSSSSSSSSSSSSS
 INSERT INTO espacio (id_espacio, codigo_espacio, estado)
 VALUES
-(1, 'E001', 'Disponible'),
-(2, 'E002', 'Disponible'),
-(3, 'E003', 'Disponible'),
-(4, 'E004', 'Disponible'),
-(5, 'E005', 'Disponible'),
-(6, 'E006', 'Disponible'),
-(7, 'E007', 'Disponible'),
-(8, 'E008', 'Disponible'),
-(9, 'E009', 'Disponible'),
-(10, 'E010', 'Disponible'),
+(1, 'E001', 'Ocupado'),
+(2, 'E002', 'Ocupado'),
+(3, 'E003', 'Ocupado'),
+(4, 'E004', 'Ocupado'),
+(5, 'E005', 'Ocupado'),
+(6, 'E006', 'Ocupado'),
+(7, 'E007', 'Ocupado'),
+(8, 'E008', 'Ocupado'),
+(9, 'E009', 'Ocupado'),
+(10, 'E010', 'Ocupado'),
 (11, 'E011', 'Mantenimiento'),
 (12, 'E012', 'Mantenimiento'),
 (13, 'E013', 'Disponible'),
@@ -97,12 +99,24 @@ CREATE TABLE boleta (
     monto_pagar DECIMAL(10, 2) NOT NULL,
     CONSTRAINT FK_boleta_Alquiler FOREIGN KEY (id_alquiler) REFERENCES alquileres(id_alquiler),
     CONSTRAINT CHK_Monto_boleta CHECK (monto_pagar > 0),
-    CONSTRAINT UQ_boleta_Unica UNIQUE (id_alquiler, fecha_emision)
+    CONSTRAINT UQ_boleta_Unica UNIQUE (id_alquiler, fecha_emision, codigo_boleta)
 );
 
-# DATOSSSSSSSSSSSS DE LA BOLETAAAAAAAA
-INSERT INTO boleta
-VALUES ('1', '1', 'B001', 'Efectivo', '2024-12-11', '300');
+#DATOS DE LA TABLA BOLETA
+INSERT INTO boleta (id_alquiler, codigo_boleta, metodo_pago, fecha_emision, monto_pagar)
+VALUES
+(1, 'B001', 'Efectivo', '2024-01-05', 150.00),
+(2, 'B002', 'Efectivo', '2024-02-05', 180.00),
+(3, 'B003', 'Efectivo', '2024-03-05', 170.00),
+(4, 'B004', 'Efectivo', '2024-04-05', 160.00),
+(5, 'B005', 'Efectivo', '2024-05-05', 200.00),
+(6, 'B006', 'Tarjeta de Crédito', '2024-06-05', 180.00),
+(7, 'B007', 'Transferencia Bancaria', '2024-07-05', 170.00),
+(8, 'B008', 'Efectivo', '2024-08-05', 190.00),
+(9, 'B009', 'Tarjeta de Débito', '2024-09-05', 200.00),
+(10, 'B010', 'PayPal', '2024-10-05', 210.00);
+
+
 
 # ---------- CONSULTASSSSSSSSSS -----------
 use flexguaraje_peru;
@@ -111,7 +125,8 @@ select * from espacio;
 select * from alquileres;
 select * from boleta;
 
-# PARA MI TABLA DE ALQUILER, VISUALIZAR LOS DATOS COMPLETOS
+
+# VISUALIZAR LOS DATOS DE LA TABLA COMBINADO - ALQUILER
 SELECT 
     e.codigo_espacio AS codigoEspacio,
     e.estado AS estado,
@@ -127,6 +142,18 @@ LEFT JOIN
 LEFT JOIN 
     cliente c ON a.id_cliente = c.id_cliente;
     
+# VISUALIZAR LOS DATOS DE LA TABLA COMBINADO - BOLETA
+SELECT 
+    b.codigo_boleta, 
+    b.fecha_emision, 
+    b.metodo_pago, 
+    b.monto_pagar, 
+    c.dni AS cliente_dni, 
+    e.codigo_espacio AS codigoEspacio
+FROM boleta b
+JOIN alquileres a ON b.id_alquiler = a.id_alquiler
+JOIN cliente c ON a.id_cliente = c.id_cliente
+JOIN espacio e ON a.id_espacio = e.id_espacio;
 
 
 

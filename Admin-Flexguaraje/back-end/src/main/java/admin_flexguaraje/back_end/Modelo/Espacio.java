@@ -3,18 +3,19 @@ package admin_flexguaraje.back_end.Modelo;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "espacio")
+@Table(name = "espacio",
+        uniqueConstraints = @UniqueConstraint(columnNames = "codigo_espacio")) // Agregar esta línea
 public class Espacio {
 
     @Id
     @Column(name = "id_espacio")
     private Long idEspacio;
 
-    @Column(name = "codigo_espacio", nullable = false, unique = true, length = 10)
+    @Column(name = "codigo_espacio", nullable = false, unique = true, length = 30)
     private String codigoEspacio;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado", nullable = false, length = 20)
+    @Column(name = "estado", nullable = false, length = 15)
     private EstadoEspacio estado = EstadoEspacio.Disponible;
 
     public Long getIdEspacio() {
