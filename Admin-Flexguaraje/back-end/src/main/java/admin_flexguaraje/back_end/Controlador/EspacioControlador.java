@@ -15,18 +15,8 @@ public class EspacioControlador {
     @Autowired
     private EspacioNegocio espacioNegocio;
 
-    @GetMapping("/listarespacio")
+    @GetMapping("/listar_espacio")
     public List<Espacio> listarEspacios() {
         return espacioNegocio.ListarEspacio();
     }
-
-    //@PostMapping("/crearespacio")
-    //public Espacio crearEspacio(@RequestBody Espacio espacio) {
-      //  return espacioNegocio.crear_Espacio(espacio);
-    //}
-
-    //@DeleteMapping("/crearespacio/{id}")
-    //public void eliminarEspacio(@PathVariable Long id) {
-      //  espacioNegocio.eliminarPorId(id);
-    //}
 }

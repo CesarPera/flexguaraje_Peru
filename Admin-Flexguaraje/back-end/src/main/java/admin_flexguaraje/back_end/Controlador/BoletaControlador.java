@@ -1,8 +1,13 @@
 package admin_flexguaraje.back_end.Controlador;
 
+import admin_flexguaraje.back_end.Modelo.Alquileres;
 import admin_flexguaraje.back_end.Modelo.Boleta;
+import admin_flexguaraje.back_end.Modelo.Cliente;
+import admin_flexguaraje.back_end.Modelo.Espacio;
+import admin_flexguaraje.back_end.Negocio.AlquileresNegocio;
 import admin_flexguaraje.back_end.Negocio.BoletaNegocio;
 import admin_flexguaraje.back_end.Repositorio.BoletaRepositorio;
+import admin_flexguaraje.back_end.Repositorio.ClienteRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,100 +28,107 @@ public class BoletaControlador {
     @Autowired
     private BoletaNegocio boletaNegocio;
 
-    @GetMapping("/listarboleta")
+    private AlquileresNegocio alquileresNegocio;
+
+    @GetMapping("/listar_boleta_general")
     public ResponseEntity<List<Boleta>> listarBoletas() {
         List<Boleta> listarboleta = boletaNegocio.listarBoleta();
         return ResponseEntity.ok(listarboleta);
     }
 
-    @PostMapping("/agregarboletas")
-    public ResponseEntity<?> agregarBoleta(@RequestBody Map<String, Object> requestBody) {
+    @PostMapping("/buscar_boleta")
+    public ResponseEntity<?> buscarBoleta(@RequestBody Map<String, String> body) {
         try {
-            // Extraer los valores del Map
-            String dni = (String) requestBody.get("dni");
-            String codigoEspacio = (String) requestBody.get("codigoEspacio");
-            String codigoBoleta = (String) requestBody.get("codigoBoleta");
-            String metodoPago = (String) requestBody.get("metodoPago");
-            LocalDate fechaEmision = LocalDate.parse((String) requestBody.get("fechaEmision"));
+            String codigoBoleta = body.get("codigoBoleta");
 
-            BigDecimal montoPagar;
-            Object montoPagarObj = requestBody.get("montoPagar");
-            if (montoPagarObj instanceof Double) {
-                montoPagar = BigDecimal.valueOf((Double) montoPagarObj);
-            } else if (montoPagarObj instanceof String) {
-                montoPagar = new BigDecimal((String) montoPagarObj);
-            } else {
-                throw new IllegalArgumentException("El formato de 'montoPagar' no es válido");
+            if (codigoBoleta == null || codigoBoleta.isEmpty()) {
+                return ResponseEntity.badRequest().body("El código de boleta es obligatorio.");
             }
 
-            // Llamada al servicio para agregar la boleta
-            Boleta boleta = boletaNegocio.agregarBoleta(
-                    dni,
-                    codigoEspacio,
-                    codigoBoleta,
-                    metodoPago,
-                    fechaEmision,
-                    montoPagar
-            );
+            Boleta boleta = boletaNegocio.buscarPorCodigoBoleta(codigoBoleta);
+            return ResponseEntity.ok(boleta);
+        } catch (IllegalArgumentException e) {
+            // Devuelve un error 404 con un mensaje claro
+            return ResponseEntity.status(404).body("El código de boleta no existe.");
+        }
+    }
+
+    // Método actualizado en el backend
+    @PostMapping("/alquileres_activos")
+    public ResponseEntity<?> obtenerEspaciosActivosPorDni(@RequestBody Map<String, String> requestBody) {
+        String dni = requestBody.get("dni");
+
+        // Validar el DNI
+        if (dni == null || dni.isEmpty()) {
+            return ResponseEntity.badRequest().body("El DNI es obligatorio.");
+        }
+        if (dni.length() != 8) {
+            return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
+        }
+        if (!dni.matches("\\d+")) { // Validar que el DNI solo contenga números
+            return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
+        }
+
+        // Verificar si el cliente existe
+        if (!boletaNegocio.existeDni(dni)) {
+            return ResponseEntity.ok("CLIENTE NO EXISTE"); // Cambiado a 200 con mensaje
+        }
+
+        // Verificar si el cliente tiene alquileres con boleta asociada
+        boolean todosConBoleta = boletaNegocio.clienteTieneAlquileresConBoletaPorDni(dni);
+
+        if (todosConBoleta) {
+            return ResponseEntity.ok("El cliente con DNI " + dni + " ya tiene todos sus alquileres con boleta asociada.");
+        }
+
+        // Obtener los espacios activos de ese cliente
+        List<Espacio> espaciosActivos = boletaNegocio.obtenerEspaciosActivosPorDni(dni);
+
+        if (espaciosActivos.isEmpty()) {
+            return ResponseEntity.ok("No se encontraron espacios activos para este DNI."); // Cambiado a 200 con mensaje
+        }
+
+        return ResponseEntity.ok(espaciosActivos);
+    }
+
+    @PostMapping("/crear_boleta")
+    public ResponseEntity<?> agregarBoleta(@RequestBody Map<String, Object> requestBody) {
+        try {
+            String dni = (String) requestBody.get("dni");
+            String codigoEspacio = (String) requestBody.get("codigoEspacio");
+
+            // Validar DNI y Código de Espacio
+            if (dni.length() != 8) {
+                return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
+            }
+            if (!dni.matches("\\d+")) { // Validar que el DNI solo contenga números
+                return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
+            }
+
+            if (!boletaNegocio.existeDni(dni)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("CLIENTE NO EXISTE");
+            }
+
+            if (codigoEspacio == null || codigoEspacio.isEmpty()) {
+                return ResponseEntity.badRequest().body("El código de espacio es obligatorio.");
+            }
+
+            Boleta boleta = boletaNegocio.agregarBoleta(dni, codigoEspacio);
             return ResponseEntity.status(HttpStatus.CREATED).body(boleta);
 
         } catch (RuntimeException e) {
-            // Manejo de excepciones de negocio
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            // Manejo de excepciones generales
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor.");
-        }
-    }
-
-    @PutMapping("/actualizar")
-    public ResponseEntity<String> actualizarBoleta(@RequestBody Map<String, Object> body) {
-        try {
-            // Extraer los valores del cuerpo de la solicitud (el Map)
-            String dniCliente = (String) body.get("dniCliente");
-            String codigoBoleta = (String) body.get("codigoBoleta");
-            String codigoEspacio = (String) body.get("codigoEspacio");
-            BigDecimal montoPagar = new BigDecimal((String) body.get("montoPagar"));  // O (Double) dependiendo del formato
-            LocalDate fechaEmision = LocalDate.parse((String) body.get("fechaEmision"));
-            String metodoPago = (String) body.get("metodoPago");  // Extraemos el método de pago
-
-            // Llamar al servicio para actualizar la boleta
-            String respuesta = boletaNegocio.actualizarBoleta(
-                    dniCliente,
-                    codigoBoleta,
-                    codigoEspacio,
-                    montoPagar,
-                    fechaEmision,
-                    metodoPago
-            );
-
-            return ResponseEntity.ok(respuesta);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-        }
-    }
-
-
-    @DeleteMapping("/eliminarboleta")
-    public ResponseEntity<?> eliminarBoleta(@RequestBody Map<String, String> body) {
-        try {
-            // Extraer valores desde el cuerpo de la solicitud
-            String dni = body.get("dni");
-            String codigoBoleta = body.get("codigoBoleta");
-
-            // Validación
-            if (dni == null || codigoBoleta == null) {
-                return ResponseEntity.badRequest().body("El 'dni' y 'codigoBoleta' son obligatorios.");
+            // Si la excepción es "BOLETA EXISTENTE", manejamos el error de esa forma
+            if ("El alquiler ya tiene una boleta asociada".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El alquiler ya tiene una boleta asociada");
             }
-
-            // Llamar al servicio
-            String respuesta = boletaNegocio.eliminarBoleta(dni, codigoBoleta);
-
-            return ResponseEntity.ok(respuesta);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            // Si la excepción es "ALQUILER NO ENCONTRADO", manejamos el error de esa forma
+            if ("El cliente no tiene alquileres activos con ese código de espacio".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("El cliente no tiene alquileres activos para ese código de espacio");
+            }
+            // Manejo de excepciones generales
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la boleta.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno del servidor.");
         }
     }
 }

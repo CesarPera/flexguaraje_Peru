@@ -1,58 +1,80 @@
 .solicitud-page {
-    padding: 20px;
-    margin-left: 70px;
-    margin-top: 100px;
-    flex-grow: 1;
+  padding: 20px;
+  margin-left: 70px;
+  margin-top: 100px;
+  flex-grow: 1;
 }
 
 /*EDITARRRR O AGREGAR TODOOOO DEBAJO DE ESTA LINEAAAAAAAAAAAAAAA */
 /* RECUERDA QUE TODO LOS CSS ESTAN VINCULADO AL PARECER, NO ES COMO EN HTML O JSP QUE ES UNO SOLO EL CSS PERO EN AQUI EN TODO JUNTO EN UNO SOLO EL CSS, QUISE SEPARAR EL ESTILO PARA QUE ASI CADA UNO TENGA SU PROPIO ESTILO PERO NOSE PUDO, PROXIMAMENTE BUSCARE Y INVESTIGARE PARA HACER ESO XD */
 
 /* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
-.solicitud-page h2 {
+
+/* TITULO DE SOLICITUD */
+.title-solicitud {
+  font-size: 2rem;
+  font-family: sans-serif;
+  font-weight: 800;
+  border-bottom: 5px solid black;
   text-align: center;
-  margin-bottom: 20px;
+  width: 440px;
+  margin: 5px auto 30px auto;
+  color: #333;
 }
 
-/* Estilo para tablas */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+/* informacion de cliente */
+.info-cliente {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
 }
 
-table, th, td {
-  border: 1px solid #ccc;
+.info-cliente div {
+  border: 5px solid #10dcf7;
+  border-radius: 10px;
+  background-color: #3cbbcc;
 }
 
-th, td {
-  padding: 12px;
-  text-align: center; /* Cambiado a 'center' para uniformidad */
-}
-
-/* Colores para filas alternas y efecto hover */
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-tr:hover {
-  background-color: #ddd;
-}
-
-/* Estilo para encabezados */
-table th {
-  background-color: #6a5acd; /* Lilac */
-  color: white;
+.info-cliente h3 {
+  font-size: 1.2rem;
   font-weight: bold;
+  border-bottom: 5px solid #10dcf7;
+  padding: 10px;
+  text-align: center;
+
 }
 
-/* Estilo para celdas según su estado */
-td.pendiente {
-  color: orange;
-  font-weight: bold;
+.info-cliente p {
+  font-size: 1rem;
+  text-align: center;
+  padding: 10px;
 }
 
-td.completado {
-  color: green;
-  font-weight: bold;
+.info-dni {
+  width: 120px;
+  padding: 0px;
 }
+
+.info-telefono {
+  padding: 0px;
+  width: 150px;
+}
+
+.info-email,
+.info-notas,
+.info-direccion,
+.info-nombre-completo {
+  padding: 0px;
+  width: 400px;
+}
+
+/*
+.info-nombre-completo,
+.info-email,
+.info-notas {
+  width: 400px;
+  padding: 0px;
+
+}
+  */

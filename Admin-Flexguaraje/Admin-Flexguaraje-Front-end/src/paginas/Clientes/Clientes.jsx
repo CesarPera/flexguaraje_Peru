@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Clientes.css';
 import { useNavigate } from 'react-router-dom'; // Usar react-router para redirección
 import ClientesBD from './BASE DE DATOS/ClientesBD';
@@ -11,138 +11,331 @@ function Clientes() {
     const [nuevoCliente, setNuevoCliente] = useState({
         dni: '',
         nombre: '',
-        apellido: '',
+        apellido_paterno: '',
+        apellido_materno: '',
         telefono: '',
         email: '',
-        nota: '',
+        direccion: '',
+        nota: 'Sin discapacidad'
+
     });
     // variables para buscar el cliente por nombre completo y DNI
     const [busqueda, setBusqueda] = useState('');
     const [tipoBusqueda, setTipoBusqueda] = useState('dni');
     const navigate = useNavigate();  // Para redirigir a otra página
 
+    const [discapacidad, setDiscapacidad] = useState(''); // Nuevo estado para la discapacidad
+
+    useEffect(() => {
+        setBusqueda(''); // Limpia el campo de búsqueda al cambiar el tipo de búsqueda
+    }, [tipoBusqueda]);
+
     // funcion para poder agregar un nuevo cliente
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setNuevoCliente({ ...nuevoCliente, [name]: value });
+        setNuevoCliente(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     };
 
-    const handleAñadirCliente = () => {
-        if (!nuevoCliente.dni || !nuevoCliente.nombre || !nuevoCliente.apellido || !nuevoCliente.telefono || !nuevoCliente.email) {
+    const handleNotaChange = (e) => {
+        const { value } = e.target;
+        setNuevoCliente((prevState) => ({
+            ...prevState,
+            nota: value, // Actualiza el estado según la selección
+        }));
+
+        if (value === 'Sin discapacidad') {
+            setDiscapacidad(''); // Limpia la discapacidad si seleccionan "Sin discapacidad"
+        }
+    };
+
+    const handleDiscapacidadChange = (e) => {
+        setDiscapacidad(e.target.value); // Actualiza solo el campo de discapacidad
+    };
+
+    const handleCrearCliente = () => {
+
+        const camposRequeridos = [
+            nuevoCliente.dni.trim(),
+            nuevoCliente.nombre.trim(),
+            nuevoCliente.apellido_paterno.trim(),
+            nuevoCliente.apellido_materno.trim(),
+            nuevoCliente.telefono.trim(),
+            nuevoCliente.email.trim(),
+            nuevoCliente.direccion.trim(),
+        ];
+
+        const formularioVacio = camposRequeridos.every(campo => campo === '');
+
+        if (formularioVacio) {
             Swal.fire({
                 icon: 'error',
-                title: 'Error',
-                text: 'Por favor, completa todos los campos requeridos.'
+                title: 'Formulario vacío',
+                text: 'Por favor, rellena el formulario antes de enviarlo.',
+                showConfirmButton: true,
             });
-            return;
+            return; // Detener la ejecución
         }
 
-        const clienteConNotaPredeterminada = {
-            ...nuevoCliente,
-            nota: nuevoCliente.nota.trim() === '' ? 'sin discapacidad' : nuevoCliente.nota,
-        };
+        const errores = [];
 
-        ClientesBD.crearCliente(clienteConNotaPredeterminada)
-            .then((response) => {
+        // Validar cada campo y agregar el mensaje de error correspondiente
+        if (!nuevoCliente.dni.trim()) {
+            errores.push('El DNI no puede ir vacío.');
+        } else if (!/^\d{8}$/.test(nuevoCliente.dni.trim())) {
+            errores.push('El DNI debe tener exactamente 8 caracteres numéricos.');
+        }
+
+        if (!nuevoCliente.nombre.trim()) {
+            errores.push('El Nombre no puede ir vacío.');
+        } else if (!/^[a-zA-Z ]+$/.test(nuevoCliente.nombre.trim())) {
+            errores.push('El Nombre solo debe contener letras.');
+        }
+
+        if (!nuevoCliente.apellido_paterno.trim()) {
+            errores.push('El Apellido Paterno no puede ir vacío.');
+        } else if (!/^[a-zA-Z]+$/.test(nuevoCliente.apellido_paterno.trim())) {
+            errores.push('El Apellido Paterno solo debe contener letras y una palabra.');
+        }
+
+        if (!nuevoCliente.apellido_materno.trim()) {
+            errores.push('El Apellido Materno no puede ir vacío.');
+        } else if (!/^[a-zA-Z]+$/.test(nuevoCliente.apellido_materno.trim())) {
+            errores.push('El Apellido Materno solo debe contener letras y una palabra.');
+        }
+
+        if (!nuevoCliente.telefono.trim()) {
+            errores.push('El Teléfono no puede ir vacío.');
+        } else if (!/^\d{9}$/.test(nuevoCliente.telefono.trim())) {
+            errores.push('El Teléfono debe tener exactamente 9 caracteres numéricos.');
+        }
+
+        if (!nuevoCliente.email.trim()) {
+            errores.push('El Correo Electrónico no puede ir vacío.');
+        } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(nuevoCliente.email.trim())) {
+            // Cambié la expresión regular para aceptar cualquier dominio válido (no solo .com y .pe)
+            errores.push('El Correo Electrónico debe ser válido (ejemplo@dominio.com).');
+        }
+
+        if (!nuevoCliente.direccion.trim()) {
+            errores.push('La Dirección no puede ir vacía.');
+        }
+
+        if (nuevoCliente.nota === 'Con discapacidad' && !discapacidad.trim()) {
+            errores.push('Por favor, especifique la discapacidad.');
+        } else if (nuevoCliente.nota === 'Con discapacidad' && !/^[a-zA-Z\s,.'-]+$/.test(discapacidad.trim())) {
+            // Permite letras, espacios, comas, puntos, comillas y guiones
+            errores.push('La discapacidad solo puede contener letras, espacios, comas, puntos, comillas y guiones.');
+        }
+
+        if (errores.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Errores en el formulario',
+                html: errores.map(error => `<p>${error}</p>`).join(''),
+                showConfirmButton: true,
+            });
+            return; // Detener la ejecución si hay errores
+        }
+
+        const clienteData = { ...nuevoCliente };
+        if (clienteData.nota === 'Con discapacidad') {
+            clienteData.nota = discapacidad; // Asigna la descripción al campo "nota"
+        }
+
+
+        ClientesBD.crearCliente(clienteData)
+            .then(() => {
                 Swal.fire({
                     icon: 'success',
                     title: 'Cliente creado exitosamente.',
                     showConfirmButton: false,
-                    timer: 3000
+                    timer: 3000,
                 });
                 setMostrarFormulario(false);
                 setNuevoCliente({
                     dni: '',
                     nombre: '',
-                    apellido: '',
+                    apellido_paterno: '',
+                    apellido_materno: '',
                     telefono: '',
                     email: '',
-                    nota: '',
+                    direccion: '',
+                    nota: 'Sin discapacidad'
                 });
-                console.log('Respuesta:', response.data);
+                setDiscapacidad(''); // Reinicia el campo de discapacidad
             })
             .catch((error) => {
-                console.error('Error al crear cliente:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error al crear cliente',
-                    text: 'Hubo un error al crear el cliente. Por favor, intenta nuevamente.'
+                    text: error.response?.data || 'Ocurrió un error inesperado.',
                 });
             });
     };
 
-    // funcion para poder buscar al cliente por nombre completo o DNI
-    const handleBuscarCliente = () => {
-        if (!busqueda) {
+    // Función para buscar por DNI
+    const handleBuscarClientePorDni = () => {
+
+        if (!busqueda.trim()) {
             Swal.fire({
-                icon: 'warning',
-                title: 'Campo vacío',
-                text: 'Por favor, ingresa un DNI o un nombre para la búsqueda.',
-                showConfirmButton: false,
-                timer: 3000
+                icon: 'error',
+                title: 'Error en DNI',
+                text: 'El DNI no puede estar vacío.',
             });
             return;
         }
 
-        // Mostrar alerta de "Buscando cliente..."
-        const loadingAlert = Swal.fire({
+        if (!busqueda.trim() || busqueda.length !== 8 || !/^\d{8}$/.test(busqueda)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error en DNI',
+                text: 'El DNI debe tener exactamente 8 caracteres numéricos.'
+            });
+            return;
+        }
+
+        Swal.fire({
             title: 'Buscando cliente...',
             text: 'Por favor, espere.',
             showConfirmButton: false,
             allowOutsideClick: false,
             didOpen: () => {
                 Swal.showLoading();
-            }
+            },
         });
 
-        // Establecemos un tiempo mínimo de 2 segundos para mostrar la alerta de carga
-        const timeout = setTimeout(() => {
-            // Si la búsqueda tarda más de 2 segundos, mantenemos la alerta visible
-            loadingAlert.show();
-        }, 2000); // Ajusta este tiempo a 2 segundos
-
-        // Realizar la búsqueda usando la clase ClientesBD
-        ClientesBD.buscarCliente(tipoBusqueda, busqueda)
+        ClientesBD.buscarCliente('dni', busqueda)  // Llamada para buscar por DNI
             .then((response) => {
+                Swal.close();
                 const cliente = response.data;
-                // Limpiar el temporizador si la búsqueda es rápida
-                clearTimeout(timeout);
-                loadingAlert.close();  // Cerrar la alerta de carga
-
                 if (cliente) {
-                    // Pasar los datos del cliente a la página de SolicitudesClientes
                     navigate('/solicitudesclientes', { state: { cliente } });
                 } else {
-                    // Cliente no encontrado, mostrar alerta de error
                     Swal.fire({
                         icon: 'error',
                         title: 'Cliente no encontrado',
-                        text: 'No se encontró el cliente. Verifica que el DNI o el nombre esté correctamente escrito.',
-                        showConfirmButton: false,
-                        timer: 3000 // Tiempo para el mensaje de error
+                        text: `Cliente con DNI "${busqueda}" no existe.`,
                     });
                 }
             })
             .catch((error) => {
-                console.error('Error al buscar cliente:', error);
-                clearTimeout(timeout); // Limpiar el temporizador en caso de error
-                loadingAlert.close(); // Cerrar la alerta de carga
-
-                // Alerta de error en caso de fallo en el servidor o en la conexión
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error al buscar cliente',
-                    text: 'Hubo un error al intentar buscar el cliente. Por favor, intenta de nuevo más tarde.',
-                    showConfirmButton: false,
-                    timer: 3000 // Tiempo para el mensaje de error
-                });
+                Swal.close();
+                if (error.response && error.response.status === 404) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cliente no encontrado',
+                        text: `Cliente con DNI ${busqueda} no existe.`,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al buscar cliente',
+                        text: 'Ocurrió un error inesperado.',
+                    });
+                }
             });
+    };
+
+    // Función para buscar por Nombre Completo
+    const handleBuscarClientePorNombreCompleto = () => {
+        const nombreCompleto = `${busqueda.nombre || ''} ${busqueda.apellidoPaterno || ''} ${busqueda.apellidoMaterno || ''}`;
+
+        if (!nombreCompleto.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error en Nombre Completo',
+                text: 'El Nombre Completo no puede estar vacío.',
+            });
+            return;
+        }
+
+        const errores = [];
+
+        if (!busqueda.nombre.trim()) {
+            errores.push('El Nombre no puede estar vacío.');
+        } else if (!/^[a-zA-Z ]+$/.test(busqueda.nombre)) {
+            errores.push('El Nombre solo debe contener letras.');
+        }
+
+        // Validar apellido paterno: solo letras, sin espacios
+        if (!busqueda.apellidoPaterno.trim()) {
+            errores.push('El Apellido Paterno no puede estar vacío.');
+        } else if (!/^[a-zA-Z]+$/.test(busqueda.apellidoPaterno)) {
+            errores.push('El Apellido Paterno solo debe contener una palabra y solo letras.');
+        }
+
+        // Validar apellido materno: solo letras, sin espacios
+        if (!busqueda.apellidoMaterno.trim()) {
+            errores.push('El Apellido Materno no puede estar vacío.');
+        } else if (!/^[a-zA-Z]+$/.test(busqueda.apellidoMaterno)) {
+            errores.push('El Apellido Materno solo debe contener una palabra y solo letras.');
+        }
+
+        // Si hay errores, mostrar todos los mensajes de error al mismo tiempo
+        if (errores.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Errores de Validación',
+                html: errores.map(error => `<p>${error}</p>`).join(''),
+                showConfirmButton: true,
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Buscando cliente...',
+            text: 'Por favor, espere.',
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
+        ClientesBD.buscarCliente('nombre', busqueda)  // Llamada para buscar por nombre completo
+            .then((response) => {
+                Swal.close();
+                const cliente = response.data;
+                if (cliente) {
+                    navigate('/solicitudesclientes', { state: { cliente } });
+                }
+            })
+            .catch((error) => {
+                Swal.close();
+                if (error.response && error.response.status === 404) {
+                    // Si el error es 404, mostrar el mensaje con el nombre completo
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cliente no encontrado',
+                        text: error.response.data,  // El mensaje de error que contiene el nombre completo
+                    });
+                } else {
+                    // Si ocurre otro tipo de error, mostrar un mensaje genérico
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al buscar cliente',
+                        text: 'Ocurrió un error inesperado.',
+                    });
+                }
+            });
+    };
+
+    // Función principal para manejar la búsqueda
+    const handleBuscarCliente = () => {
+        if (tipoBusqueda === 'dni') {
+            handleBuscarClientePorDni();  // Llama a la función de búsqueda por DNI
+        } else {
+            handleBuscarClientePorNombreCompleto();  // Llama a la función de búsqueda por nombre completo
+        }
     };
 
 
     return (
         <div className="clientes-page">
-            <h2>Buscar y/o Agregar Clientes</h2>
+            <h2 className='title-cliente'>Buscar y/o Agregar Clientes:</h2>
 
             <div className="formulario-busqueda">
                 <select
@@ -151,24 +344,52 @@ function Clientes() {
                     <option value="dni">DNI</option>
                     <option value="nombre">Nombre Completo</option>
                 </select>
-                <input
-                    type="text"
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                    placeholder={tipoBusqueda === 'dni' ? 'Ingrese el DNI' : 'Ingrese el Nombre Completo'} />
-                <button className="boton-buscar" onClick={handleBuscarCliente}>Buscar</button>
+                {tipoBusqueda === 'dni' ? (
+                    <input
+                        type="text"
+                        value={busqueda}
+                        onChange={(e) => setBusqueda(e.target.value)}
+                        placeholder="Ingrese el DNI del cliente"
+                    />
+                ) : (
+                    <div className="nombre-completo">
+                        <input
+                            type="text"
+                            value={busqueda.nombre}
+                            onChange={(e) => setBusqueda({ ...busqueda, nombre: e.target.value })}
+                            placeholder="Ingrese el Nombre del cliente"
+                        />
+                        <input
+                            type="text"
+                            value={busqueda.apellidoPaterno}
+                            onChange={(e) =>
+                                setBusqueda({ ...busqueda, apellidoPaterno: e.target.value })
+                            }
+                            placeholder="Ingrese el Apellido Paterno del cliente"
+                        />
+                        <input
+                            type="text"
+                            value={busqueda.apellidoMaterno}
+                            onChange={(e) =>
+                                setBusqueda({ ...busqueda, apellidoMaterno: e.target.value })
+                            }
+                            placeholder="Ingrese el Apellido Materno del cliente"
+                        />
+                    </div>
+                )}
+                <button className="btn btn-info boton-buscar" onClick={handleBuscarCliente}>Buscar</button>
             </div>
 
             <button
-                className="boton-abrir-formulario"
+                className="btn btn-success boton-abrir-formulario"
                 onClick={() => setMostrarFormulario(true)}>
-                Añadir Cliente
+                Crear Cliente
             </button>
 
             {mostrarFormulario && (
-                <div className="formulario-flotante">
-                    <div className="formulario-contenido">
-                        <h3 className="text-center">Añadir Nuevo Cliente:</h3>
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3 className="text-center">CREAR NUEVO CLIENTE</h3>
                         <div className="formulario-campos">
                             <label>DNI:</label>
                             <input
@@ -186,11 +407,19 @@ function Clientes() {
                                 onChange={handleChange}
                                 required
                             />
-                            <label>Apellidos:</label>
+                            <label>Apellido Paterno:</label>
                             <input
                                 type="text"
-                                name="apellido"
-                                value={nuevoCliente.apellido}
+                                name="apellido_paterno"
+                                value={nuevoCliente.apellido_paterno}
+                                onChange={handleChange}
+                                required
+                            />
+                            <label>Apellido Materno:</label>
+                            <input
+                                type="text"
+                                name="apellido_materno"
+                                value={nuevoCliente.apellido_materno}
                                 onChange={handleChange}
                                 required
                             />
@@ -210,23 +439,41 @@ function Clientes() {
                                 onChange={handleChange}
                                 required
                             />
-                            <label>Notas Extras:</label>
-                            <textarea
-                                name="nota"
-                                value={nuevoCliente.nota}
+                            <label>Dirección:</label>
+                            <input
+                                type="text"
+                                name="direccion"
+                                value={nuevoCliente.direccion}
                                 onChange={handleChange}
-                                placeholder="Agregar notas adicionales sobre el cliente (opcional)."
-                                rows="3"
+                                required
                             />
+                            <label>¿Tiene discapacidad?</label>
+                            <div className='cliente-discapacidad'>
+                                <div className='form-check'>
+                                    <input className='form-check-input' type="radio" name="nota" value="Sin discapacidad" checked={nuevoCliente.nota === 'Sin discapacidad'} onChange={handleNotaChange} />
+                                    <label className='form-check-label'>Sin discapacidad</label>
+                                </div>
+                                <div className='form-check'>
+                                    <input className='form-check-input' type="radio" name="nota" value="Con discapacidad" checked={nuevoCliente.nota === 'Con discapacidad'} onChange={handleNotaChange} />
+                                    <label className='form-check-label'>Con discapacidad</label>
+                                </div>
+                            </div>
+
+                            {nuevoCliente.nota === 'Con discapacidad' && (
+                                <div>
+                                    <label>Especifique la discapacidad:</label>
+                                    <input
+                                        type="text"
+                                        value={discapacidad} // Vinculado al nuevo estado
+                                        onChange={handleDiscapacidadChange} // Actualiza solo la discapacidad
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         <div className="formulario-botones">
-                            <button className="annadir" onClick={handleAñadirCliente}>
-                                Añadir
-                            </button>
-                            <button className="cancelar" onClick={() => setMostrarFormulario(false)}>
-                                Cancelar
-                            </button>
+                            <button className="btn btn-success" onClick={handleCrearCliente}>Crear Cliente</button>
+                            <button className="btn btn-secondary" onClick={() => setMostrarFormulario(false)}>Cancelar</button>
                         </div>
                     </div>
                 </div>

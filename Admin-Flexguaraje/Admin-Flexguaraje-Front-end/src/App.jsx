@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Clientes from './paginas/Clientes/Clientes';
 import SolicitudesClientes from './paginas/Clientes/SolicitudesClientes';
 import Espacios from './paginas/Espacios/Espacios';
-import Servicios from './paginas/Servicios/Servicios';
+import Boleta from './paginas/Boleta/Boleta';
 import Reportes from './paginas/Reportes/Reportes';
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/solicitudesclientes" element={<SolicitudesClientes />} />
             <Route path="/espacios" element={<Espacios />} />
-            <Route path="/servicios" element={<Servicios />} />
+            <Route path="/Boleta" element={<Boleta />} />
             <Route path="/reportes" element={<Reportes />} />
           </Routes>
         </div>

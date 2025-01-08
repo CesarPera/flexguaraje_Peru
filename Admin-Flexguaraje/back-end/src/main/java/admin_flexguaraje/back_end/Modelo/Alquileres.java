@@ -1,12 +1,14 @@
 package admin_flexguaraje.back_end.Modelo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
-@Table(name = "alquileres",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"id_espacio", "fecha_inicio_alquiler", "fecha_fin_alquiler"}))
+@Table(name = "alquileres")
 public class Alquileres {
 
     @Id
@@ -30,6 +32,13 @@ public class Alquileres {
 
     @Column(name = "fecha_fin_alquiler", nullable = false)
     private LocalDate fechaFinAlquiler;
+
+    @Column(name = "total_dias_alquiler", nullable = false,  length = 20)
+    private String dias_alquiler;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false, length = 15)
+    private estadoAlquiler estado = estadoAlquiler.No_Ignorar;
 
     public Long getIdAlquiler() {
         return idAlquiler;
@@ -71,11 +80,35 @@ public class Alquileres {
         this.fechaFinAlquiler = fechaFinAlquiler;
     }
 
+    public String getDias_alquiler() {
+        return dias_alquiler;
+    }
+
+    public void setDias_alquiler(String dias_alquiler) {
+        this.dias_alquiler = dias_alquiler;
+    }
+
+    public estadoAlquiler getEstado() {
+        return estado;
+    }
+
+    public void setEstado(estadoAlquiler estado) {
+        this.estado = estado;
+    }
+
     @PrePersist
     @PreUpdate
     private void validarFechas() {
         if (fechaInicioAlquiler.isAfter(fechaFinAlquiler)) {
-            throw new IllegalArgumentException("La fecha de inicio debe ser menor o igual a la fecha de fin.");
+            throw new IllegalArgumentException(
+                    "La fecha final debe ser mayor que la fecha de inicio. " +
+                            "Inicio: " + fechaInicioAlquiler + ", Fin: " + fechaFinAlquiler
+            );
         }
+    }
+
+    public enum estadoAlquiler {
+        Ignorar,
+        No_Ignorar
     }
 }

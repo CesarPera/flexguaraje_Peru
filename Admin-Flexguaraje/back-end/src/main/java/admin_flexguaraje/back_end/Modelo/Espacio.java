@@ -1,6 +1,10 @@
 package admin_flexguaraje.back_end.Modelo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "espacio",
@@ -8,15 +12,23 @@ import jakarta.persistence.*;
 public class Espacio {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_espacio")
     private Long idEspacio;
 
-    @Column(name = "codigo_espacio", nullable = false, unique = true, length = 30)
+    @Column(name = "codigo_espacio", nullable = false, length = 30)
     private String codigoEspacio;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 15)
     private EstadoEspacio estado = EstadoEspacio.Disponible;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "subestado", nullable = false, length = 15)
+    private SubestadoEspacio subestado = SubestadoEspacio.Desactivado;
+
+    @Column(name = "costo", nullable = false, precision = 10, scale = 2)
+    private BigDecimal costo;
 
     public Long getIdEspacio() {
         return idEspacio;
@@ -42,10 +54,31 @@ public class Espacio {
         this.estado = estado;
     }
 
+    public SubestadoEspacio getSubestado() {
+        return subestado;
+    }
+
+    public void setSubestado(SubestadoEspacio subestado) {
+        this.subestado = subestado;
+    }
+
+    public BigDecimal getCosto() {
+        return costo;
+    }
+
+    public void setCosto(BigDecimal costo) {
+        this.costo = costo;
+    }
+
     public enum EstadoEspacio {
         Disponible,
         Ocupado,
         Mantenimiento
+    }
+
+    public enum SubestadoEspacio {
+        Activo,
+        Desactivado
     }
 }
 

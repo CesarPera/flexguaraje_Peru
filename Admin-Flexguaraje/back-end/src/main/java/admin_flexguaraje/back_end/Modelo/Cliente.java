@@ -7,11 +7,8 @@ import java.util.List;
 @Entity
 @Table(name = "cliente",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "dni"),
-                @UniqueConstraint(columnNames = "email")
-        })
+                @UniqueConstraint(columnNames = "dni")})
 public class Cliente {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cliente")
@@ -23,8 +20,11 @@ public class Cliente {
     @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
 
-    @Column(name = "apellido", nullable = false, length = 50)
-    private String apellido;
+    @Column(name = "apellido_paterno", nullable = false, length = 20)
+    private String apellidoPaterno;
+
+    @Column(name = "apellido_materno", nullable = false, length = 20)
+    private String apellidoMaterno;
 
     @Column(name = "telefono", nullable = false, length = 9)
     private String telefono;
@@ -32,15 +32,16 @@ public class Cliente {
     @Column(name = "email", nullable = false, length = 50)
     private String email;
 
-    @Column(name = "nota", length = 255)
-    private String nota = "Sin Discapacidad";
+    @Column(name = "direccion", nullable = false, length = 250)
+    private String direccion;
 
-    // Relación uno a muchos con la entidad Alquileres
+    @Column(name = "nota_adicional", length = 250)
+    private String notaAdicional = "Sin Discapacidad";
+
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private List<Alquileres> alquileres;
 
-    // Getters y Setters
     public Long getIdCliente() {
         return idCliente;
     }
@@ -65,12 +66,20 @@ public class Cliente {
         this.nombre = nombre;
     }
 
-    public String getApellido() {
-        return apellido;
+    public String getApellidoPaterno() {
+        return apellidoPaterno;
     }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
+    public void setApellidoPaterno(String apellidoPaterno) {
+        this.apellidoPaterno = apellidoPaterno;
+    }
+
+    public String getApellidoMaterno() {
+        return apellidoMaterno;
+    }
+
+    public void setApellidoMaterno(String apellidoMaterno) {
+        this.apellidoMaterno = apellidoMaterno;
     }
 
     public String getTelefono() {
@@ -89,12 +98,20 @@ public class Cliente {
         this.email = email;
     }
 
-    public String getNota() {
-        return nota;
+    public String getDireccion() {
+        return direccion;
     }
 
-    public void setNota(String nota) {
-        this.nota = nota;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getNotaAdicional() {
+        return notaAdicional;
+    }
+
+    public void setNotaAdicional(String notaAdicional) {
+        this.notaAdicional = notaAdicional;
     }
 
     public List<Alquileres> getAlquileres() {
@@ -105,7 +122,6 @@ public class Cliente {
         this.alquileres = alquileres;
     }
 
-    // Validación personalizada
     @PrePersist
     @PreUpdate
     private void validarDatos() {
@@ -115,5 +131,15 @@ public class Cliente {
         if (!telefono.matches("\\d{9}")) {
             throw new IllegalArgumentException("El teléfono debe contener exactamente 9 dígitos.");
         }
+        if (!nombre.matches("[A-Za-z ]+")) {
+            throw new IllegalArgumentException("El nombre solo debe contener letras.");
+        }
+        if (!apellidoPaterno.matches("[A-Za-z]+")) {
+            throw new IllegalArgumentException("El apellido paterno solo debe contener letras.");
+        }
+        if (!apellidoMaterno.matches("[A-Za-z]+")) {
+            throw new IllegalArgumentException("El apellido materno solo debe contener letras.");
+        }
     }
 }
+

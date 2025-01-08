@@ -39,10 +39,10 @@ function ListaAdmin() {
                         )}
                     </li>
                     <li className="menu-item">
-                        {!isExpanded && <span className="short-label">S</span>}
+                        {!isExpanded && <span className="short-label">B</span>}
                         {isExpanded && (
-                            <Link to="/servicios">
-                                <span className="full-label animate">Servicios</span>
+                            <Link to="/Boleta">
+                                <span className="full-label animate">Boleta</span>
                             </Link>
                         )}
                     </li>

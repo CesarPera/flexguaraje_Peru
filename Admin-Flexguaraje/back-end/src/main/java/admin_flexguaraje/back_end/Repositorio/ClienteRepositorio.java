@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface ClienteRepositorio extends JpaRepository<Cliente, Long> {
     public Cliente findByDni(String dni);
-    Optional<Cliente> findByNombreAndApellido(String nombre, String apellido);
-
+    Optional<Cliente> findByNombreAndApellidoPaternoAndApellidoMaterno(String nombre, String apellidoPaterno, String apellidoMaterno);
+    public boolean existsByDni(String dni);
+    public boolean existsByEmail(String email);
 }

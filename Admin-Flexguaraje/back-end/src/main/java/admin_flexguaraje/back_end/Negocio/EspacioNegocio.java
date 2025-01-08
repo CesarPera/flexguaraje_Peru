@@ -15,16 +15,4 @@ public class EspacioNegocio {
     public List<Espacio> ListarEspacio() {
         return espacioRepositorio.findAll();
     }
-
-    public List<Espacio> buscarPorEstado(String estado) {
-        return espacioRepositorio.findByEstado(estado);
-    }
-
-    //public Espacio crear_Espacio(Espacio espacio) {
-    //    return espacioRepositorio.save(espacio);
-    //}
-
-    //public void eliminarPorId(Long id) {
-      //  espacioRepositorio.deleteById(id);
-    //}
 }

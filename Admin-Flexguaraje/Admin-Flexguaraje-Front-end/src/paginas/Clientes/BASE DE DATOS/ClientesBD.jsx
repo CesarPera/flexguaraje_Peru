@@ -6,26 +6,26 @@ const CREAR_CLIENTE_BD_REST_API_URL = "http://127.0.0.1:8080/cliente/crear_clien
 
 class ClientesBD {
     // crear cliente
-    crearCliente(cliente) {
-        return axios.post(CREAR_CLIENTE_BD_REST_API_URL, cliente);
+    crearCliente(nuevoCliente) {
+        return axios.post(CREAR_CLIENTE_BD_REST_API_URL, nuevoCliente);
     }
 
-    // Buscar cliente (DNI o nombre completo)
+    // Buscar cliente - DNI y NOMBRE COMPLETO
     buscarCliente(tipoBusqueda, busqueda) {
         let url = '';
         let data = {};
 
-        // Seleccionar la URL y los datos según el tipo de búsqueda
         if (tipoBusqueda === 'dni') {
             url = BUSCAR_CLIENTE_DNI_BD_REST_API_URL;
             data = { dni: busqueda };
         } else if (tipoBusqueda === 'nombre') {
-            const [nombre, apellido] = busqueda.split(' ');
-            if (!nombre || !apellido) {
-                throw new Error('Por favor, ingresa el nombre completo (nombre y apellido).');
-            }
+            const { nombre, apellidoPaterno, apellidoMaterno } = busqueda;
             url = BUSCAR_CLIENTE_NC_BD_REST_API_URL;
-            data = { nombre, apellido };
+            data = {
+                nombre: busqueda.nombre || '',
+                apellido_paterno: busqueda.apellidoPaterno || '',
+                apellido_materno: busqueda.apellidoMaterno || '',
+            };
         }
 
         return axios.post(url, data);

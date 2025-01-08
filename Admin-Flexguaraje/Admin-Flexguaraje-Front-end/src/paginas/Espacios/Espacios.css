@@ -47,7 +47,37 @@
     text-align: center;
 }
 
+/* BOTONESSSSSSSSSSSSSSSSSSS-ACCIONES */
 
+.btn-acciones {
+    justify-content: center;
+    align-items: center;
+    margin: 10px auto;
+    display: flex;
+    gap: 30px;
+}
+
+.btn-agregar {
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.btn-actualizar {
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+
+}
+
+.btn-eliminar {
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
 
 /* TABLASSSSSSSS */
 .table {
@@ -61,65 +91,33 @@
 }
 
 /* LOS ESPACIOS DE CADA COLUMNA */
+/*
+.espacios-dni,
 .espacios-n {
-    width: 50px;
+    width: 80px;
 }
 
-.espacios-dni {
-    width: 140px;
+.espacios-na {
+    width: 250px;
 }
 
 .espacios-t {
     width: 100px;
 }
 
+.espacio-costo {
+    width: 70px;
+}
+
+.espacios-fecha {
+    width: 10%;
+}
+
 .espacios-e {
-    width: 210px;
+    width: 100px;
 }
+*/
 
-/* BOTONESSSSSSSSSSSSSSSSSSS-ACCIONES */
-
-.btn-acciones {
-    justify-content: center;
-    align-items: center;
-    margin: 10px auto;
-    display: flex;
-    gap: 40px;
-    font-size: 1.2rem;
-}
-
-.btn-agregar {
-    background-color: rgb(24, 247, 24);
-    border-radius: 20px;
-}
-
-.btn-agregar:hover {
-    background-color: rgb(24, 247, 24);
-    border-radius: 20px;
-
-}
-
-.btn-actualizar {
-    background-color: rgba(72, 182, 245, 0.925);
-    border-radius: 20px;
-
-}
-
-.btn-actualizar:hover {
-    background-color: rgba(72, 182, 245, 0.925);
-    border-radius: 20px;
-
-}
-
-.btn-eliminar {
-    border-radius: 20px;
-    background-color: rgb(228, 34, 34);
-}
-
-.btn-eliminar:hover {
-    border-radius: 20px;
-    background-color: rgb(228, 34, 34);
-}
 
 /* VENTANAAAAAA FLOTANTEEEEEEEEEEEE */
 .modal-backdrop {
@@ -178,4 +176,10 @@
     padding: 10px;
     margin: 10px auto;
     font-size: 1rem;
+}
+
+/* VER MASSSSSSSSSSSSSSSS */
+.modal-backdrop p {
+    font-size: 2rem;
+    margin: 10px;
 }

@@ -33,13 +33,6 @@ h1 {
   font-size: 60px;
 }
 
-/* BOTTON DE CERRAR SESION */
-
-button {
-  padding: 10px;
-  font-family: cursive;
-}
-
 button:hover {
   background-color: yellow;
 }
@@ -144,24 +137,20 @@ button:hover {
   margin-left: 70px;
   margin-top: 100px;
   flex-grow: 1;
-  background: #f4f7fb;
   color: #333;
   padding: 40px;
   border-radius: 8px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .intro-text h2 {
   font-size: 2.5rem;
   color: #2a82d7;
-  /* Color principal de Flexguaraje */
   font-weight: bold;
 }
 
 .empresa-nombre {
   color: #d96b32;
-  /* Color complementario para el nombre de la empresa */
 }
 
 .subtitulo {

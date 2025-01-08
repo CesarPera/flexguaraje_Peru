@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import './Servicios.css';
+import './Info-boleta.css';
 import BoletasBD from './BASE DE DATOS/BoletasBD';
 import { jsPDF } from "jspdf";
 import "jspdf-autotable"; // Asegúrate de importar esta librería
 import Swal from 'sweetalert2'; // Importa SweetAlert2
 
 
-function Servicios() {
+const Info_Boleta = ({ boleta }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({
         DNI: '',
@@ -14,10 +14,9 @@ function Servicios() {
         metodoPago: '',
         costo: '',
         fechaPago: '',
-        espacioAdquirido: '',
+        espacioAdquirido: ''
     });
     const [boletas, setBoletas] = useState([]);
-    const [editingBoletaIndex, setEditingBoletaIndex] = useState(null);
 
     // Cargar boletas al iniciar la página
     useEffect(() => {
@@ -25,7 +24,7 @@ function Servicios() {
             .then((response) => {
                 setBoletas(response.data);
             })
-            .catch((error) => alert("Error al cargar boletas: " + error.message));
+
     }, []);
 
     const handleInputChange = (e) => {
@@ -58,7 +57,7 @@ function Servicios() {
             metodoPago: formData.metodoPago,
             montoPagar: formData.costo,
             fechaEmision: formData.fechaPago,
-            codigoEspacio: formData.espacioAdquirido,
+            codigoEspacio: formData.espacioAdquirido
         };
 
         // Cerrar el modal antes de mostrar la alerta
@@ -112,11 +111,13 @@ function Servicios() {
         const tableData = [
             ["Código de Boleta", boleta.codigoBoleta],
             ["DNI del Cliente", boleta.alquileres?.cliente?.dni],
-            ["Nombre Completo", `${boleta.alquileres?.cliente?.nombre} ${boleta.alquileres?.cliente?.apellido}`],
+            ["Nombre Completo", `${boleta.alquileres?.cliente?.nombre} ${boleta.alquileres?.cliente?.apellidoPaterno} ${boleta.alquileres?.cliente?.apellidoMaterno}`],
             ["Espacio Alquilado", boleta.alquileres?.espacio?.codigoEspacio],
             ["Fecha de Emisión", boleta.fechaEmision],
             ["Método de Pago", boleta.metodoPago],
-            ["Monto de Pago", `S/ ${boleta.montoPagar}`],
+            ["Monto Base", `S/ ${Number(boleta.montobase).toFixed(2)}`],
+            ["IGV (18%)", `S/ ${Number(boleta.montoIGV).toFixed(2)}`],
+            ["Monto Total", `S/ ${Number(boleta.montoPagar).toFixed(2)}`],
         ];
 
         // Usando autotable para agregar la tabla
@@ -134,98 +135,49 @@ function Servicios() {
             title: 'PDF Generado',
             text: `El PDF de la boleta ${boleta.codigoBoleta} se ha generado correctamente.`,
             timer: 3000,
-            showConfirmButton: false,  // Oculta el botón de confirmación
+            showConfirmButton: false, // Oculta el botón de confirmación
         });
     };
 
-
     return (
-        <div className="servicios-page">
-            <h2 className="title-servicios">Servicios de Boleta</h2>
-
-            <div className="center-button-container">
-                <button className="btn-generate" onClick={() => handleOpenModal()}>
-                    Generar Boletas
-                </button>
-            </div>
-
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h3>{editingBoletaIndex !== null ? 'Editar Boleta' : 'Generar Boleta'}</h3>
-                        <form>
-                            <div className="form-group">
-                                <label>Código de Boleta:</label>
-                                <input type="text" name="codigoBoleta" value={formData.codigoBoleta} onChange={handleInputChange} />
-                            </div>
-                            <div className="form-group">
-                                <label>DNI:</label>
-                                <input type="text" name="DNI" value={formData.DNI} onChange={handleInputChange} />
-                            </div>
-                            <div className="form-group">
-                                <label>Espacio Adquirido:</label>
-                                <input type="text" name="espacioAdquirido" value={formData.espacioAdquirido} onChange={handleInputChange} />
-                            </div>
-                            <div className="form-group">
-                                <label>Fecha de Pago:</label>
-                                <input type="date" name="fechaPago" value={formData.fechaPago} onChange={handleInputChange} />
-                            </div>
-                            <div className="form-group">
-                                <label>Método de Pago:</label>
-                                <select name="metodoPago" value={formData.metodoPago} onChange={handleInputChange}>
-                                    <option value="">Seleccione</option>
-                                    <option value="Efectivo">Efectivo</option>
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label>Monto de Pago:</label>
-                                <input type="number" name="costo" value={formData.costo} onChange={handleInputChange} />
-                            </div>
-                        </form>
-                        <div className="modal-actions">
-                            <button type="button" className="btn-save" onClick={handleSaveBoleta}>
-                                {editingBoletaIndex !== null ? 'Actualizar' : 'Generar'}
-                            </button>
-                            <button type="button" className="btn-cancel" onClick={handleCloseModal}>
-                                Cancelar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            <table className="boletas-table">
-                <thead>
-                    <tr>
-                        <th>Código de Boleta</th>
-                        <th>DNI del Cliente</th>
-                        <th>Nombre Completo</th>
-                        <th>Espacio Alquilado</th>
-                        <th>Fecha de Emisión</th>
-                        <th>Método de Pago</th>
-                        <th>Monto</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody className='text-center'>
-                    {boletas.map((boleta, index) => (
-                        <tr key={index}>
+        <div className="info-boleta">
+            <h3 className='title-infoboleta'>Información de la boleta</h3>
+            <div className="table-responsive">
+                <table className="table table-primary table-hover table-bordered border-primary text-center boletas-table">
+                    <thead>
+                        <tr>
+                            <th>Código de Boleta</th>
+                            <th>DNI</th>
+                            <th>Nombre Completo</th>
+                            <th>Espacio Adquirido</th>
+                            <th>Fecha de Emisión</th>
+                            <th>Método de Pago</th>
+                            <th>Monto Base</th>
+                            <th>IGV</th>
+                            <th>Monto Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody className='text-center'>
+                        <tr>
                             <td>{boleta.codigoBoleta}</td>
                             <td>{boleta.alquileres?.cliente?.dni}</td>
-                            <td>{`${boleta.alquileres?.cliente?.nombre} ${boleta.alquileres?.cliente?.apellido}`}</td>
+                            <td>{`${boleta.alquileres?.cliente?.nombre} ${boleta.alquileres?.cliente?.apellidoPaterno} ${boleta.alquileres?.cliente?.apellidoMaterno}`}</td>
                             <td>{boleta.alquileres?.espacio?.codigoEspacio}</td>
                             <td>{boleta.fechaEmision}</td>
                             <td>{boleta.metodoPago}</td>
-                            <td>S/ {boleta.montoPagar}</td>
+                            <td>S/ {Number(boleta.montobase).toFixed(2)}</td>
+                            <td>S/ {Number(boleta.montoIGV).toFixed(2)}</td>
+                            <td>S/ {Number(boleta.montoPagar).toFixed(2)}</td>
                             <td className="actions">
-                                <button className="btn-generate" onClick={() => handleGenerateTablePDF(boleta)}>Generar PDF</button>
+                                <button className="btn btn-success" onClick={() => handleGenerateTablePDF(boleta)}>Generar PDF</button>
                             </td>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }
 
-export default Servicios;
+export default Info_Boleta;

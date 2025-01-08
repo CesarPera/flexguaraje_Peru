@@ -13,10 +13,25 @@
 /* Búsqueda */
 /* Clientes.css */
 
+/* TITULO CLIENTE */
+
+.title-cliente {
+    font-size: 2rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    border-bottom: 5px solid black;
+    width: 440px;
+    margin-bottom: 30px;
+    color: #333;
+    vertical-align: middle;
+
+}
+
+/* FORMULARIO DE BUSCAR */
 .formulario-busqueda {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     margin-bottom: 20px;
 }
 
@@ -26,113 +41,76 @@
     border-radius: 4px;
     border: 1px solid #ccc;
 }
-.boton-buscar {
-    padding: 10px 20px;
-    background-color: #00bfff; /* Color celeste */
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
+
+.formulario-busqueda select {
+    width: 200px;
 }
 
-.boton-buscar:hover {
-    background-color: #009acd; /* Celeste oscuro al pasar el mouse */
+.formulario-busqueda input {
+    width: 400px;
+}
+
+/* BOTON BUSCAR */
+.boton-buscar {
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
 }
 
 /* Botón para abrir el formulario */
 .boton-abrir-formulario {
-    padding: 10px 20px;
-    background-color: #6a5acd; /* Color lilac */
-    color: white;
-    border: none;
     cursor: pointer;
-    border-radius: 4px;
-    margin-bottom: 20px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
 }
 
-.boton-abrir-formulario:hover {
-    background-color: #5b4b9e;
+/* Formulario flotante MODAL*/
+.modal-overlay {
+    z-index: 2;
 }
 
-/* Formulario flotante */
-.formulario-flotante {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+.modal-overlay h3 {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.modal-overlay label {
+    font-weight: 500;
+}
+
+.modal-overlay textarea {
     display: flex;
+    width: 300px;
     justify-content: center;
-    align-items: flex-start;
-    padding-top: 50px;
-    z-index: 1000;
-    overflow: auto;
+    margin: 0px auto 10px auto;
 }
 
-.formulario-contenido {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    max-width: 90%;
-    max-height: 80vh;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
+/* FORMULARIO FLOTANTE - BOTONES */
+.formulario-botones {
+    display: flex;
+    gap: 60px;
+    margin: 10px auto;
 }
 
-.formulario-campos {
-    max-height: 60vh;
-    overflow-y: auto;
-    margin-bottom: 20px;
-}
-
-.formulario-contenido h3 {
-    margin-bottom: 20px;
+.formulario-botones .btn {
     font-size: 20px;
-    color: #333;
-}
-
-.formulario-contenido label {
-    display: block;
-    margin: 10px 0 5px;
-    font-size: 14px;
-    color: #333;
-}
-
-.formulario-contenido input,
-.formulario-contenido select {
-    width: 100%;
+    font-weight: bolder;
     padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
 }
 
-/* Botones de acción dentro del formulario */
-.annadir {
-    padding: 10px 20px;
-    background-color: #28a745; /* Color verde */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 10px;
+.form-check {
+    width: 360px;
+    display: flex;
+    margin: 10px auto;
 }
 
-.annadir:hover {
-    background-color: #218838;
+.form-check input {
+    width: 1% !important;
+    margin: 5px;
 }
 
-.cancelar {
-    padding: 10px 20px;
-    background-color: #dc3545; /* Color rojo */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.cancelar:hover {
-    background-color: #c82333;
+.form-check label {
+    font-weight: normal !important;
 }

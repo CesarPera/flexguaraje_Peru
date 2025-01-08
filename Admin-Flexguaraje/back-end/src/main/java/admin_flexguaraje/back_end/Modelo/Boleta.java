@@ -1,31 +1,42 @@
 package admin_flexguaraje.back_end.Modelo;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "boleta",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"id_alquiler", "fecha_emision", "codigo_boleta"}))
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"id_alquiler"}), // Coincide con UQ_id_alquiler
+                @UniqueConstraint(columnNames = {"codigo_boleta"}), // Coincide con UQ_codigo_boleta
+        })
 public class Boleta {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_boleta")
     private Long idBoleta;
 
-    @ManyToOne
-    @JoinColumn(name = "id_alquiler", nullable = false, foreignKey = @ForeignKey(name = "FK_boleta_Alquiler"))
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_alquiler", nullable = false,
+            foreignKey = @ForeignKey(name = "FK_boleta_Alquiler"))
     private Alquileres alquileres; // Cambiar de List<Alquileres> a Alquileres
 
-    @Column(name = "codigo_boleta", nullable = false, length = 30)
+    @Column(name = "codigo_boleta", nullable = false, length = 15)
     private String codigoBoleta;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "metodo_pago", nullable = false, length = 30)
-    private String metodoPago;
+    private metodo_pago metodoPago = metodo_pago.Efectivo;
 
     @Column(name = "fecha_emision", nullable = false)
     private LocalDate fechaEmision; // Cambiado a LocalDate
+
+    @Column(name = "monto_base", nullable = false, precision = 10, scale = 2)
+    private BigDecimal montobase;
+
+    @Column(name = "monto_igv", nullable = false, precision = 10, scale = 2)
+    private BigDecimal montoIGV;
 
     @Column(name = "monto_pagar", nullable = false, precision = 10, scale = 2)
     private BigDecimal montoPagar;
@@ -54,11 +65,11 @@ public class Boleta {
         this.codigoBoleta = codigoBoleta;
     }
 
-    public String getMetodoPago() {
+    public metodo_pago getMetodoPago() {
         return metodoPago;
     }
 
-    public void setMetodoPago(String metodoPago) {
+    public void setMetodoPago(metodo_pago metodoPago) {
         this.metodoPago = metodoPago;
     }
 
@@ -70,6 +81,22 @@ public class Boleta {
         this.fechaEmision = fechaEmision;
     }
 
+    public BigDecimal getMontobase() {
+        return montobase;
+    }
+
+    public void setMontobase(BigDecimal montobase) {
+        this.montobase = montobase;
+    }
+
+    public BigDecimal getMontoIGV() {
+        return montoIGV;
+    }
+
+    public void setMontoIGV(BigDecimal montoIGV) {
+        this.montoIGV = montoIGV;
+    }
+
     public BigDecimal getMontoPagar() {
         return montoPagar;
     }
@@ -78,11 +105,9 @@ public class Boleta {
         this.montoPagar = montoPagar;
     }
 
-    @PrePersist
-    @PreUpdate
-    public void validarDatos() {
-        if (montoPagar == null || montoPagar.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("El monto a pagar debe ser mayor a 0.");
-        }
+    public enum metodo_pago {
+        Efectivo,
+        tarjeta_credito,
+        tarjeta_debito
     }
 }

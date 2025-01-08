@@ -25,125 +25,163 @@ public class AlquileresControlador {
         this.alquileresNegocio = alquileresNegocio;
     }
 
-    // Endpoint para listar todos los alquileres
-    @GetMapping("/listar_alquileres")
+    // Endpoint para listar todos los alquileres generales
+    @GetMapping("/listar_alquileres_general")
     public ResponseEntity<List<Alquileres>> listarAlquileres() {
         List<Alquileres> listaAlquileres = alquileresNegocio.listarAlquileres();
         return ResponseEntity.ok(listaAlquileres);
     }
 
-    // Endpoint para agregar un cliente a un espacio y realizar un alquiler
-    @PostMapping("/agregar_alquileres")
+    // LISTAR ALQUILERES CON SOLO ESTADO "NO IGNORAR"
+    @GetMapping("/listar_alquileres")
+    public List<Alquileres> obtenerAlquileresNoIgnorar() {
+        return alquileresNegocio.obtenerAlquileresNoIgnorar();
+    }
+
+    @PostMapping("/crear_alquiler")
     public ResponseEntity<Object> agregarClienteAlEspacio(@RequestBody Map<String, Object> body) {
         try {
-            // Verificar si los valores son nulos
-            if (body.get("dni") == null || body.get("codigoEspacio") == null || body.get("fechaInicio") == null || body.get("fechaFin") == null) {
-                return new ResponseEntity<>(new ErrorResponse("Faltan parámetros en la solicitud"), HttpStatus.BAD_REQUEST);
+            // Verificar si los valores son nulos o vacíos
+            if (body.get("dni") == null || body.get("dni").toString().isEmpty() ||
+                    body.get("codigoEspacio") == null || body.get("codigoEspacio").toString().isEmpty() ||
+                    body.get("fechaFin") == null || body.get("fechaFin").toString().isEmpty()) {
+                return new ResponseEntity<>(Map.of("message", "Faltan parámetros en la solicitud. Complete todos los campos."), HttpStatus.BAD_REQUEST);
             }
 
-            String dni = (String) body.get("dni");
-            String codigoEspacio = (String) body.get("codigoEspacio");
-            LocalDate fechaInicio = LocalDate.parse(body.get("fechaInicio").toString());
-            LocalDate fechaFin = LocalDate.parse(body.get("fechaFin").toString());
+            String dni = body.get("dni").toString();
+            String codigoEspacio = body.get("codigoEspacio").toString();
+            String fechaFinStr = body.get("fechaFin").toString();
 
-            // Buscar el ID del espacio basado en el código
+            // Validar DNI: verificar longitud y formato
+            if (dni.length() != 8) {
+                return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
+            }
+            if (!dni.matches("\\d+")) { // Validar que el DNI solo contenga números
+                return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
+            }
+            if (!alquileresNegocio.existeDni(dni)) {
+                return new ResponseEntity<>(Map.of("message", "CLIENTE CON DNI " + dni + " NO EXISTE."), HttpStatus.NOT_FOUND);
+            }
+
+            // Validar formato de fecha
+            LocalDate fechaFin;
+            try {
+                fechaFin = LocalDate.parse(fechaFinStr);
+            } catch (Exception e) {
+                return new ResponseEntity<>(Map.of("message", "Formato de fecha inválido. Use el formato YYYY-MM-DD."), HttpStatus.BAD_REQUEST);
+            }
+
+            // Validar que la fecha de fin sea posterior o igual a la fecha actual
+            if (fechaFin.isBefore(LocalDate.now())) {
+                return new ResponseEntity<>(Map.of("message", "La fecha de fin debe ser igual o posterior a la fecha actual."), HttpStatus.BAD_REQUEST);
+            }
+
+            // Validar existencia del código de espacio
             Long idEspacio = alquileresNegocio.obtenerIdPorCodigoEspacio(codigoEspacio);
             if (idEspacio == null) {
-                return new ResponseEntity<>(new ErrorResponse("Código de espacio inválido"), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(Map.of("message", "El código del espacio ingresado no existe."), HttpStatus.BAD_REQUEST);
             }
 
-            // Llamar al servicio para agregar el cliente al espacio
-            Alquileres nuevoAlquiler = alquileresNegocio.agregarClienteAlEspacio(
-                    dni, idEspacio, fechaInicio, fechaFin);
-
+            // Crear el alquiler
+            Alquileres nuevoAlquiler = alquileresNegocio.agregarClienteAlEspacio(dni, idEspacio, fechaFin);
             return new ResponseEntity<>(nuevoAlquiler, HttpStatus.CREATED);
 
         } catch (Exception e) {
-            // Devolver un ErrorResponse en caso de error
-            ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    // Clase para la respuesta de error
-    public class ErrorResponse {
-        private String message;
-
-        public ErrorResponse(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
+            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/actualizar_estado")
     public ResponseEntity<Object> actualizarEstadoEspacio(@RequestBody Map<String, Object> body) {
         try {
-            // Verificar parámetros
-            if (body.get("codigoEspacio") == null || body.get("nuevoEstado") == null) {
-                return new ResponseEntity<>(new ErrorResponse("Faltan parámetros en la solicitud"), HttpStatus.BAD_REQUEST);
+            // Verificar campos requeridos
+            if (body.get("codigoEspacio") == null || body.get("codigoEspacio").toString().isEmpty() ||
+                    body.get("nuevoEstado") == null || body.get("nuevoEstado").toString().isEmpty()) {
+                return new ResponseEntity<>(Map.of("message", "Faltan parámetros en la solicitud. Complete todos los campos."), HttpStatus.BAD_REQUEST);
             }
 
             String codigoEspacio = body.get("codigoEspacio").toString();
-            Espacio.EstadoEspacio nuevoEstado = Espacio.EstadoEspacio.valueOf(body.get("nuevoEstado").toString());
+            String nuevoEstado = body.get("nuevoEstado").toString();
 
-            // Llamar al negocio para actualizar el estado
-            Espacio espacioActualizado = alquileresNegocio.actualizarEstadoPorCodigo(codigoEspacio, nuevoEstado);
+            // Validar existencia del espacio
+            if (!alquileresNegocio.existeCodigoEspacio(codigoEspacio)) {
+                return new ResponseEntity<>(Map.of("message", "El código del espacio ingresado no existe."), HttpStatus.BAD_REQUEST);
+            }
 
+            // Validar estado válido
+            try {
+                Espacio.EstadoEspacio estado = Espacio.EstadoEspacio.valueOf(nuevoEstado);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(Map.of("message", "El estado ingresado no es válido."), HttpStatus.BAD_REQUEST);
+            }
+
+            Espacio espacioActualizado = alquileresNegocio.actualizarEstadoPorCodigo(codigoEspacio, Espacio.EstadoEspacio.valueOf(nuevoEstado));
             return new ResponseEntity<>(espacioActualizado, HttpStatus.OK);
+
         } catch (Exception e) {
-            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Map.of("message", "Ocurrió un error: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/actualizar_alquiler")
     public ResponseEntity<Object> actualizarClienteEnAlquiler(@RequestBody Map<String, Object> body) {
         try {
-            // Verificar parámetros
-            if (body.get("codigoEspacio") == null ||
-                    body.get("nuevoDniCliente") == null ||
-                    body.get("nuevaFechaInicio") == null ||
-                    body.get("nuevaFechaFin") == null) {
-                return new ResponseEntity<>(new ErrorResponse("Faltan parámetros en la solicitud"), HttpStatus.BAD_REQUEST);
+            // Verificar campos requeridos
+            if (body.get("codigoEspacio") == null || body.get("codigoEspacio").toString().isEmpty() ||
+                    body.get("nuevoDniCliente") == null || body.get("nuevoDniCliente").toString().isEmpty()) {
+                return new ResponseEntity<>(Map.of("message", "Faltan parámetros en la solicitud. Complete todos los campos."), HttpStatus.BAD_REQUEST);
             }
 
             String codigoEspacio = body.get("codigoEspacio").toString();
             String nuevoDni = body.get("nuevoDniCliente").toString();
-            LocalDate nuevaFechaInicio = LocalDate.parse(body.get("nuevaFechaInicio").toString());
-            LocalDate nuevaFechaFin = LocalDate.parse(body.get("nuevaFechaFin").toString());
 
-            // Llamar al negocio para actualizar el alquiler
-            Alquileres alquilerActualizado = alquileresNegocio.actualizarClienteEnAlquiler(
-                    codigoEspacio, nuevoDni, nuevaFechaInicio, nuevaFechaFin);
+            // Validar DNI
+            if (nuevoDni.length() != 8) {
+                return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
+            }
+            if (!nuevoDni.matches("\\d+")) { // Validar que el DNI solo contenga números
+                return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
+            }
+            if (!alquileresNegocio.existeDni(nuevoDni)) {
+                return new ResponseEntity<>(Map.of("message", "CLIENTE CON DNI " + nuevoDni + " NO EXISTE."), HttpStatus.NOT_FOUND);
 
+            }
+
+
+            // Validar existencia del espacio
+            if (!alquileresNegocio.existeCodigoEspacio(codigoEspacio)) {
+                return new ResponseEntity<>(Map.of("message", "El código del espacio ingresado no existe."), HttpStatus.BAD_REQUEST);
+            }
+
+            Alquileres alquilerActualizado = alquileresNegocio.actualizarClienteEnAlquiler(codigoEspacio, nuevoDni);
             return new ResponseEntity<>(alquilerActualizado, HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @DeleteMapping("/eliminar_alquiler")
-    public ResponseEntity<Object> eliminarAlquilerPorCodigoEspacio(@RequestBody Map<String, String> body) {
+    // LITERAL SE ESTARIA ELIMINANDO ALQUILER PERO SOLO ACTUALIZA
+    @PutMapping("/eliminar_alquiler")
+    public ResponseEntity<Object> actualizarEstadoAlquiler(@RequestBody Map<String, String> body) {
         try {
-            // Verificar si el código de espacio fue proporcionado
-            String codigoEspacio = body.get("codigoEspacio");
-            if (codigoEspacio == null || codigoEspacio.isEmpty()) {
-                return new ResponseEntity<>(new ErrorResponse("Faltan parámetros en la solicitud"), HttpStatus.BAD_REQUEST);
+            if (body.get("codigoEspacio") == null || body.get("codigoEspacio").isEmpty()) {
+                return new ResponseEntity<>(Map.of("message", "Faltan parámetros en la solicitud. Complete todos los campos."), HttpStatus.BAD_REQUEST);
             }
 
-            // Llamar al servicio para eliminar el alquiler por código de espacio
-            alquileresNegocio.eliminarAlquilerPorCodigoEspacio(codigoEspacio);
-            return new ResponseEntity<>("Alquiler eliminado y espacio actualizado a DISPONIBLE", HttpStatus.OK);
+            String codigoEspacio = body.get("codigoEspacio");
+            if (!alquileresNegocio.existeCodigoEspacio(codigoEspacio)) {
+                return new ResponseEntity<>(Map.of("message", "El código del espacio ingresado no existe."), HttpStatus.BAD_REQUEST);
+            }
+
+            alquileresNegocio.actualizarEstadoAlquilerparaeliminar(codigoEspacio);
+            return new ResponseEntity<>(Map.of("message", "Estado del alquiler actualizado a IGNORAR correctamente"), HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Map.of("message", "Ocurrió un error: " + e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+
 }
