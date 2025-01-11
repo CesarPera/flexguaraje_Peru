@@ -109,6 +109,59 @@ CREATE TABLE boleta (
     CONSTRAINT CHK_metodo_pago CHECK (metodo_pago IN ('Efectivo','tarjeta_credito','Tarjeta_debito'))
 );
 
+create table roles (
+	id_roles int primary key auto_increment,
+    nombre_rol varchar(20) not null,
+    constraint UQ_nombre_rol UNIQUE (nombre_rol)
+);
+
+create table permisos (
+	id_permiso int primary key auto_increment,
+    id_roles int not null,
+    nombre_permiso varchar(20) not null,
+	constraint FK_permisos_cuenta foreign key (id_roles) references roles(id_roles),
+	constraint nombre_permiso UNIQUE (nombre_permiso)
+);
+
+create table cuenta (
+	id_cuenta int primary key auto_increment,
+    id_roles int not null,
+    usuario varchar(20) not null,
+    email varchar(50) not null,
+    pass varchar(30) not null,
+    constraint FK_roles_cuenta foreign key (id_roles) references roles(id_roles),
+    constraint UQ_email_cuenta UNIQUE (email),
+    constraint UQ_usuario_cuenta UNIQUE (usuario)
+);
+
+create table administrador (
+	id_admin int primary key auto_increment,
+    id_cuenta int not null,
+    dni varchar(8) not null,
+    nombre varchar(30) not null,
+    apellido_paterno varchar(20) not null,
+    apellido_materno varchar(20) not null,
+	constraint FK_admin_cuenta foreign key (id_cuenta) references roles(id_cuenta)
+);
+
+ create table propietario (
+	id_pripietario int primary key auto_increment,
+    id_cuenta int not null,
+	dni varchar(8) not null,
+    nombre varchar(30) not null,
+    apellido_paterno varchar(20) not null,
+    apellido_materno varchar(20) not null,
+	constraint FK_propit_cuenta foreign key (id_cuenta) references roles(id_cuenta)
+ );
+
+ALTER TABLE cliente ADD COLUMN id_cuenta INT NOT NULL;
+ALTER TABLE cliente ADD CONSTRAINT fk_cliente_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta);
+
+ALTER TABLE alquileres ADD COLUMN id_cuenta INT NOT NULL;
+ALTER TABLE alquileres ADD CONSTRAINT fk_alquileres_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta);
+
+ALTER TABLE boleta ADD COLUMN id_cuenta INT NOT NULL;
+ALTER TABLE boleta ADD CONSTRAINT fk_boleta_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta);
 
 # ---------- CONSULTASSSSSSSSSS -----------
 use flexguaraje_peru;
@@ -117,6 +170,7 @@ select * from espacio;
 select * from alquileres;
 select * from boleta;
 
+DELETE FROM alquileres WHERE id_alquiler = 12;
 
 # VISUALIZAR LOS DATOS DE LA TABLA COMBINADO - ALQUILER
 SELECT 
