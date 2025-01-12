@@ -82,6 +82,11 @@ public class AlquileresControlador {
                 return new ResponseEntity<>(Map.of("message", "El código del espacio ingresado no existe."), HttpStatus.BAD_REQUEST);
             }
 
+            // Verificar si el espacio ya tiene un alquiler activo
+            if (alquileresNegocio.espacioTieneAlquiler(codigoEspacio)) {
+                return new ResponseEntity<>(Map.of("message", "El espacio ya tiene un alquiler activo."), HttpStatus.CONFLICT);
+            }
+
             // Crear el alquiler
             Alquileres nuevoAlquiler = alquileresNegocio.agregarClienteAlEspacio(dni, idEspacio, fechaFin);
             return new ResponseEntity<>(nuevoAlquiler, HttpStatus.CREATED);

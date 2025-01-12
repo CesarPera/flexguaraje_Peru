@@ -573,7 +573,7 @@ function Espacios() {
                             </form>
                             <div className='modal-btn'>
                                 <button className="btn btn-success" onClick={agregarAlquiler}>
-                                    Guardar
+                                    CREAR
                                 </button>
                                 <button className="btn btn-secondary" onClick={handleModalToggle}>
                                     Cancelar

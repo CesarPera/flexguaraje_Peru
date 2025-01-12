@@ -50,6 +50,7 @@
     width: 400px;
 }
 
+
 /* BOTON BUSCAR */
 .boton-buscar {
     cursor: pointer;
@@ -113,4 +114,26 @@
 
 .form-check label {
     font-weight: normal !important;
+}
+
+/* TABLA DE MULTIPLES CLIENTES CON EL MISMO NOMBRE COMPLETO */
+
+.table-seleccionar th,
+.table-seleccionar td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+
+.modal-content {
+    width: 60% !important;
+}
+
+.btn-tabla-modal {
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
 }

@@ -57,6 +57,16 @@ public class AlquileresNegocio {
                 .orElse(null); // Retorna null si no encuentra el código
     }
 
+    public boolean espacioTieneAlquiler(String codigoEspacio) {
+        // Obtener el ID del espacio a partir del código
+        Long idEspacio = obtenerIdPorCodigoEspacio(codigoEspacio);
+        if (idEspacio == null) {
+            throw new IllegalArgumentException("El código del espacio no existe.");
+        }
+        // Verificar si existe un alquiler activo para el espacio
+        return AlquileresRepositorio.findByEspacio_IdEspacioAndEstado(idEspacio, Alquileres.estadoAlquiler.No_Ignorar).isPresent();
+    }
+
     @Transactional
     public Alquileres agregarClienteAlEspacio(String dni, Long idEspacio, LocalDate fechaFin) {
         // Validar que el DNI existe

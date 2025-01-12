@@ -23,6 +23,7 @@ function Clientes() {
     const [busqueda, setBusqueda] = useState('');
     const [tipoBusqueda, setTipoBusqueda] = useState('dni');
     const navigate = useNavigate();  // Para redirigir a otra página
+    const [clientesEncontrados, setClientesEncontrados] = useState([]);
 
     const [discapacidad, setDiscapacidad] = useState(''); // Nuevo estado para la discapacidad
 
@@ -254,21 +255,21 @@ function Clientes() {
 
         const errores = [];
 
-        if (!busqueda.nombre.trim()) {
+        if (!(busqueda.nombre || '').trim()) {
             errores.push('El Nombre no puede estar vacío.');
         } else if (!/^[a-zA-Z ]+$/.test(busqueda.nombre)) {
             errores.push('El Nombre solo debe contener letras.');
         }
 
         // Validar apellido paterno: solo letras, sin espacios
-        if (!busqueda.apellidoPaterno.trim()) {
+        if (!(busqueda.apellidoPaterno || '').trim()) {
             errores.push('El Apellido Paterno no puede estar vacío.');
         } else if (!/^[a-zA-Z]+$/.test(busqueda.apellidoPaterno)) {
             errores.push('El Apellido Paterno solo debe contener una palabra y solo letras.');
         }
 
         // Validar apellido materno: solo letras, sin espacios
-        if (!busqueda.apellidoMaterno.trim()) {
+        if (!(busqueda.apellidoMaterno || '').trim()) {
             errores.push('El Apellido Materno no puede estar vacío.');
         } else if (!/^[a-zA-Z]+$/.test(busqueda.apellidoMaterno)) {
             errores.push('El Apellido Materno solo debe contener una palabra y solo letras.');
@@ -299,8 +300,12 @@ function Clientes() {
             .then((response) => {
                 Swal.close();
                 const cliente = response.data;
-                if (cliente) {
-                    navigate('/solicitudesclientes', { state: { cliente } });
+                if (cliente.length === 1) {
+                    // Si solo se encuentra un cliente, navegar directamente a la página de solicitudes
+                    navigate('/solicitudesclientes', { state: { cliente: clientes[0] } });
+                } else {
+                    // Si hay más de un cliente, mostrar la tabla modal
+                    setClientesEncontrados(cliente);
                 }
             })
             .catch((error) => {
@@ -332,6 +337,10 @@ function Clientes() {
         }
     };
 
+    const handleSeleccionarCliente = (cliente) => {
+        navigate('/solicitudesclientes', { state: { cliente } });
+    };
+
 
     return (
         <div className="clientes-page">
@@ -353,31 +362,70 @@ function Clientes() {
                     />
                 ) : (
                     <div className="nombre-completo">
-                        <input
-                            type="text"
-                            value={busqueda.nombre}
-                            onChange={(e) => setBusqueda({ ...busqueda, nombre: e.target.value })}
-                            placeholder="Ingrese el Nombre del cliente"
-                        />
-                        <input
-                            type="text"
-                            value={busqueda.apellidoPaterno}
-                            onChange={(e) =>
-                                setBusqueda({ ...busqueda, apellidoPaterno: e.target.value })
-                            }
-                            placeholder="Ingrese el Apellido Paterno del cliente"
-                        />
-                        <input
-                            type="text"
-                            value={busqueda.apellidoMaterno}
-                            onChange={(e) =>
-                                setBusqueda({ ...busqueda, apellidoMaterno: e.target.value })
-                            }
-                            placeholder="Ingrese el Apellido Materno del cliente"
-                        />
+                        <div className=''>
+                            <input
+                                type="text"
+                                value={busqueda.nombre || ''}
+                                onChange={(e) => setBusqueda({ ...busqueda, nombre: e.target.value })}
+                                placeholder="Ingrese el Nombre del cliente"
+                            />
+                            <input
+                                type="text"
+                                value={busqueda.apellidoPaterno || ''}
+                                onChange={(e) =>
+                                    setBusqueda({ ...busqueda, apellidoPaterno: e.target.value })
+                                }
+                                placeholder="Ingrese el Apellido Paterno del cliente"
+                            />
+                            <input
+                                type="text"
+                                value={busqueda.apellidoMaterno || ''}
+                                onChange={(e) =>
+                                    setBusqueda({ ...busqueda, apellidoMaterno: e.target.value })
+                                }
+                                placeholder="Ingrese el Apellido Materno del cliente"
+                            />
+                        </div>
+
                     </div>
                 )}
                 <button className="btn btn-info boton-buscar" onClick={handleBuscarCliente}>Buscar</button>
+
+                {clientesEncontrados.length > 0 && (
+                    <div className="modal-overlay">
+                        <div className="modal-content">
+                            <h3>Selecciona un cliente:</h3>
+                            <table className="table table-primary table-hover table-bordered border-primary text-center table-seleccionar">
+                                <thead>
+                                    <tr>
+                                        <th>DNI</th>
+                                        <th>Nombres Completo</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {clientesEncontrados.map((cliente) => (
+                                        <tr key={cliente.dni}>
+                                            <td>{cliente.dni}</td>
+                                            <td>{`${cliente.nombre} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`}</td>
+                                            <td>
+                                                <button
+                                                    className="btn btn-primary btn-tabla-modal"
+                                                    onClick={() => handleSeleccionarCliente(cliente)}
+                                                >
+                                                    Seleccionar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <button className="btn btn-secondary btn-tabla-modal" onClick={() => setClientesEncontrados([])}>
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <button

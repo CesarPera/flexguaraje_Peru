@@ -66,16 +66,20 @@ public class ClienteControlador {
         }
 
         try {
-            Optional<Cliente> cliente = clienteNegocio.buscarPorNombreCompleto(nombre, apellidoPaterno, apellidoMaterno);
-            if (cliente.isPresent()) {
-                return ResponseEntity.ok(cliente.get());
+            List<Cliente> clientes = clienteNegocio.buscarPorNombreCompleto(nombre, apellidoPaterno, apellidoMaterno);
+            if (!clientes.isEmpty()) {
+                // Si se encontraron múltiples clientes, devolverlos
+                return ResponseEntity.ok(clientes);
             } else {
+                // Si no se encontró ningún cliente, devolver el mensaje adecuado
                 return ResponseEntity.status(404).body("No se encontró un cliente con el nombre completo: "
-                        + nombre + " " + apellidoPaterno + " " + apellidoMaterno);            }
+                        + nombre + " " + apellidoPaterno + " " + apellidoMaterno);
+            }
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error al buscar el cliente.");
         }
     }
+
 
     @PostMapping("/crear_cliente")
     public ResponseEntity<?> crearCliente(@RequestBody Map<String, Object> cuerpo) {
@@ -146,6 +150,56 @@ public class ClienteControlador {
             return ResponseEntity.status(201).body(clienteCreado); // 201 Created
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al crear el cliente: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/actualizar_cliente")
+    public ResponseEntity<?> actualizarCliente(@RequestBody Map<String, Object> cuerpo) {
+        try {
+            String dni = (String) cuerpo.get("dni");
+
+            // Validación de DNI
+            if (dni == null || dni.isEmpty()) {
+                return ResponseEntity.badRequest().body("El DNI no puede estar vacío.");
+            }
+            if (dni.length() != 8) {
+                return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres.");
+            }
+            if (!dni.matches("\\d+")) { // Validar que el DNI solo contenga números
+                return ResponseEntity.badRequest().body("El DNI solo debe contener números.");
+            }
+
+            // Crear objeto Cliente con los nuevos datos
+            Cliente nuevosDatos = new Cliente();
+            nuevosDatos.setNombre(((String) cuerpo.get("nombre")).toUpperCase());
+            nuevosDatos.setApellidoPaterno(((String) cuerpo.get("apellido_paterno")).toUpperCase());
+            nuevosDatos.setApellidoMaterno(((String) cuerpo.get("apellido_materno")).toUpperCase());
+            nuevosDatos.setTelefono((String) cuerpo.get("telefono"));
+            nuevosDatos.setEmail((String) cuerpo.get("email"));
+            nuevosDatos.setDireccion((String) cuerpo.get("direccion"));
+            nuevosDatos.setNotaAdicional(((String) cuerpo.getOrDefault("nota", "SIN DISCAPACIDAD")).toUpperCase());
+
+            // Validación de datos
+            if (!nuevosDatos.getNombre().matches("[a-zA-Z ]+")) {
+                return ResponseEntity.badRequest().body("El nombre solo debe contener letras.");
+            }
+            if (!nuevosDatos.getApellidoPaterno().matches("[a-zA-Z]+")) {
+                return ResponseEntity.badRequest().body("El apellido paterno solo debe contener letras.");
+            }
+            if (!nuevosDatos.getApellidoMaterno().matches("[a-zA-Z]+")) {
+                return ResponseEntity.badRequest().body("El apellido materno solo debe contener letras.");
+            }
+            if (nuevosDatos.getTelefono().length() != 9 || !nuevosDatos.getTelefono().matches("\\d+")) {
+                return ResponseEntity.badRequest().body("El teléfono debe tener 9 caracteres numéricos.");
+            }
+
+            // Actualizar cliente
+            Cliente clienteActualizado = clienteNegocio.actualizarCliente(dni, nuevosDatos);
+            return ResponseEntity.ok(clienteActualizado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al actualizar el cliente: " + e.getMessage());
         }
     }
 

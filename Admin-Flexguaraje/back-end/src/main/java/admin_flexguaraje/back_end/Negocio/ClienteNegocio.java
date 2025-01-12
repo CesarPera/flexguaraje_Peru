@@ -34,13 +34,33 @@ public class ClienteNegocio {
         return cliente;
     }
 
-    public Optional<Cliente> buscarPorNombreCompleto(String nombre, String apellidoPaterno, String apellidoMaterno) {
+    public List<Cliente> buscarPorNombreCompleto(String nombre, String apellidoPaterno, String apellidoMaterno) {
         return clienteRepositorio.findByNombreAndApellidoPaternoAndApellidoMaterno(nombre, apellidoPaterno, apellidoMaterno);
     }
+
 
     public Cliente crearCliente(Cliente cliente) {
         // Guardar el cliente en la base de datos
         return clienteRepositorio.save(cliente);
+    }
+
+    public Cliente actualizarCliente(String dni, Cliente nuevosDatos) {
+        Cliente clienteExistente = clienteRepositorio.findByDni(dni);
+        if (clienteExistente == null) {
+            throw new IllegalArgumentException("Cliente con DNI " + dni + " no existe.");
+        }
+
+        // Actualizar los datos del cliente
+        clienteExistente.setNombre(nuevosDatos.getNombre());
+        clienteExistente.setApellidoPaterno(nuevosDatos.getApellidoPaterno());
+        clienteExistente.setApellidoMaterno(nuevosDatos.getApellidoMaterno());
+        clienteExistente.setTelefono(nuevosDatos.getTelefono());
+        clienteExistente.setEmail(nuevosDatos.getEmail());
+        clienteExistente.setDireccion(nuevosDatos.getDireccion());
+        clienteExistente.setNotaAdicional(nuevosDatos.getNotaAdicional());
+
+        // Guardar los cambios en la base de datos
+        return clienteRepositorio.save(clienteExistente);
     }
 
 }
