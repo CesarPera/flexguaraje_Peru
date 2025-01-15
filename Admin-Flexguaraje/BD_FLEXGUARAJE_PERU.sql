@@ -5,7 +5,7 @@ use flexguaraje_peru;
 create table roles (
 	id_roles int primary key auto_increment,
     nombre_rol varchar(20) not null,
-    estado varchar(15) not null,
+    estado varchar(15) not null default 'Activo',
     constraint UQ_nombre_rol UNIQUE (nombre_rol),
 	CONSTRAINT valores_estado_roles CHECK (estado IN ('Activo', 'Desactivado'))
 
@@ -16,7 +16,7 @@ create table permisos (
 	id_permiso int primary key auto_increment,
     id_roles int not null,
     nombre_permiso varchar(20) not null,
-    estado varchar(15) not null,
+    estado varchar(15) not null default 'Activo',
 	constraint FK_permisos_cuenta foreign key (id_roles) references roles(id_roles),
 	CONSTRAINT valores_Estado_permisos CHECK (estado IN ('Activo', 'Desactivado')),
 	constraint nombre_permiso UNIQUE (nombre_permiso)
@@ -30,7 +30,7 @@ create table cuenta (
     usuario varchar(20) not null,
     email varchar(50) not null,
     pass varchar(30) not null,
-    estado varchar(15) not null,
+    estado varchar(15) not null default 'Activo',
     constraint FK_roles_cuenta foreign key (id_roles) references roles(id_roles),
 	CONSTRAINT valores_estado_cuenta CHECK (estado IN ('Activo', 'Desactivado')),
     constraint UQ_email_cuenta UNIQUE (email),
