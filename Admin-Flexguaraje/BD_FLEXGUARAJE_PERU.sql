@@ -45,6 +45,8 @@ create table administrador (
     nombre varchar(30) not null,
     apellido_paterno varchar(20) not null,
     apellido_materno varchar(20) not null,
+    email varchar(30) not null,
+    telefono varchar(9) not null,
 	constraint FK_admin_cuenta foreign key (id_cuenta) references cuenta(id_cuenta)
 );
 
@@ -56,6 +58,7 @@ create table propietario (
     nombre varchar(30) not null,
     apellido_paterno varchar(20) not null,
     apellido_materno varchar(20) not null,
+	telefono varchar(9) not null,
 	constraint FK_propit_cuenta foreign key (id_cuenta) references cuenta(id_cuenta)
  );
 
