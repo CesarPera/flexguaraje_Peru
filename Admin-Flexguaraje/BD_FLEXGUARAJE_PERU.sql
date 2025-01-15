@@ -1,9 +1,68 @@
 create database flexguaraje_peru;
 use flexguaraje_peru;
 
+# TABLA ROLESSSSSSSSSSSSSSSSSSSSSS
+create table roles (
+	id_roles int primary key auto_increment,
+    nombre_rol varchar(20) not null,
+    estado varchar(15) not null,
+    constraint UQ_nombre_rol UNIQUE (nombre_rol),
+	CONSTRAINT valores_estado_roles CHECK (estado IN ('Activo', 'Desactivado'))
+
+);
+
+# TABLAAAAAAAA PERMISOSSSSSSSSSS
+create table permisos (
+	id_permiso int primary key auto_increment,
+    id_roles int not null,
+    nombre_permiso varchar(20) not null,
+    estado varchar(15) not null,
+	constraint FK_permisos_cuenta foreign key (id_roles) references roles(id_roles),
+	CONSTRAINT valores_Estado_permisos CHECK (estado IN ('Activo', 'Desactivado')),
+	constraint nombre_permiso UNIQUE (nombre_permiso)
+);
+
+
+# TABLAAAAA CUENTAAAAAAAAAAAAAA
+create table cuenta (
+	id_cuenta int primary key auto_increment,
+    id_roles int not null,
+    usuario varchar(20) not null,
+    email varchar(50) not null,
+    pass varchar(30) not null,
+    estado varchar(15) not null,
+    constraint FK_roles_cuenta foreign key (id_roles) references roles(id_roles),
+	CONSTRAINT valores_estado_cuenta CHECK (estado IN ('Activo', 'Desactivado')),
+    constraint UQ_email_cuenta UNIQUE (email),
+    constraint UQ_usuario_cuenta UNIQUE (usuario)
+);
+
+# TABLA ADMINISTRADORRRRRRRRRR
+create table administrador (
+	id_admin int primary key auto_increment,
+    id_cuenta int not null,
+    dni varchar(8) not null,
+    nombre varchar(30) not null,
+    apellido_paterno varchar(20) not null,
+    apellido_materno varchar(20) not null,
+	constraint FK_admin_cuenta foreign key (id_cuenta) references cuenta(id_cuenta)
+);
+
+# TABLA PROPIETARIOOOOOOOOOO
+create table propietario (
+	id_pripietario int primary key auto_increment,
+    id_cuenta int not null,
+	dni varchar(8) not null,
+    nombre varchar(30) not null,
+    apellido_paterno varchar(20) not null,
+    apellido_materno varchar(20) not null,
+	constraint FK_propit_cuenta foreign key (id_cuenta) references cuenta(id_cuenta)
+ );
+
 #TABLA CLIENTESSSSSSSSSSSS
 CREATE TABLE cliente (
     id_cliente INT auto_increment PRIMARY KEY,
+    id_cuenta INT NOT NULL,
     dni VARCHAR(8) NOT NULL,
     nombre VARCHAR(50) NOT NULL,
     apellido_paterno VARCHAR(20) NOT NULL,
@@ -12,6 +71,7 @@ CREATE TABLE cliente (
     email VARCHAR(50) NOT NULL,
     direccion VARCHAR(250) NOT NULL,
     nota_adicional VARCHAR(250) DEFAULT 'Sin Discapacidad',
+    CONSTRAINT fk_cliente_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta),
     CONSTRAINT UQ_dni UNIQUE (dni),
     CONSTRAINT CHK_DNI_Format CHECK (LENGTH(dni) = 8 AND dni NOT LIKE '%[^0-9]%'),
     CONSTRAINT CHK_Telefono_Format CHECK (LENGTH(telefono) = 9 AND telefono NOT LIKE '%[^0-9]%'),
@@ -19,29 +79,6 @@ CREATE TABLE cliente (
                                                  apellido_paterno NOT LIKE '%[^A-Za-z]%' AND 
                                                  apellido_materno NOT LIKE '%[^A-Za-z]%')
 );
-
-#DATOS CLIENTES
-INSERT INTO cliente (dni, nombre, apellido_paterno, apellido_materno, telefono, email, direccion, nota_adicional) VALUES
-('12345678', 'JUAN PABLO', 'GARCIA', 'MARTINEZ', '987654321', 'juanpablo@example.com', 'Calle Ficticia 123', 'Sin Discapacidad'),
-('23456789', 'ANA MARIA', 'LOPEZ', 'RODRIGUEZ', '987654322', 'anamaria@example.com', 'Av. Siempre Viva 456', 'Sin Discapacidad'),
-('34567890', 'CARLOS ANDRES', 'PEREZ', 'GOMEZ', '987654323', 'carlosandres@example.com', 'Calle Real 789', 'Sin Discapacidad'),
-('45678901', 'MARIA ELENA', 'GUTIERREZ', 'HERNANDEZ', '987654324', 'mariaelena@example.com', 'Calle Principal 101', 'Sin Discapacidad'),
-('56789012', 'LUIS FERNANDO', 'MARTINEZ', 'SERRANO', '987654325', 'luisfernando@example.com', 'Calle Secundaria 202', 'Sin Discapacidad'),
-('67890123', 'ISABEL CRISTINA', 'PEREZ', 'MORALES', '987654326', 'isabelcristina@example.com', 'Calle Nueva 303', 'Sin Discapacidad'),
-('78901234', 'JUAN CARLOS', 'CASTRO', 'ROJAS', '987654327', 'juancarlos@example.com', 'Calle Vieja 404', 'Sin Discapacidad'),
-('89012345', 'MARIA JOSE', 'RAMIREZ', 'CASTAÑO', '987654328', 'mariajose@example.com', 'Av. Los Álamos 505', 'Sin Discapacidad'),
-('90123456', 'RAUL ENRIQUE', 'SALGADO', 'PEREZ', '987654329', 'raulenrique@example.com', 'Calle del Sol 606', 'Sin Discapacidad'),
-('01234567', 'CARMEN LUZA LUISA', 'GARCIA', 'VILLALBA', '987654330', 'carmenluz@example.com', 'Calle de la Luna 707', 'Sin Discapacidad'),
-('12345679', 'JUAN JOSE', 'MARTINEZ', 'MARTIN', '987654331', 'juanjose@example.com', 'Calle del Mar 808', 'Sin Discapacidad'),
-('23456780', 'LAURA ISABEL CAMILA', 'TORO', 'MUÑOZ', '987654332', 'lauraisabel@example.com', 'Calle del Bosque 909', 'Sin Discapacidad'),
-('34567891', 'PEDRO ALBERTO', 'DIAZ', 'SALAZAR', '987654333', 'pedroalberto@example.com', 'Calle Central 1010', 'Sin Discapacidad'),
-('45678902', 'MARIA PATRICIA', 'VARGAS', 'SUAREZ', '987654334', 'mariapatricia@example.com', 'Calle de la Paz 1111', 'Sin Discapacidad'),
-('56789013', 'ALEJANDRO FRANCISCO', 'MARTINEZ', 'FERNANDEZ', '987654335', 'alejandrofrancisco@example.com', 'Calle Libertad 1212', 'Sin Discapacidad'),
-('67890124', 'ANDREA LILIANA GABRIELA', 'GUTIERREZ', 'PEREZ', '987654336', 'andrealiliana@example.com', 'Calle del Río 1313', 'Sin Discapacidad'),
-('78901235', 'FERNANDO JIMENEZ', 'PEREZ', 'FLORES', '987654337', 'fernandojimenex@example.com', 'Calle del Águila 1414', 'Sin Discapacidad'),
-('89012346', 'JULIAN ESTEBAN', 'CASTAÑO', 'HERRERA', '987654338', 'julianesteban@example.com', 'Av. El Bosque 1515', 'Sin Discapacidad'),
-('90123457', 'CAROLINA BEATRIZ', 'MORA', 'GUTIERREZ', '987654339', 'carolinabeatriz@example.com', 'Calle Rosario 1616', 'Sin Discapacidad'),
-('01234568', 'RAFAEL ALEJANDRO', 'FERNANDEZ', 'SILVA', '987654340', 'rafaelalejandro@example.com', 'Calle del Norte 1717', 'Sin Discapacidad');
 
 #TABLA ESPACIOSSSSS
 CREATE TABLE espacio (
@@ -83,12 +120,14 @@ CREATE TABLE alquileres (
 	id_alquiler INT auto_increment PRIMARY KEY,
     id_cliente INT NOT NULL,
     id_espacio INT NOT NULL,
+    id_cuenta INT NOT NULL,
     fecha_inicio_alquiler DATE NOT NULL,
     fecha_fin_alquiler DATE NOT NULL,
 	total_dias_alquiler VARCHAR(20) NOT NULL,
     estado varchar(15) NOT NULL default 'No_Ignorar',
     CONSTRAINT FK_Alquiler_Cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
     CONSTRAINT FK_Alquiler_Espacio FOREIGN KEY (id_espacio) REFERENCES espacio(id_espacio),
+    CONSTRAINT fk_alquileres_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta),
 	CONSTRAINT CHK_Alquiler_estado CHECK (estado IN ('Ignorar','No_Ignorar')),
     CONSTRAINT CHK_Fechas_Alquiler CHECK (fecha_inicio_alquiler <= fecha_fin_alquiler)
 );
@@ -97,6 +136,7 @@ CREATE TABLE alquileres (
 CREATE TABLE boleta (
     id_boleta INT auto_increment PRIMARY KEY,
     id_alquiler INT NOT NULL,
+    id_cuenta INT NOT NULL,
     codigo_boleta VARCHAR(15) NOT NULL,
     metodo_pago VARCHAR(30) NOT NULL default "Efectivo",
     fecha_emision DATE NOT NULL,
@@ -104,64 +144,13 @@ CREATE TABLE boleta (
     monto_igv DECIMAL(10, 2) NOT NULL,
     monto_pagar DECIMAL(10, 2) NOT NULL,
     CONSTRAINT FK_boleta_Alquiler FOREIGN KEY (id_alquiler) REFERENCES alquileres(id_alquiler),
+    CONSTRAINT fk_boleta_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta),
     constraint UQ_codigo_boleta UNIQUE (codigo_boleta),
     CONSTRAINT UQ_id_alquiler UNIQUE (id_alquiler),
     CONSTRAINT CHK_metodo_pago CHECK (metodo_pago IN ('Efectivo','tarjeta_credito','Tarjeta_debito'))
 );
 
-create table roles (
-	id_roles int primary key auto_increment,
-    nombre_rol varchar(20) not null,
-    constraint UQ_nombre_rol UNIQUE (nombre_rol)
-);
 
-create table permisos (
-	id_permiso int primary key auto_increment,
-    id_roles int not null,
-    nombre_permiso varchar(20) not null,
-	constraint FK_permisos_cuenta foreign key (id_roles) references roles(id_roles),
-	constraint nombre_permiso UNIQUE (nombre_permiso)
-);
-
-create table cuenta (
-	id_cuenta int primary key auto_increment,
-    id_roles int not null,
-    usuario varchar(20) not null,
-    email varchar(50) not null,
-    pass varchar(30) not null,
-    constraint FK_roles_cuenta foreign key (id_roles) references roles(id_roles),
-    constraint UQ_email_cuenta UNIQUE (email),
-    constraint UQ_usuario_cuenta UNIQUE (usuario)
-);
-
-create table administrador (
-	id_admin int primary key auto_increment,
-    id_cuenta int not null,
-    dni varchar(8) not null,
-    nombre varchar(30) not null,
-    apellido_paterno varchar(20) not null,
-    apellido_materno varchar(20) not null,
-	constraint FK_admin_cuenta foreign key (id_cuenta) references roles(id_cuenta)
-);
-
- create table propietario (
-	id_pripietario int primary key auto_increment,
-    id_cuenta int not null,
-	dni varchar(8) not null,
-    nombre varchar(30) not null,
-    apellido_paterno varchar(20) not null,
-    apellido_materno varchar(20) not null,
-	constraint FK_propit_cuenta foreign key (id_cuenta) references roles(id_cuenta)
- );
-
-ALTER TABLE cliente ADD COLUMN id_cuenta INT NOT NULL;
-ALTER TABLE cliente ADD CONSTRAINT fk_cliente_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta);
-
-ALTER TABLE alquileres ADD COLUMN id_cuenta INT NOT NULL;
-ALTER TABLE alquileres ADD CONSTRAINT fk_alquileres_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta);
-
-ALTER TABLE boleta ADD COLUMN id_cuenta INT NOT NULL;
-ALTER TABLE boleta ADD CONSTRAINT fk_boleta_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta);
 
 # ---------- CONSULTASSSSSSSSSS -----------
 use flexguaraje_peru;
@@ -171,6 +160,7 @@ select * from alquileres;
 select * from boleta;
 
 DELETE FROM alquileres WHERE id_alquiler = 12;
+
 
 # VISUALIZAR LOS DATOS DE LA TABLA COMBINADO - ALQUILER
 SELECT 
