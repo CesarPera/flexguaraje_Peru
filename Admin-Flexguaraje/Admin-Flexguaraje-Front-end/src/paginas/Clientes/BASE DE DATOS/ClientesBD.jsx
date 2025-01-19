@@ -3,6 +3,7 @@ import axios from "axios";
 const BUSCAR_CLIENTE_DNI_BD_REST_API_URL = "http://127.0.0.1:8080/cliente/buscar_cliente_dni";
 const BUSCAR_CLIENTE_NC_BD_REST_API_URL = "http://127.0.0.1:8080/cliente/buscar_cliente_nombreCompleto";
 const CREAR_CLIENTE_BD_REST_API_URL = "http://127.0.0.1:8080/cliente/crear_cliente"
+const ACTUALIZAR_CLIENTE_bD_REST_API_URL = "http://127.0.0.1:8080/cliente/actualizar_cliente"
 
 class ClientesBD {
     // crear cliente
@@ -30,6 +31,11 @@ class ClientesBD {
 
         return axios.post(url, data);
     }
+
+    actualizarCliente(updatedData) {
+        return axios.put(ACTUALIZAR_CLIENTE_bD_REST_API_URL, updatedData);
+    }
+
 }
 
 export default new ClientesBD();

@@ -5,6 +5,7 @@ import ContenidoInicio from './Componentes/contenidoInicio';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // Aquí definimos las páginas (pueden ser otros componentes)
+import Cuenta from './paginas/Cuenta/Cuenta';
 import Clientes from './paginas/Clientes/Clientes';
 import SolicitudesClientes from './paginas/Clientes/SolicitudesClientes';
 import Espacios from './paginas/Espacios/Espacios';
@@ -23,6 +24,7 @@ function App() {
         <div className="content-container">
           <Routes>
             <Route path="/" element={<ContenidoInicio />} /> {/* Página por defecto */}
+            <Route path="/cuenta" element={<Cuenta />} />
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/solicitudesclientes" element={<SolicitudesClientes />} />
             <Route path="/espacios" element={<Espacios />} />

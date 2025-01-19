@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/cliente")
@@ -19,6 +18,10 @@ import java.util.Optional;
 public class ClienteControlador {
     @Autowired
     private ClienteNegocio clienteNegocio;
+
+    public void setClienteNegocio(ClienteNegocio clienteNegocio) {
+        this.clienteNegocio = clienteNegocio;
+    }
 
     @GetMapping ("/listar_cliente")
     public List<Cliente> ListarClientes() {

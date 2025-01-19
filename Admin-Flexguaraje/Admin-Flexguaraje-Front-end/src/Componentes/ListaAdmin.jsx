@@ -25,6 +25,14 @@ function ListaAdmin() {
                     <li className="menu-item">
                         {!isExpanded && <span className="short-label">C</span>}
                         {isExpanded && (
+                            <Link to="/cuenta">
+                                <span className="full-label animate">Cuenta</span>
+                            </Link>
+                        )}
+                    </li>
+                    <li className="menu-item">
+                        {!isExpanded && <span className="short-label">C</span>}
+                        {isExpanded && (
                             <Link to="/clientes">
                                 <span className="full-label animate">Clientes</span>
                             </Link>
