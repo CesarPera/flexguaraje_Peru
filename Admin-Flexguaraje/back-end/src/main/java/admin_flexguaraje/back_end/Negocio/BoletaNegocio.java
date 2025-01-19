@@ -1,9 +1,8 @@
 package admin_flexguaraje.back_end.Negocio;
-
+import admin_flexguaraje.back_end.Modelo.Espacio;
 import admin_flexguaraje.back_end.Modelo.Alquileres;
 import admin_flexguaraje.back_end.Modelo.Boleta;
 import admin_flexguaraje.back_end.Modelo.Cliente;
-import admin_flexguaraje.back_end.Modelo.Espacio;
 import admin_flexguaraje.back_end.Repositorio.AlquileresRepositorio;
 import admin_flexguaraje.back_end.Repositorio.BoletaRepositorio;
 import admin_flexguaraje.back_end.Repositorio.ClienteRepositorio;
@@ -163,6 +162,7 @@ public class BoletaNegocio {
 
         // Obtener el costo por día del espacio
         BigDecimal costoDia = alquilerSeleccionado.getEspacio().getCosto();
+
 
         // Obtener el valor de dias_alquiler (almacenado como String, ej. "3 DIAS")
         String diasAlquilerStr = alquilerSeleccionado.getDias_alquiler(); // "3 DIAS" o "1 DIA"

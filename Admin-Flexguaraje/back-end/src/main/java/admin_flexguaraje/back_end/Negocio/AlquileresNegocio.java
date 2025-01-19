@@ -1,8 +1,8 @@
 package admin_flexguaraje.back_end.Negocio;
 
+import admin_flexguaraje.back_end.Modelo.Espacio;
 import admin_flexguaraje.back_end.Modelo.Alquileres;
 import admin_flexguaraje.back_end.Modelo.Cliente;
-import admin_flexguaraje.back_end.Modelo.Espacio;
 import admin_flexguaraje.back_end.Repositorio.AlquileresRepositorio;
 import admin_flexguaraje.back_end.Repositorio.ClienteRepositorio;
 import admin_flexguaraje.back_end.Repositorio.EspacioRepositorio;
@@ -17,37 +17,39 @@ import java.util.Optional;
 
 @Service
 public class AlquileresNegocio {
-    @Autowired
-    private final AlquileresRepositorio AlquileresRepositorio;
 
     @Autowired
-    public AlquileresNegocio(AlquileresRepositorio AlquileresRepositorio) {
-        this.AlquileresRepositorio = AlquileresRepositorio;
+    private AlquileresRepositorio alquileresRepositorio; // Cambié el nombre aquí
+
+    @Autowired
+    public AlquileresNegocio(AlquileresRepositorio alquileresRepositorio) { // Cambié el nombre aquí
+        this.alquileresRepositorio = alquileresRepositorio; // Cambié el nombre aquí
     }
 
     @Autowired
     private EspacioRepositorio espacioRepositorio; // Repositorio de la tabla Espacio
 
     @Autowired
-    private ClienteRepositorio ClienteRepositorio; // Repositorio de la tabla Cliente
+    private ClienteRepositorio clienteRepositorio; // Repositorio de la tabla Cliente
 
     public boolean existeDni(String dni) {
         // Consulta en el repositorio ClienteRepositorio para verificar si el DNI existe
-        return ClienteRepositorio.existsByDni(dni); // Supone que tienes un método existsByDni en ClienteRepositorio
+        return clienteRepositorio.existsByDni(dni); // Supone que tienes un método existsByDni en ClienteRepositorio
     }
 
     public boolean existeCodigoEspacio(String codigoEspacio) {
         // Consulta en el repositorio EspacioRepositorio para verificar si el código de espacio existe
         return espacioRepositorio.existsByCodigoEspacio(codigoEspacio); // Supone que tienes un método existsByCodigoEspacio en EspacioRepositorio
     }
+
     // LISTAR ALQUILERES GENERALES
     public List<Alquileres> listarAlquileres() {
-        return AlquileresRepositorio.findAll();
+        return alquileresRepositorio.findAll(); // Cambié el nombre aquí
     }
 
     // LISTAR ALQUILERES CON SOLO ESTADO "NO IGNORAR"
     public List<Alquileres> obtenerAlquileresNoIgnorar() {
-        return AlquileresRepositorio.findByEstado(Alquileres.estadoAlquiler.No_Ignorar);
+        return alquileresRepositorio.findByEstado(Alquileres.estadoAlquiler.No_Ignorar); // Cambié el nombre aquí
     }
 
     public Long obtenerIdPorCodigoEspacio(String codigoEspacio) {
@@ -64,7 +66,7 @@ public class AlquileresNegocio {
             throw new IllegalArgumentException("El código del espacio no existe.");
         }
         // Verificar si existe un alquiler activo para el espacio
-        return AlquileresRepositorio.findByEspacio_IdEspacioAndEstado(idEspacio, Alquileres.estadoAlquiler.No_Ignorar).isPresent();
+        return alquileresRepositorio.findByEspacio_IdEspacioAndEstado(idEspacio, Alquileres.estadoAlquiler.No_Ignorar).isPresent(); // Cambié el nombre aquí
     }
 
     @Transactional
@@ -83,7 +85,7 @@ public class AlquileresNegocio {
         Espacio espacio = espacioRepositorio.findById(idEspacio)
                 .orElseThrow(() -> new IllegalArgumentException("El espacio no existe"));
 
-        Cliente cliente = ClienteRepositorio.findByDni(dni);
+        Cliente cliente = clienteRepositorio.findByDni(dni); // Cambié el nombre aquí
         if (cliente == null) {
             throw new IllegalArgumentException("No se encontró un cliente con el DNI proporcionado");
         }
@@ -110,7 +112,7 @@ public class AlquileresNegocio {
         alquiler.setEstado(Alquileres.estadoAlquiler.No_Ignorar);
 
         // Guardar el alquiler en la base de datos
-        Alquileres nuevoAlquiler = AlquileresRepositorio.save(alquiler);
+        Alquileres nuevoAlquiler = alquileresRepositorio.save(alquiler); // Cambié el nombre aquí
 
         // Actualizar el estado del espacio a "OCUPADO"
         espacio.setEstado(Espacio.EstadoEspacio.Ocupado);
@@ -137,7 +139,7 @@ public class AlquileresNegocio {
         // Si el subestado es ACTIVO (espacio con cliente)
         if (subestado == Espacio.SubestadoEspacio.Activo) {
             // Buscar el alquiler asociado y verificar su estado
-            Optional<Alquileres> alquilerOpt = AlquileresRepositorio.findByEspacio_IdEspacioAndEstado(espacio.getIdEspacio(), Alquileres.estadoAlquiler.No_Ignorar);
+            Optional<Alquileres> alquilerOpt = alquileresRepositorio.findByEspacio_IdEspacioAndEstado(espacio.getIdEspacio(), Alquileres.estadoAlquiler.No_Ignorar);
 
             if (alquilerOpt.isPresent()) {
                 Alquileres alquiler = alquilerOpt.get();
@@ -186,20 +188,19 @@ public class AlquileresNegocio {
         Espacio espacio = espacioRepositorio.findByCodigoEspacio(codigoEspacio)
                 .orElseThrow(() -> new IllegalArgumentException("No se encontró un espacio con el código proporcionado"));
 
-        Alquileres alquiler = AlquileresRepositorio.findByEspacio_IdEspacioAndEstado(espacio.getIdEspacio(), Alquileres.estadoAlquiler.No_Ignorar)
+        Alquileres alquiler = alquileresRepositorio.findByEspacio_IdEspacioAndEstado(espacio.getIdEspacio(), Alquileres.estadoAlquiler.No_Ignorar)
                 .orElseThrow(() -> new IllegalArgumentException("No existe un alquiler activo o en estado 'No_Ignorar' para este espacio"));
 
         // Buscar el nuevo cliente
-        Cliente nuevoCliente = ClienteRepositorio.findByDni(nuevoDniCliente);
+        Cliente nuevoCliente = clienteRepositorio.findByDni(nuevoDniCliente);
         if (nuevoCliente == null) {
             throw new IllegalArgumentException("No existe un cliente con el DNI proporcionado");
         }
 
         alquiler.setCliente(nuevoCliente);
-        return AlquileresRepositorio.save(alquiler);
+        return alquileresRepositorio.save(alquiler); // Cambié el nombre aquí
     }
 
-    // literal se estaria eliminando el alquiler pero solo actualiza
     @Transactional
     public void actualizarEstadoAlquilerparaeliminar(String codigoEspacio) {
         // Validar que el código de espacio existe
@@ -211,12 +212,12 @@ public class AlquileresNegocio {
         Espacio espacio = espacioRepositorio.findByCodigoEspacio(codigoEspacio)
                 .orElseThrow(() -> new IllegalArgumentException("El espacio no existe"));
 
-        Alquileres alquiler = AlquileresRepositorio.findByEspacio_IdEspacioAndEstado(espacio.getIdEspacio(), Alquileres.estadoAlquiler.No_Ignorar)
+        Alquileres alquiler = alquileresRepositorio.findByEspacio_IdEspacioAndEstado(espacio.getIdEspacio(), Alquileres.estadoAlquiler.No_Ignorar)
                 .orElseThrow(() -> new IllegalArgumentException("No existe un alquiler activo con el espacio proporcionado"));
 
         // Cambiar el estado del alquiler a 'IGNORAR'
         alquiler.setEstado(Alquileres.estadoAlquiler.Ignorar);
-        AlquileresRepositorio.save(alquiler);
+        alquileresRepositorio.save(alquiler); // Cambié el nombre aquí
 
         // Cambiar el estado del espacio a DISPONIBLE y subestado a DESACTIVADO
         espacio.setEstado(Espacio.EstadoEspacio.Disponible);

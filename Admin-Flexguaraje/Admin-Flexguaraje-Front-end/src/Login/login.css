@@ -1,0 +1,85 @@
+/* Estilo para el contenedor del login */
+.login-container {
+  width: 360px;
+  padding: 40px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  position: absolute; /* Centrado en la pantalla */
+  top: 50%; /* Centrado verticalmente */
+  left: 50%; /* Centrado horizontalmente */
+  transform: translate(-50%, -50%); /* Ajuste preciso para centrar */
+}
+
+/* Título del formulario */
+.form-title {
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+/* Estilo para las etiquetas */
+.animated-label {
+  display: block;
+  margin-bottom: 8px; /* Espacio entre la etiqueta y el campo */
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Estilo para los campos de entrada */
+.animated-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px; /* Espacio entre los campos de entrada */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #333;
+  background-color: #fafafa;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+/* Efecto de foco en los campos de entrada */
+.animated-input:focus {
+  border-color: #5c6bc0;
+  background-color: #f4f5fc;
+  outline: none;
+}
+
+/* Estilo para el botón de inicio de sesión */
+.animated-button {
+  width: 100%;
+  padding: 14px;
+  background-color: #5c6bc0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+/* Efecto al pasar el mouse sobre el botón */
+.animated-button:hover {
+  background-color: #3f51b5;
+  transform: translateY(-2px);
+}
+
+/* Estilo para el botón al hacer clic */
+.animated-button:active {
+  transform: translateY(0);
+}
+
+/* Texto para alternar entre login y cambio de contraseña */
+.toggle-text {
+  text-align: center;
+  font-size: 14px;
+  color: #5c6bc0;
+  cursor: pointer;
+  margin-top: 20px;
+}

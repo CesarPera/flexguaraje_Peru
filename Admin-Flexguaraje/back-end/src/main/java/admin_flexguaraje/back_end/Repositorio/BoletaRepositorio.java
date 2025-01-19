@@ -14,5 +14,6 @@ public interface BoletaRepositorio extends JpaRepository<Boleta, Long> {
     boolean existsByCodigoBoleta(String codigoBoleta);
     boolean existsByAlquileres(Alquileres alquileres);
     Boleta findByAlquileresClienteDniAndAlquileresEspacioCodigoEspacio(String dni, String codigoEspacio);
+
 }
 
