@@ -1,16 +1,24 @@
 package admin_flexguaraje.back_end.Controlador;
-import admin_flexguaraje.back_end.Modelo.Espacio;
 
+import admin_flexguaraje.back_end.Modelo.Alquileres;
 import admin_flexguaraje.back_end.Modelo.Boleta;
+import admin_flexguaraje.back_end.Modelo.Cliente;
+import admin_flexguaraje.back_end.Modelo.Espacio;
 import admin_flexguaraje.back_end.Negocio.AlquileresNegocio;
 import admin_flexguaraje.back_end.Negocio.BoletaNegocio;
+import admin_flexguaraje.back_end.Repositorio.BoletaRepositorio;
+import admin_flexguaraje.back_end.Repositorio.ClienteRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController

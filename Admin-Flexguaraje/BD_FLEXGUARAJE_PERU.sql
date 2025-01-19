@@ -8,14 +8,8 @@ create table roles (
     estado varchar(15) not null default 'Activo',
     constraint UQ_nombre_rol UNIQUE (nombre_rol),
 	CONSTRAINT valores_estado_roles CHECK (estado IN ('Activo', 'Desactivado'))
-    
-);
 
-INSERT INTO roles (nombre_rol, estado)
-VALUES
-('Admin', 'Activo'),
-('User', 'Activo'),
-('Guest', 'Activo');
+);
 
 # TABLAAAAAAAA PERMISOSSSSSSSSSS
 create table permisos (
@@ -30,23 +24,18 @@ create table permisos (
 
 
 # TABLAAAAA CUENTAAAAAAAAAAAAAA
-CREATE TABLE cuenta (
-    id_cuenta INT PRIMARY KEY AUTO_INCREMENT,
-    email VARCHAR(50) NOT NULL,
-    pass VARCHAR(30) NOT NULL,
-    CONSTRAINT UQ_email_cuenta UNIQUE (email)
+create table cuenta (
+	id_cuenta int primary key auto_increment,
+    id_roles int not null,
+    usuario varchar(20) not null,
+    email varchar(50) not null,
+    pass varchar(30) not null,
+    estado varchar(15) not null default 'Activo',
+    constraint FK_roles_cuenta foreign key (id_roles) references roles(id_roles),
+	CONSTRAINT valores_estado_cuenta CHECK (estado IN ('Activo', 'Desactivado')),
+    constraint UQ_email_cuenta UNIQUE (email),
+    constraint UQ_usuario_cuenta UNIQUE (usuario)
 );
-
-INSERT INTO cuenta (email, pass)
-VALUES
-('usuario1@example.com', 'password123'),
-('usuario2@example.com', 'password456'),
-('usuario3@example.com', 'password789'),
-('usuario4@example.com', 'password101'),
-('usuario5@example.com', 'password202');
-
-
-
 
 # TABLA ADMINISTRADORRRRRRRRRR
 create table administrador (
@@ -172,7 +161,6 @@ select * from cliente;
 select * from espacio;
 select * from alquileres;
 select * from boleta;
-select * from cuenta;
 
 DELETE FROM alquileres WHERE id_alquiler = 12;
 

@@ -1,85 +1,84 @@
 package admin_flexguaraje.back_end.Modelo;
-import java.math.BigDecimal;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Entity
-@Table(name = "espacio")
+@Table(name = "espacio",
+        uniqueConstraints = @UniqueConstraint(columnNames = "codigo_espacio")) // Agregar esta línea
 public class Espacio {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_espacio")
-    private Long idEspacio;  // Cambié 'id' a 'idEspacio' para que sea consistente con el uso en el negocio
+    private Long idEspacio;
 
-    @Column(name = "codigo_espacio", nullable = false)
+    @Column(name = "codigo_espacio", nullable = false, length = 30)
     private String codigoEspacio;
 
-    @Column(name = "costo", nullable = false)
-    private BigDecimal costo;  // Aquí es donde definimos el costo
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false, length = 15)
+    private EstadoEspacio estado = EstadoEspacio.Disponible;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado_espacio", nullable = false)
-    private EstadoEspacio estadoEspacio;
+    @Column(name = "subestado", nullable = false, length = 15)
+    private SubestadoEspacio subestado = SubestadoEspacio.Desactivado;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "subestado_espacio", nullable = false)
-    private SubestadoEspacio subestadoEspacio;
-
-    // Métodos getters y setters
+    @Column(name = "costo", nullable = false, precision = 10, scale = 2)
+    private BigDecimal costo;
 
     public Long getIdEspacio() {
-        return idEspacio;  // Getter para el ID
+        return idEspacio;
+    }
+
+    public void setIdEspacio(Long idEspacio) {
+        this.idEspacio = idEspacio;
     }
 
     public String getCodigoEspacio() {
         return codigoEspacio;
     }
 
-    public EstadoEspacio getEstado() {
-        return estadoEspacio;
-    }
-
-    public SubestadoEspacio getSubestado() {
-        return subestadoEspacio;
-    }
-
-    public BigDecimal getCosto() {
-        return costo;  // Aquí definimos el getter para el costo
-    }
-
-    public void setIdEspacio(Long idEspacio) {
-        this.idEspacio = idEspacio;  // Setter para el ID
-    }
-
     public void setCodigoEspacio(String codigoEspacio) {
         this.codigoEspacio = codigoEspacio;
     }
 
-    public void setEstado(EstadoEspacio estadoEspacio) {
-        this.estadoEspacio = estadoEspacio;
+    public EstadoEspacio getEstado() {
+        return estado;
     }
 
-    public void setSubestado(SubestadoEspacio subestadoEspacio) {
-        this.subestadoEspacio = subestadoEspacio;
+    public void setEstado(EstadoEspacio estado) {
+        this.estado = estado;
+    }
+
+    public SubestadoEspacio getSubestado() {
+        return subestado;
+    }
+
+    public void setSubestado(SubestadoEspacio subestado) {
+        this.subestado = subestado;
+    }
+
+    public BigDecimal getCosto() {
+        return costo;
     }
 
     public void setCosto(BigDecimal costo) {
-        this.costo = costo;  // Setter para el costo
-    }
-
-    // Enumeraciones de estado y subestado
-
-    public enum SubestadoEspacio {
-        Activo,
-        Inactivo,
-        Mantenimiento,
-        Desactivado // Añadido aquí
+        this.costo = costo;
     }
 
     public enum EstadoEspacio {
+        Disponible,
         Ocupado,
-        Libre,
-        Reservado,
-        No_Disponible,
-        Disponible // Añadido aquí
+        Mantenimiento
+    }
+
+    public enum SubestadoEspacio {
+        Activo,
+        Desactivado
     }
 }
+
