@@ -1,7 +1,6 @@
 import './App.css';
 import HeaderAdmin from './Componentes/headerAdmin';
 import ListaAdmin from './Componentes/ListaAdmin';
-
 import ContenidoInicio from './Componentes/contenidoInicio';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -12,7 +11,6 @@ import SolicitudesClientes from './paginas/Clientes/SolicitudesClientes';
 import Espacios from './paginas/Espacios/Espacios';
 import Boleta from './paginas/Boleta/Boleta';
 import Reportes from './paginas/Reportes/Reportes';
-import Login from './Login/Login';
 
 function App() {
   return (
@@ -25,7 +23,7 @@ function App() {
 
         <div className="content-container">
           <Routes>
-            <Route path="/" element={<Login />} /> {/* Página por defecto */}
+            <Route path="/" element={<ContenidoInicio />} /> {/* Página por defecto */}
             <Route path="/cuenta" element={<Cuenta />} />
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/solicitudesclientes" element={<SolicitudesClientes />} />

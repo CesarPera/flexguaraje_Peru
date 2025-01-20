@@ -32,7 +32,6 @@ const Login = () => {
         <form className="login-form" onSubmit={handleSubmit}>
           <h2 className="form-title">{isRegistering ? 'Crear Cuenta' : 'Iniciar Sesión'}</h2>
           <div className="input-group">
-            
             <label htmlFor="email" className="animated-label">Correo Electrónico</label>
             <input
               type="email"
