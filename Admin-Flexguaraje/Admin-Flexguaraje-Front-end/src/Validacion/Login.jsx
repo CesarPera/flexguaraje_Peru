@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importamos useNavigate
 import './login.css';
 
 const Login = () => {
@@ -6,6 +7,8 @@ const Login = () => {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const navigate = useNavigate(); // Usamos el hook useNavigate
 
   const toggleMode = () => {
     setIsRegistering(!isRegistering);
@@ -20,9 +23,12 @@ const Login = () => {
     if (isChangingPassword) {
       alert('Contraseña actualizada con éxito.');
     } else if (isRegistering) {
+      // Simulamos la creación de cuenta
       alert('Cuenta creada con éxito.');
+      navigate("/bienvenido_a_flexguaraje_peru"); // Redirige a la página de bienvenida después de crear la cuenta
     } else {
       alert('Inicio de sesión exitoso.');
+      navigate("/bienvenido_a_flexguaraje_peru"); // Redirige a la página de bienvenida después de iniciar sesión
     }
   };
 
@@ -65,7 +71,7 @@ const Login = () => {
           </form>
         ) : (
           <form className="login-form" onSubmit={handleSubmit}>
-            <h2 className="form-title"></h2>
+            <h2 className="form-title">Cambiar Contraseña</h2>
             <div className="input-group">
               <label htmlFor="email" className="animated-label">Nombre de usuario</label>
               <input
@@ -98,12 +104,11 @@ const Login = () => {
                 placeholder=" "
               />
             </div>
-            <button type="submit" className="animated-button">Crear Cuenta Nueva</button>
+            <button type="submit" className="animated-button">Actualizar Contraseña</button>
           </form>
         )}
       </div>
     </div>
-
   );
 };
 

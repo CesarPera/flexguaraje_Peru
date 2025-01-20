@@ -1,7 +1,7 @@
 import './App.css';
 import HeaderAdmin from './Componentes/HeaderAdmin';
 import ListaAdmin from './Componentes/ListaAdmin';
-import ContenidoInicio from './Componentes/contenidoInicio';
+import ContenidoInicio from './Componentes/ContenidoInicio';  // Verifica esta línea
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // Aquí definimos las páginas (pueden ser otros componentes)
@@ -15,29 +15,26 @@ import Login from './Validacion/Login';
 
 function App() {
   return (
-    <Router>
-      {/* Layout principal con HeaderAdmin y ListaAdmin */}
-      <div className="app-layout">
-        <HeaderAdmin />
-        <ListaAdmin />
+<Router>
+  {/* Layout principal con HeaderAdmin y ListaAdmin */}
+  <div className="app-layout">
+    <HeaderAdmin />
+    <ListaAdmin />
 
-
-        <div className="content-container">
-          <Routes>
-            <Route path="/" element={<Login />} /> {/* Página por defecto */}
-            <Route path="/bienvenido_a_flexguaraje_peru" element={<ContenidoInicio />} />
-            <Route path="/cuenta" element={<Cuenta />} />
-            <Route path="/clientes" element={<Clientes />} />
-            <Route path="/solicitudesclientes" element={<SolicitudesClientes />} />
-            <Route path="/espacios" element={<Espacios />} />
-            <Route path="/Boleta" element={<Boleta />} />
-            <Route path="/reportes" element={<Reportes />} />
-          </Routes>
-        </div>
-      </div>
-
-
-    </Router>
+    <div className="content-container">
+      <Routes>
+        <Route path="/" element={<Login />} /> {/* Página por defecto */}
+        <Route path="/bienvenido_a_flexguaraje_peru" element={<ContenidoInicio />} />
+        <Route path="/cuenta" element={<Cuenta />} />
+        <Route path="/clientes" element={<Clientes />} />
+        <Route path="/solicitudesclientes" element={<SolicitudesClientes />} />
+        <Route path="/espacios" element={<Espacios />} />
+        <Route path="/Boleta" element={<Boleta />} />
+        <Route path="/reportes" element={<Reportes />} />
+      </Routes>
+    </div>
+  </div>
+</Router>
 
   );
 }
