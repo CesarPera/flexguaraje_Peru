@@ -10,6 +10,8 @@
 
 /* COMENZARRRRRRRRRRR TU TRABAJOOOOO DE AQUIIII PARA ABAJOOOOOOOOOOOOO */
 
+
+
 /* TITULO DE SOLICITUD */
 .title-solicitud {
   font-size: 2rem;
@@ -22,18 +24,24 @@
   color: #333;
 }
 
+.contenido-cliente {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* informacion de cliente */
 .info-cliente {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;
 }
 
 .info-cliente div {
   border: 5px solid #10dcf7;
   border-radius: 10px;
   background-color: #3cbbcc;
+  margin: 10px;
 }
 
 .info-cliente h3 {
@@ -69,12 +77,22 @@
   width: 400px;
 }
 
-/*
-.info-nombre-completo,
-.info-email,
-.info-notas {
-  width: 400px;
-  padding: 0px;
-
+/* actualizar cliente */
+.btn-act-cliente {
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-left: 15px;
 }
-  */
+
+/* FORMULARIO MODAL - ACTUALIZAR */
+
+.cont-act-info-cliente {
+  width: 400px !important;
+}
+
+.modal-overlay h3 {
+  font-weight: bold;
+  font-size: 1.5rem;
+}

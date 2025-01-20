@@ -81,13 +81,6 @@
     font-weight: 500;
 }
 
-.modal-overlay textarea {
-    display: flex;
-    width: 300px;
-    justify-content: center;
-    margin: 0px auto 10px auto;
-}
-
 /* FORMULARIO FLOTANTE - BOTONES */
 .formulario-botones {
     display: flex;
@@ -125,9 +118,7 @@
     vertical-align: middle;
 }
 
-
-
-.modal-content {
+.select-cliente-buscar {
     width: 60% !important;
 }
 

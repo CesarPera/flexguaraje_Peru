@@ -302,7 +302,7 @@ function Clientes() {
                 const cliente = response.data;
                 if (cliente.length === 1) {
                     // Si solo se encuentra un cliente, navegar directamente a la página de solicitudes
-                    navigate('/solicitudesclientes', { state: { cliente: clientes[0] } });
+                    navigate('/solicitudesclientes', { state: { cliente: cliente[0] } });
                 } else {
                     // Si hay más de un cliente, mostrar la tabla modal
                     setClientesEncontrados(cliente);
@@ -343,7 +343,7 @@ function Clientes() {
 
 
     return (
-        <div className="clientes-page">
+        <div data-testid='clientes-page' className="clientes-page" >
             <h2 className='title-cliente'>Buscar y/o Agregar Clientes:</h2>
 
             <div className="formulario-busqueda">
@@ -393,7 +393,7 @@ function Clientes() {
 
                 {clientesEncontrados.length > 0 && (
                     <div className="modal-overlay">
-                        <div className="modal-content">
+                        <div className="modal-content select-cliente-buscar">
                             <h3>Selecciona un cliente:</h3>
                             <table className="table table-primary table-hover table-bordered border-primary text-center table-seleccionar">
                                 <thead>
