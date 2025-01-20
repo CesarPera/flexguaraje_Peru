@@ -1,11 +1,8 @@
 package admin_flexguaraje.back_end.Modelo;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "alquileres")
@@ -17,13 +14,13 @@ public class Alquileres {
     private Long idAlquiler;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente", nullable = false,
+    @JoinColumn(name = "id_cliente", nullable = false,
             foreignKey = @ForeignKey(name = "FK_Alquiler_Cliente"))
     @JsonManagedReference
     private Cliente cliente;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_espacio", referencedColumnName = "id_espacio", nullable = false,
+    @JoinColumn(name = "id_espacio", nullable = false,
             foreignKey = @ForeignKey(name = "FK_Alquiler_Espacio"))
     private Espacio espacio;
 

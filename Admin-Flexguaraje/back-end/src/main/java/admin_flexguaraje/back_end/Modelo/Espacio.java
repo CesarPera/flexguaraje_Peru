@@ -1,10 +1,8 @@
 package admin_flexguaraje.back_end.Modelo;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 @Table(name = "espacio",

@@ -1,6 +1,5 @@
 package admin_flexguaraje.back_end.Modelo;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
