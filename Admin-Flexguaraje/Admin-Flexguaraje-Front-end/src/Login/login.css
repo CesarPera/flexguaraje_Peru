@@ -1,0 +1,132 @@
+/* login.css */
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+  }
+  
+  .login-container {
+    width: 100%;
+    max-width: 380px;
+    background: #fff;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff7e5f;
+    margin-bottom: 20px;
+  }
+  
+  .input-group {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  
+  .animated-label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-size: 14px;
+    color: #aaa;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  
+  .animated-input {
+    width: 100%;
+    padding: 14px 12px;
+    font-size: 16px;
+    color: #333;
+    background: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .animated-input:focus {
+    border-color: #ff7e5f;
+    background: #fff;
+  }
+  
+  .animated-input:focus ~ .animated-label,
+  .animated-input:not(:placeholder-shown) ~ .animated-label {
+    top: -8px;
+    left: 10px;
+    font-size: 12px;
+    color: #ff7e5f;
+    background: #fff;
+    padding: 0 4px;
+  }
+  
+  .animated-button {
+    width: 100%;
+    padding: 12px 0;
+    font-size: 16px;
+    color: #fff;
+    background: #ff7e5f;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .animated-button:hover {
+    background-color: #e8694f;
+  }
+  
+  .toggle-text {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .toggle-text:hover {
+    color: #ff7e5f;
+  }
+  
+  @media (max-width: 480px) {
+    .login-container {
+      padding: 20px;
+    }
+  
+    .form-title {
+      font-size: 20px;
+    }
+  
+    .animated-button {
+      font-size: 14px;
+    }
+  }
+  
