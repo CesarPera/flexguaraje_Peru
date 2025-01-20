@@ -11,7 +11,6 @@ import Espacios from './paginas/Espacios/Espacios';
 import Boleta from './paginas/Boleta/Boleta';
 import Reportes from './paginas/Reportes/Reportes';
 
-
 function App() {
   return (
     <Router>
@@ -29,7 +28,6 @@ function App() {
             <Route path="/espacios" element={<Espacios />} />
             <Route path="/Boleta" element={<Boleta />} />
             <Route path="/reportes" element={<Reportes />} />
-            <Route path="/Cuentas" element={<Cuentas />}/>
           </Routes>
         </div>
       </div>
