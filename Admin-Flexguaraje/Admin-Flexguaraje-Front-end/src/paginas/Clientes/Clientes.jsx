@@ -343,7 +343,7 @@ function Clientes() {
 
 
     return (
-        <div data-testid='clientes-page' className="clientes-page" >
+        <div className="clientes-page" >
             <h2 className='title-cliente'>Buscar y/o Agregar Clientes:</h2>
 
             <div className="formulario-busqueda">
