@@ -63,18 +63,19 @@ create table cuenta (
 	id_cuenta int primary key auto_increment,
     id_usuario int not null,
     id_roles int not null,
-    usuario varchar(20) not null,
+    nombre_usuario varchar(20) not null,
     email varchar(50) not null,
     pass varchar(30) not null,
     estado varchar(15) not null default 'Activo',
-    constraint FK_roles_cuenta foreign key (id_roles) references roles(id_roles),
 	constraint FK_usuario_cuenta foreign key (id_usuario) references usuario(id_usuario),
+    constraint FK_roles_cuenta foreign key (id_roles) references roles(id_roles),
 	CONSTRAINT valores_estado_cuenta CHECK (estado IN ('Activo', 'Desactivado')),
-    constraint UQ_email_cuenta UNIQUE (email),
-    constraint UQ_usuario_cuenta UNIQUE (usuario)
+    constraint UQ_usuario_unico UNIQUE (id_usuario),
+    constraint UQ_usuario_cuenta UNIQUE (nombre_usuario),
+    constraint UQ_email_cuenta UNIQUE (email)
 );
 # 15 DATOS PARA LA TABLA CUENTA
-INSERT INTO cuenta (id_usuario, id_roles, usuario, email, pass, estado)
+INSERT INTO cuenta (id_usuario, id_roles, nombre_usuario, email, pass, estado)
 VALUES
 (1, 2, 'propietario1', 'propietario1@example.com', 'password123', 'Activo'),
 (2, 1, 'admin1', 'admin1@example.com', 'password123', 'Activo'),
@@ -95,7 +96,6 @@ VALUES
 #TABLA CLIENTESSSSSSSSSSSS
 CREATE TABLE cliente (
     id_cliente INT auto_increment PRIMARY KEY,
-    id_cuenta INT NOT NULL,
     dni VARCHAR(8) NOT NULL,
     nombre VARCHAR(50) NOT NULL,
     apellido_paterno VARCHAR(20) NOT NULL,
@@ -104,7 +104,6 @@ CREATE TABLE cliente (
     email VARCHAR(50) NOT NULL,
     direccion VARCHAR(250) NOT NULL,
     nota_adicional VARCHAR(250) DEFAULT 'Sin Discapacidad',
-    CONSTRAINT fk_cliente_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta),
     CONSTRAINT UQ_dni UNIQUE (dni),
     CONSTRAINT CHK_DNI_Format CHECK (LENGTH(dni) = 8 AND dni NOT LIKE '%[^0-9]%'),
     CONSTRAINT CHK_Telefono_Format CHECK (LENGTH(telefono) = 9 AND telefono NOT LIKE '%[^0-9]%'),
@@ -113,26 +112,26 @@ CREATE TABLE cliente (
                                                  apellido_materno NOT LIKE '%[^A-Za-z]%')
 );
 # 20 DATOS DE LA TABLA CLIENTE
-INSERT INTO cliente (id_cuenta, dni, nombre, apellido_paterno, apellido_materno, telefono, email, direccion, nota_adicional) VALUES
-(2, '12345678', 'Carlos', 'Gomez', 'Lopez', '912345678', 'carlos.gomez@example.com', 'Av. Siempre Viva 123, Lima', 'Sin Discapacidad'),
-(3, '23456789', 'Maria', 'Torres', 'Perez', '923456789', 'maria.torres@example.com', 'Jr. Los Pinos 456, Arequipa', 'Sin Discapacidad'),
-(4, '34567890', 'Juan', 'Ramirez', 'Garcia', '934567890', 'juan.ramirez@example.com', 'Calle Los Olivos 789, Cusco', 'Sin Discapacidad'),
-(5, '45678901', 'Elena', 'Martinez', 'Lopez', '945678901', 'elena.martinez@example.com', 'Av. Las Flores 321, Trujillo', 'Usuario con silla de ruedas'),
-(6, '56789012', 'Luis', 'Fernandez', 'Ramos', '956789012', 'luis.fernandez@example.com', 'Jr. San Juan 654, Ica', 'Sin Discapacidad'),
-(7, '67890123', 'Lucia', 'Diaz', 'Guzman', '967890123', 'lucia.diaz@example.com', 'Calle Principal 987, Piura', 'Usuario con bastón'),
-(8, '78901234', 'Pedro', 'Castillo', 'Alvarez', '978901234', 'pedro.castillo@example.com', 'Av. La Marina 147, Tacna', 'Sin Discapacidad'),
-(9, '89012345', 'Ana', 'Rios', 'Morales', '989012345', 'ana.rios@example.com', 'Jr. Amazonas 258, Chiclayo', 'Sin Discapacidad'),
-(10, '90123456', 'Jorge', 'Paredes', 'Flores', '900123456', 'jorge.paredes@example.com', 'Calle El Sol 369, Huancayo', 'Sin Discapacidad'),
-(11, '01234567', 'Sofia', 'Mendoza', 'Chavez', '911234567', 'sofia.mendoza@example.com', 'Jr. Las Palmeras 111, Puno', 'Sin Discapacidad'),
-(12, '11234567', 'Ricardo', 'Lopez', 'Salazar', '922345678', 'ricardo.lopez@example.com', 'Av. La Cultura 222, Juliaca', 'Usuario con discapacidad auditiva'),
-(13, '22345678', 'Daniela', 'Vega', 'Rojas', '933456789', 'daniela.vega@example.com', 'Calle Los Cedros 333, Tumbes', 'Sin Discapacidad'),
-(14, '33456789', 'Miguel', 'Cruz', 'Hernandez', '944567890', 'miguel.cruz@example.com', 'Jr. Los Claveles 444, Moquegua', 'Usuario con discapacidad visual'),
-(15, '44567890', 'Isabel', 'Ruiz', 'Espinoza', '955678901', 'isabel.ruiz@example.com', 'Av. San Martín 555, Chimbote', 'Sin Discapacidad'),
-(15, '55678901', 'Camila', 'Ponce', 'Vargas', '966789012', 'camila.ponce@example.com', 'Jr. Los Tulipanes 666, Cajamarca', 'Sin Discapacidad'),
-(11, '66789012', 'Jose', 'Alvarez', 'Paredes', '977890123', 'jose.alvarez@example.com', 'Calle Principal 777, Huánuco', 'Sin Discapacidad'),
-(9, '77890123', 'Karina', 'Chavez', 'Garcia', '988901234', 'karina.chavez@example.com', 'Jr. Los Jazmines 888, Ayacucho', 'Usuario con silla de ruedas'),
-(9, '88901234', 'Hector', 'Morales', 'Diaz', '999012345', 'hector.morales@example.com', 'Av. El Progreso 999, Cajamarca', 'Sin Discapacidad'),
-(4, '99012345', 'Paola', 'Garcia', 'Sanchez', '910123456', 'paola.garcia@example.com', 'Jr. Las Margaritas 123, Iquitos', 'Sin Discapacidad');
+INSERT INTO cliente (dni, nombre, apellido_paterno, apellido_materno, telefono, email, direccion, nota_adicional) VALUES
+('12345678', 'Carlos', 'Gomez', 'Lopez', '912345678', 'carlos.gomez@example.com', 'Av. Siempre Viva 123, Lima', 'Sin Discapacidad'),
+('23456789', 'Maria', 'Torres', 'Perez', '923456789', 'maria.torres@example.com', 'Jr. Los Pinos 456, Arequipa', 'Sin Discapacidad'),
+('34567890', 'Juan', 'Ramirez', 'Garcia', '934567890', 'juan.ramirez@example.com', 'Calle Los Olivos 789, Cusco', 'Sin Discapacidad'),
+('45678901', 'Elena', 'Martinez', 'Lopez', '945678901', 'elena.martinez@example.com', 'Av. Las Flores 321, Trujillo', 'Usuario con silla de ruedas'),
+('56789012', 'Luis', 'Fernandez', 'Ramos', '956789012', 'luis.fernandez@example.com', 'Jr. San Juan 654, Ica', 'Sin Discapacidad'),
+('67890123', 'Lucia', 'Diaz', 'Guzman', '967890123', 'lucia.diaz@example.com', 'Calle Principal 987, Piura', 'Usuario con bastón'),
+('78901234', 'Pedro', 'Castillo', 'Alvarez', '978901234', 'pedro.castillo@example.com', 'Av. La Marina 147, Tacna', 'Sin Discapacidad'),
+('89012345', 'Ana', 'Rios', 'Morales', '989012345', 'ana.rios@example.com', 'Jr. Amazonas 258, Chiclayo', 'Sin Discapacidad'),
+('90123456', 'Jorge', 'Paredes', 'Flores', '900123456', 'jorge.paredes@example.com', 'Calle El Sol 369, Huancayo', 'Sin Discapacidad'),
+('01234567', 'Sofia', 'Mendoza', 'Chavez', '911234567', 'sofia.mendoza@example.com', 'Jr. Las Palmeras 111, Puno', 'Sin Discapacidad'),
+('11234567', 'Ricardo', 'Lopez', 'Salazar', '922345678', 'ricardo.lopez@example.com', 'Av. La Cultura 222, Juliaca', 'Usuario con discapacidad auditiva'),
+('22345678', 'Daniela', 'Vega', 'Rojas', '933456789', 'daniela.vega@example.com', 'Calle Los Cedros 333, Tumbes', 'Sin Discapacidad'),
+('33456789', 'Miguel', 'Cruz', 'Hernandez', '944567890', 'miguel.cruz@example.com', 'Jr. Los Claveles 444, Moquegua', 'Usuario con discapacidad visual'),
+('44567890', 'Isabel', 'Ruiz', 'Espinoza', '955678901', 'isabel.ruiz@example.com', 'Av. San Martín 555, Chimbote', 'Sin Discapacidad'),
+('55678901', 'Camila', 'Ponce', 'Vargas', '966789012', 'camila.ponce@example.com', 'Jr. Los Tulipanes 666, Cajamarca', 'Sin Discapacidad'),
+('66789012', 'Jose', 'Alvarez', 'Paredes', '977890123', 'jose.alvarez@example.com', 'Calle Principal 777, Huánuco', 'Sin Discapacidad'),
+('77890123', 'Karina', 'Chavez', 'Garcia', '988901234', 'karina.chavez@example.com', 'Jr. Los Jazmines 888, Ayacucho', 'Usuario con silla de ruedas'),
+('88901234', 'Hector', 'Morales', 'Diaz', '999012345', 'hector.morales@example.com', 'Av. El Progreso 999, Cajamarca', 'Sin Discapacidad'),
+('99012345', 'Paola', 'Garcia', 'Sanchez', '910123456', 'paola.garcia@example.com', 'Jr. Las Margaritas 123, Iquitos', 'Sin Discapacidad');
 
 #TABLA ESPACIOSSSSS
 CREATE TABLE espacio (
@@ -232,7 +231,7 @@ SELECT
     u.nombre AS nombre_usuario,
     u.apellido_paterno, 
     u.apellido_materno, 
-    c.usuario AS cuenta_usuario, 
+    c.nombre_usuario AS cuenta_usuario, 
     c.email AS cuenta_email,
     c.pass AS cuenta_contraseña,
     c.estado AS estado_cuenta
@@ -243,26 +242,12 @@ JOIN cuenta c ON u.id_usuario = c.id_usuario;
 SELECT 
     r.nombre_rol, 
     p.nombre_permiso, 
-    c.usuario AS cuenta_usuario, 
+    c.nombre_usuario AS cuenta_usuario, 
     c.email AS cuenta_email,
 	c.estado AS estado_cuenta
 FROM roles r
 JOIN permisos p ON r.id_roles = p.id_roles
 JOIN cuenta c ON r.id_roles = c.id_roles;
-
-# VISUALIZAR LOS DATOS COMBINADOS DE CUENTA Y CLIENTE
-SELECT 
-    c.usuario AS cuenta_usuario, 
-    c.email AS cuenta_email, 
-    cl.dni AS cliente_dni, 
-    cl.nombre AS cliente_nombre, 
-    cl.apellido_paterno AS cliente_apellido_paterno,
-    cl.apellido_materno AS cliente_apellido_materno,
-    cl.telefono AS cliente_telefono, 
-    cl.direccion AS cliente_direccion, 
-    cl.nota_adicional AS cliente_nota_adicional
-FROM cuenta c
-JOIN cliente cl ON c.id_cuenta = cl.id_cuenta;
 
 # VISUALIZAR LOS DATOS COMBINADOS DE ALQUILERES, CLIENTE Y ESPACIO
 SELECT 
@@ -303,7 +288,7 @@ SELECT
     b.monto_pagar, 
     a.fecha_inicio_alquiler, 
     a.fecha_fin_alquiler, 
-    c.usuario AS cuenta_usuario
+    c.nombre_usuario AS cuenta_usuario
 FROM boleta b
 JOIN alquileres a ON b.id_alquiler = a.id_alquiler
 JOIN cuenta c ON b.id_cuenta = c.id_cuenta;
