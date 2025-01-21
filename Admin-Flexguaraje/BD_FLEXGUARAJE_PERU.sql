@@ -65,7 +65,7 @@ create table cuenta (
     id_roles int not null,
     nombre_usuario varchar(20) not null,
     email varchar(50) not null,
-    pass varchar(30) not null,
+    pass varchar(255) not null,
     estado varchar(15) not null default 'Activo',
 	constraint FK_usuario_cuenta foreign key (id_usuario) references usuario(id_usuario),
     constraint FK_roles_cuenta foreign key (id_roles) references roles(id_roles),

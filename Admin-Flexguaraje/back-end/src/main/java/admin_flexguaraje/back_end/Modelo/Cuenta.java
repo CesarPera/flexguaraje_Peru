@@ -31,7 +31,7 @@ public class Cuenta {
     @Column(name = "email", nullable = false, length = 50)
     private String email;
 
-    @Column(name = "pass", nullable = false, length = 30)
+    @Column(name = "pass", nullable = false, length = 255)
     private String password;
 
     @Enumerated(EnumType.STRING)
