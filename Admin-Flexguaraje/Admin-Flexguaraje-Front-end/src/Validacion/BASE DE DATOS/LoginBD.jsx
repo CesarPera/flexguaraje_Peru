@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// URLs de la API REST
 const LOGIN_BD_API_REST_URL = "http://localhost:8080/cuenta/login";
 const CAMBIO_PASS_BD_API_REST_URL = "http://localhost:8080/cuenta/cambiar_contraseña";
 
@@ -7,46 +8,65 @@ class LoginBD {
 
   // Método para autenticar al usuario
   login(email, password) {
-    const credentials = `${email}:${password}`;  // Asegúrate de que las credenciales estén dentro de un template literal
-    const base64Credentials = btoa(credentials); // Codificar las credenciales en base64
-
-    return axios.post(LOGIN_BD_API_REST_URL, null, {
+    const credentials = `${email}:${password}`;
+    const base64Credentials = btoa(credentials); // Codifica las credenciales en Base64
+    
+    return axios.post(LOGIN_BD_API_REST_URL, {}, {
       headers: {
-        "Authorization": `Basic ${base64Credentials}`,  // Corregir el formato del encabezado Authorization
+        Authorization: `Basic ${base64Credentials}` // Agrega las credenciales al encabezado Authorization
       }
     })
     .then(response => {
-      return response.data; // Si la autenticación es exitosa
+      // Aquí puedes manejar la respuesta si la autenticación es exitosa
+      console.log("Login exitoso:", response.data);
+      return response.data;
     })
     .catch(error => {
+      // Manejo de errores (credenciales incorrectas, error del servidor, etc.)
       if (error.response) {
-        throw new Error(error.response.data); // Si hay un error en el servidor
+        console.error("Error en el login:", error.response.data);
+        throw new Error(error.response.data);
       } else {
-        throw new Error("Error de red o configuración"); // En caso de problemas de red
+        console.error("Error de red o conexión:", error.message);
+        throw new Error("Error de red o conexión");
       }
     });
   }
 
   // Método para cambiar la contraseña
-  cambiarPassword(email, passwordActual, nuevaPassword, repetirNuevaPassword) {
-    const data = {
-      email: email,
-      passwordActual: passwordActual,
-      nuevaPassword: nuevaPassword,
-      repetirNuevaPassword: repetirNuevaPassword
+  cambiarContraseña(email, passwordActual, nuevaPassword, repetirNuevaPassword) {
+    // Validación de las contraseñas
+    if (nuevaPassword !== repetirNuevaPassword) {
+      throw new Error("Las contraseñas nuevas no coinciden");
+    }
+
+    // Validación adicional: Contraseña actual no debe ser igual a la nueva
+    if (passwordActual === nuevaPassword) {
+      throw new Error("La nueva contraseña no puede ser igual a la actual");
+    }
+
+    // Preparar los datos para el cambio de contraseña
+    const datos = {
+      email,
+      passwordActual,
+      nuevaPassword,
+      repetirNuevaPassword
     };
 
-    return axios.put(CAMBIO_PASS_BD_API_REST_URL, data)
-    .then(response => {
-      return response.data; // Si la actualización de la contraseña es exitosa
-    })
-    .catch(error => {
-      if (error.response) {
-        throw new Error(error.response.data); // Si hay un error en el servidor
-      } else {
-        throw new Error("Error de red o configuración"); // En caso de problemas de red
-      }
-    });
+    return axios.put(CAMBIO_PASS_BD_API_REST_URL, datos)
+      .then(response => {
+        console.log("Contraseña cambiada con éxito:", response.data);
+        return response.data;
+      })
+      .catch(error => {
+        if (error.response) {
+          console.error("Error al cambiar la contraseña:", error.response.data);
+          throw new Error(error.response.data);
+        } else {
+          console.error("Error de red o conexión:", error.message);
+          throw new Error("Error de red o conexión");
+        }
+      });
   }
 }
 

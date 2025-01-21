@@ -216,6 +216,8 @@ select * from espacio;
 select * from alquileres;
 select * from boleta;
 
+
+
 # VISUALIZAR LOS DATOS COMBINADOS DE ROLES Y PERMISOS
 SELECT 
     r.nombre_rol, 
