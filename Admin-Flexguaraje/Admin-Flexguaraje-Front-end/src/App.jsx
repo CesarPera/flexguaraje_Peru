@@ -1,6 +1,7 @@
 import './App.css';
-import HeaderAdmin from './Componentes/headerAdmin';
+import HeaderAdmin from './Componentes/HeaderAdmin';
 import ListaAdmin from './Componentes/ListaAdmin';
+import ContenidoInicio from './Componentes/contenidoInicio';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // Aquí definimos las páginas (pueden ser otros componentes)
@@ -24,6 +25,7 @@ function App() {
         <div className="content-container">
           <Routes>
             <Route path="/" element={<Login />} /> {/* Página por defecto */}
+            <Route path="/bienvenido_a_flexguaraje_peru" element={<ContenidoInicio />} />
             <Route path="/cuenta" element={<Cuenta />} />
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/solicitudesclientes" element={<SolicitudesClientes />} />

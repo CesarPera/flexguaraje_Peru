@@ -7,7 +7,7 @@ function HeaderAdmin() {
             <header>
                 {/* Usamos Link para redirigir al inicio */}
                 <h1>
-                    <Link to="/">Flexguaraje Perú</Link>
+                    <Link to="/bienvenido_a_flexguaraje_peru">Flexguaraje Perú</Link>
                 </h1>
 
                 {/*<button>Cerrar Sesión</button>*/}

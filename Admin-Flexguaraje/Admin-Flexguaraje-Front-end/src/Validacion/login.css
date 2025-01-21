@@ -1,13 +1,15 @@
 .general-login {
     margin: 0;
+    position: fixed;
     font-family: 'Arial', sans-serif;
     background: linear-gradient(135deg, #ff7e5f, #feb47b);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    width: 100vw;
     color: #333;
-    z-index: 5000;
+    z-index: 1000 !important;
 }
 
 .login-container {
