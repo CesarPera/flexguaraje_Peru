@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Clientes.css';
 import { useNavigate } from 'react-router-dom'; // Usar react-router para redirección
-import ClientesBD from './BASE DE DATOS/ClientesBD';
+import ClientesBD from './BASE DE DATOS/ClientesBD'
 import Swal from 'sweetalert2';
 
 function Clientes() {

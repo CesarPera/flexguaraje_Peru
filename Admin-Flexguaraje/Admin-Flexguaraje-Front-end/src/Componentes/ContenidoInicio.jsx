@@ -4,9 +4,7 @@ function ContenidoInicio() {
     const navigate = useNavigate();
 
     // Función para redirigir al usuario
-    const handleBackToHome = () => {
-        navigate("/");  // Redirige a la página de login o página principal
-    };
+
 
     return (
         <div className="contenido-inicio">
@@ -31,9 +29,6 @@ function ContenidoInicio() {
             <div className="cierre">
                 <p>¡Estamos aquí para apoyarte en cada paso del camino! ¡Buena suerte en tu jornada laboral!</p>
                 <h3>¡GRACIASSSSSSSSSSSSSSSSSSSSSSSS!</h3>
-                <button onClick={handleBackToHome} className="btn btn-primary">
-                    Volver al Inicio
-                </button>
             </div>
         </div>
     );

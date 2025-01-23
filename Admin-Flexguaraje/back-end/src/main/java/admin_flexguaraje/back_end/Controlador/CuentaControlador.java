@@ -4,6 +4,7 @@ package admin_flexguaraje.back_end.Controlador;
 import admin_flexguaraje.back_end.Modelo.Cuenta;
 import admin_flexguaraje.back_end.Negocio.CuentaNegocio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,11 @@ public class CuentaControlador {
         // Validar formato del nombre del rol
         if (nombreRol == null || !nombreRol.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) {
             return ResponseEntity.badRequest().body("El nombre del rol solo puede contener letras y espacios.");
+        }
+
+        String passwordPattern = "^(?=(.*[A-Z]){3})(?=(.*[0-9]){3})(?=(.*[\\W_]){2})(?=.*[a-z]).{10,}$";
+        if (!password.matches(passwordPattern)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La nueva contraseña debe tener minimo 10 caracteres, incluir 3 mayúsculas, 3 números, 2 caracteres especiales y el resto en minúsculas.");
         }
 
         try {
