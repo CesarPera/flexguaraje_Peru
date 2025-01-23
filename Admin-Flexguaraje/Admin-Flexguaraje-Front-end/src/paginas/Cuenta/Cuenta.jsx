@@ -113,9 +113,11 @@ function GestionCuentas() {
                 <h2>Crear Cuenta y/o Usuario</h2>
             </div>
 
-            {/* Botones para abrir los modales */}
-            <button className="crear-cuenta-btn" onClick={() => setIsModalOpen(true)}>Crear Cuenta</button>
-            <button className="crear-usuario-btn" onClick={() => setIsUserModalOpen(true)}>Crear Usuario</button>
+            <div className="botones-crear">
+                {/* Botones para abrir los modales */}
+                <button className="crear-cuenta-btn" onClick={() => setIsModalOpen(true)}>Crear Cuenta</button>
+                <button className="crear-usuario-btn" onClick={() => setIsUserModalOpen(true)}>Crear Usuario</button>
+            </div>
 
             {/* Modal para crear una nueva cuenta */}
             {isModalOpen && (
@@ -263,12 +265,18 @@ function GestionCuentas() {
                             <td>{cuenta.rol}</td>
                             <td>{cuenta.estado}</td>
                             <td>
-                                <button onClick={() => toggleEstado(index)}>
-                                    {cuenta.estado === "Activo" ? "Desactivar" : "Activar"}
-                                </button>
-                                <button onClick={() => alert("Función de cambiar contraseña no implementada")}>
-                                    Cambiar Contraseña
-                                </button>
+                                <div className="acciones">
+                                    <button 
+                                        className="desactivar-btn" 
+                                        onClick={() => toggleEstado(index)}>
+                                        {cuenta.estado === "Activo" ? "Desactivar" : "Activar"}
+                                    </button>
+                                    <button 
+                                        className="cambiar-btn" 
+                                        onClick={() => alert("Función de cambiar contraseña no implementada")}>
+                                        Cambiar Contraseña
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}
