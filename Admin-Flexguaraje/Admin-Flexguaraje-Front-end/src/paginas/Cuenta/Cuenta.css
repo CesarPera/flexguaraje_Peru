@@ -6,6 +6,24 @@
     flex-grow: 1;
 }
 
+.cuenta-page h2 {
+    text-align: center; /* Centra el texto */
+    text-decoration: underline; /* Añade subrayado */
+    color: #131313; /* Color del texto */
+    font-size: 2rem; /* Tamaño de la fuente */
+    font-family: sans-serif;
+    font-weight: bold;
+    margin-top: 20px; /* Espaciado superior */
+}
+
+h2 {
+    width: 900px;
+    margin: 25px auto 30px auto;
+    color: #333;
+    vertical-align: middle;
+    font-size: 30px; /* Ajusta el tamaño de la fuente */
+}
+
 /* Modal */
 .modal {
     position: fixed;
@@ -18,18 +36,26 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    overflow: auto; /* Añadido para manejar desbordes */
 }
 
 .modal-content {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    width: 400px;
+    width: 80%; /* Reducido el tamaño al 80% */
+    max-width: 500px; /* Establece un ancho máximo más pequeño */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    overflow: hidden; /* Evita desbordes */
 }
 
 .modal-content h2 {
     margin-top: 0;
+    font-size: 1.5rem; /* Tamaño más pequeño para el título */
+    text-align: left; /* Alinea el texto a la izquierda */
+    color: #333; /* Color del texto */
+    font-weight: bold; /* Negrita para destacarlo */
+    margin-left: 60px; /* Añade un margen izquierdo para mayor separación */
 }
 
 .modal-content label {
@@ -91,41 +117,80 @@ table.tabla-cuenta th {
     text-align: center;
 }
 
-/* Botón centrado con estilo atractivo */
-.crear-cuenta-btn {
-    display: block; /* Asegura que se comporte como un bloque para centrar */
-    margin: 5px auto ; /* Centra horizontalmente */
-    padding: 10px 20px;
-    background-color: #5c7bda; /* Color violeta agradable */
-    color: white; /* Texto en blanco */
-    border: none;
-    border-radius: 5px; /* Bordes redondeados */
-    font-size: 16px; /* Tamaño de fuente */
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra para efecto 3D */
+/* Contenedor para los botones */
+.botones-crear {
+    display: flex; /* Alineación horizontal */
+    justify-content: center; /* Centra los botones horizontalmente */
+    gap: 10px; /* Espaciado entre los botones */
+    margin: 20px auto; /* Centrado general y espaciado superior */
 }
 
-/* Efectos al pasar el mouse */
+/* Estilo genérico para los botones */
+.crear-cuenta-btn,
+.crear-usuario-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+/* Botón específico para "Crear Cuenta" */
+.crear-cuenta-btn {
+    background-color: #5c7bda; /* Color violeta agradable */
+}
+
 .crear-cuenta-btn:hover {
     background-color: #95cadf; /* Color más oscuro al pasar el mouse */
     transform: scale(1.05); /* Ligero aumento de tamaño */
 }
-.cuenta-page h2 {
-    text-align: center; /* Centra el texto */
-    text-decoration: underline; /* Añade subrayado */
-    color: #131313; /* Color del texto (puedes ajustarlo a tu preferencia) */
-    font-size: 2rem; /* Tamaño de la fuente */
-    font-family: sans-serif;
-    font-weight: bold;
-    margin-top: 20px; /* Espaciado superior */
+
+/* Botón específico para "Crear Usuario" */
+.crear-usuario-btn {
+    background-color: #5cda7b; /* Color verde agradable */
 }
 
-h2 {
-    width: 900px;
-    margin: 25px auto 30px auto;
-    color: #333;
-    vertical-align: middle;
-    font-size: 30px; /* Ajusta el tamaño de la fuente */
-    color: #333; /* Color del texto */
+.crear-usuario-btn:hover {
+    background-color: #95dfb5; /* Color más oscuro al pasar el mouse */
+    transform: scale(1.05);
+}
+
+/* Estilo de los botones dentro de la tabla */
+.tabla-cuenta td .acciones {
+    display: flex; /* Alineación horizontal */
+    gap: 10px; /* Espaciado entre botones */
+    justify-content: center; /* Centrado horizontal */
+}
+
+.tabla-cuenta td button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    color: white;
+}
+
+/* Botón para desactivar */
+.tabla-cuenta td button.desactivar-btn {
+    background-color: #dc3545; /* Rojo */
+}
+
+.tabla-cuenta td button.desactivar-btn:hover {
+    background-color: #c82333; /* Rojo más oscuro al pasar el mouse */
+    transform: scale(1.05); /* Ligero aumento */
+}
+
+/* Botón para cambiar contraseña */
+.tabla-cuenta td button.cambiar-btn {
+    background-color: #007bff; /* Azul */
+}
+
+.tabla-cuenta td button.cambiar-btn:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+    transform: scale(1.05); /* Ligero aumento */
 }
