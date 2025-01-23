@@ -25,19 +25,23 @@ public class UsuarioControlador {
     }
 
     @PostMapping("/buscar_dni")
-    public ResponseEntity<Usuario> buscarUsuarioPorDni(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> buscarUsuarioPorDni(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
-        if (dni == null || dni.isEmpty()) {
-            return ResponseEntity.badRequest().build(); // 400 Bad Request si el DNI no se proporciona.
-        }
-        Optional<Usuario> usuario = usuarioNegocio.buscarUsuarioPorDni(dni);
-        return usuario.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        if (dni == null || !dni.matches("\\d{8}")) {
+            return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres numéricos.");
         }
 
+        Optional<Usuario> usuario = usuarioNegocio.buscarUsuarioPorDni(dni);
+        if (usuario.isEmpty()) {
+            return ResponseEntity.status(404).body("El cliente con DNI " + dni + " no se encuentra.");
+        }
+
+        return ResponseEntity.ok(usuario.get());
+    }
+
     @PostMapping("/crear_usuario")
-    public ResponseEntity<Usuario> crearUsuario(@RequestBody Map<String, String> body) {
-        // Extraer los campos del cuerpo de la solicitud
+    public ResponseEntity<String> crearUsuario(@RequestBody Map<String, String> body) {
+        // Validaciones
         String dni = body.get("dni");
         String nombre = body.get("nombre");
         String apellidoPaterno = body.get("apellidoPaterno");
@@ -45,14 +49,29 @@ public class UsuarioControlador {
         String email = body.get("email");
         String telefono = body.get("telefono");
 
-        // Validar que todos los campos requeridos estén presentes
-        if (dni == null || nombre == null || apellidoPaterno == null || apellidoMaterno == null || email == null || telefono == null) {
-            return ResponseEntity.badRequest().build(); // 400 Bad Request
+        if (dni == null || !dni.matches("\\d{8}")) {
+            return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres numéricos.");
+        }
+        if (usuarioNegocio.buscarUsuarioPorDni(dni).isPresent()) {
+            return ResponseEntity.badRequest().body("El DNI " + dni + " ya existe.");
+        }
+        if (nombre == null || !nombre.matches("[a-zA-Z ]+")) {
+            return ResponseEntity.badRequest().body("El nombre solo puede contener letras y espacios.");
+        }
+        if (apellidoPaterno == null || !apellidoPaterno.matches("[a-zA-Z]+")) {
+            return ResponseEntity.badRequest().body("El apellido paterno solo puede contener letras.");
+        }
+        if (apellidoMaterno == null || !apellidoMaterno.matches("[a-zA-Z]+")) {
+            return ResponseEntity.badRequest().body("El apellido materno solo puede contener letras.");
+        }
+        if (email == null || !email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            return ResponseEntity.badRequest().body("El email debe ser válido y contener '@'.");
+        }
+        if (telefono == null || !telefono.matches("\\d{9}")) {
+            return ResponseEntity.badRequest().body("El teléfono debe tener exactamente 9 caracteres numéricos.");
         }
 
-        
-
-        // Crear el usuario
+        // Crear usuario
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setDni(dni);
         nuevoUsuario.setNombre(nombre);
@@ -61,8 +80,47 @@ public class UsuarioControlador {
         nuevoUsuario.setEmail(email);
         nuevoUsuario.setTelefono(telefono);
 
-        // Guardar el usuario
-        Usuario usuarioCreado = usuarioNegocio.crearUsuario(nuevoUsuario);
-        return ResponseEntity.ok(usuarioCreado); // 200 OK con el usuario creado
+        usuarioNegocio.crearUsuario(nuevoUsuario);
+        return ResponseEntity.ok("Usuario creado con éxito.");
+    }
+
+    @PutMapping("/actualizar_usuario")
+    public ResponseEntity<String> actualizarUsuario(@RequestBody Map<String, String> body) {
+        String dni = body.get("dni");
+        if (dni == null || !dni.matches("\\d{8}")) {
+            return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres numéricos.");
+        }
+
+        Optional<Usuario> usuarioExistente = usuarioNegocio.buscarUsuarioPorDni(dni);
+        if (usuarioExistente.isEmpty()) {
+            return ResponseEntity.status(404).body("El cliente con DNI " + dni + " no se encuentra.");
+        }
+
+        Usuario usuario = usuarioExistente.get();
+        if (body.containsKey("nombre") && !body.get("nombre").matches("[a-zA-Z ]+")) {
+            return ResponseEntity.badRequest().body("El nombre solo puede contener letras y espacios.");
+        }
+        if (body.containsKey("apellidoPaterno") && !body.get("apellidoPaterno").matches("[a-zA-Z]+")) {
+            return ResponseEntity.badRequest().body("El apellido paterno solo puede contener letras.");
+        }
+        if (body.containsKey("apellidoMaterno") && !body.get("apellidoMaterno").matches("[a-zA-Z]+")) {
+            return ResponseEntity.badRequest().body("El apellido materno solo puede contener letras.");
+        }
+        if (body.containsKey("email") && !body.get("email").matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            return ResponseEntity.badRequest().body("El email debe ser válido y contener '@'.");
+        }
+        if (body.containsKey("telefono") && !body.get("telefono").matches("\\d{9}")) {
+            return ResponseEntity.badRequest().body("El teléfono debe tener exactamente 9 caracteres numéricos.");
+        }
+
+        // Actualizar los campos del usuario
+        if (body.containsKey("nombre")) usuario.setNombre(body.get("nombre"));
+        if (body.containsKey("apellidoPaterno")) usuario.setApellidoPaterno(body.get("apellidoPaterno"));
+        if (body.containsKey("apellidoMaterno")) usuario.setApellidoMaterno(body.get("apellidoMaterno"));
+        if (body.containsKey("email")) usuario.setEmail(body.get("email"));
+        if (body.containsKey("telefono")) usuario.setTelefono(body.get("telefono"));
+
+        usuarioNegocio.actualizarUsuario(usuario);
+        return ResponseEntity.ok("Usuario actualizado con éxito.");
     }
 }

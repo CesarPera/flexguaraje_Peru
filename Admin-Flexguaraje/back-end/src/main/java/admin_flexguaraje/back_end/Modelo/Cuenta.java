@@ -25,7 +25,7 @@ public class Cuenta {
             foreignKey = @ForeignKey(name = "FK_roles_cuenta"))
     private Roles roles; // Relación con la entidad Roles
 
-    @Column(name = "nombre_usuario", nullable = false, length = 20)
+    @Column(name = "nombre_usuario", nullable = false, length = 50)
     private String nombreUsuario;
 
     @Column(name = "email", nullable = false, length = 50)

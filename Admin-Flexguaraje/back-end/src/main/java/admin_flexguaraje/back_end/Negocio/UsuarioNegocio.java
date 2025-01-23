@@ -27,4 +27,8 @@ public class UsuarioNegocio {
     public Usuario crearUsuario(Usuario usuario) {
         return usuarioRepositorio.save(usuario); // Guardar el usuario en la base de datos
     }
+
+    public Usuario actualizarUsuario(Usuario usuario) {
+        return usuarioRepositorio.save(usuario); // Guardar cambios en la base de datos
+    }
 }
