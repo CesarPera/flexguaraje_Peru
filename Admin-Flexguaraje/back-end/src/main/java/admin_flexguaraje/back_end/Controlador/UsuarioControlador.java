@@ -24,7 +24,7 @@ public class UsuarioControlador {
         return ResponseEntity.ok(usuarios);
     }
 
-    @PostMapping("/buscar_dni")
+    @PostMapping("/buscar_usuario_dni")
     public ResponseEntity<?> buscarUsuarioPorDni(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
         if (dni == null || !dni.matches("\\d{8}")) {
@@ -55,13 +55,13 @@ public class UsuarioControlador {
         if (usuarioNegocio.buscarUsuarioPorDni(dni).isPresent()) {
             return ResponseEntity.badRequest().body("El DNI " + dni + " ya existe.");
         }
-        if (nombre == null || !nombre.matches("[a-zA-Z ]+")) {
+        if (nombre == null || !nombre.matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
             return ResponseEntity.badRequest().body("El nombre solo puede contener letras y espacios.");
         }
-        if (apellidoPaterno == null || !apellidoPaterno.matches("[a-zA-Z]+")) {
+        if (apellidoPaterno == null || !apellidoPaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido paterno solo puede contener letras.");
         }
-        if (apellidoMaterno == null || !apellidoMaterno.matches("[a-zA-Z]+")) {
+        if (apellidoMaterno == null || !apellidoMaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido materno solo puede contener letras.");
         }
         if (email == null || !email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
@@ -70,6 +70,11 @@ public class UsuarioControlador {
         if (telefono == null || !telefono.matches("\\d{9}")) {
             return ResponseEntity.badRequest().body("El teléfono debe tener exactamente 9 caracteres numéricos.");
         }
+
+        // Convertir a mayúsculas
+        nombre = nombre != null ? nombre.toUpperCase() : null;
+        apellidoPaterno = apellidoPaterno != null ? apellidoPaterno.toUpperCase() : null;
+        apellidoMaterno = apellidoMaterno != null ? apellidoMaterno.toUpperCase() : null;
 
         // Crear usuario
         Usuario nuevoUsuario = new Usuario();
@@ -84,6 +89,7 @@ public class UsuarioControlador {
         return ResponseEntity.ok("Usuario creado con éxito.");
     }
 
+
     @PutMapping("/actualizar_usuario")
     public ResponseEntity<String> actualizarUsuario(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
@@ -97,13 +103,13 @@ public class UsuarioControlador {
         }
 
         Usuario usuario = usuarioExistente.get();
-        if (body.containsKey("nombre") && !body.get("nombre").matches("[a-zA-Z ]+")) {
+        if (body.containsKey("nombre") && !body.get("nombre").matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
             return ResponseEntity.badRequest().body("El nombre solo puede contener letras y espacios.");
         }
-        if (body.containsKey("apellidoPaterno") && !body.get("apellidoPaterno").matches("[a-zA-Z]+")) {
+        if (body.containsKey("apellidoPaterno") && !body.get("apellidoPaterno").matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido paterno solo puede contener letras.");
         }
-        if (body.containsKey("apellidoMaterno") && !body.get("apellidoMaterno").matches("[a-zA-Z]+")) {
+        if (body.containsKey("apellidoMaterno") && !body.get("apellidoMaterno").matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido materno solo puede contener letras.");
         }
         if (body.containsKey("email") && !body.get("email").matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
@@ -113,14 +119,23 @@ public class UsuarioControlador {
             return ResponseEntity.badRequest().body("El teléfono debe tener exactamente 9 caracteres numéricos.");
         }
 
-        // Actualizar los campos del usuario
-        if (body.containsKey("nombre")) usuario.setNombre(body.get("nombre"));
-        if (body.containsKey("apellidoPaterno")) usuario.setApellidoPaterno(body.get("apellidoPaterno"));
-        if (body.containsKey("apellidoMaterno")) usuario.setApellidoMaterno(body.get("apellidoMaterno"));
+        // Convertir a mayúsculas los campos que se actualizan
+        if (body.containsKey("nombre")) {
+            usuario.setNombre(body.get("nombre").toUpperCase());
+        }
+        if (body.containsKey("apellidoPaterno")) {
+            usuario.setApellidoPaterno(body.get("apellidoPaterno").toUpperCase());
+        }
+        if (body.containsKey("apellidoMaterno")) {
+            usuario.setApellidoMaterno(body.get("apellidoMaterno").toUpperCase());
+        }
+
+        // Actualizar los demás campos
         if (body.containsKey("email")) usuario.setEmail(body.get("email"));
         if (body.containsKey("telefono")) usuario.setTelefono(body.get("telefono"));
 
         usuarioNegocio.actualizarUsuario(usuario);
         return ResponseEntity.ok("Usuario actualizado con éxito.");
     }
+
 }

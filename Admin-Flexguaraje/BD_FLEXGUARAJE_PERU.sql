@@ -11,8 +11,8 @@ create table roles (
 );
 # DATOS PARA LA TABLA ROLES
 INSERT INTO roles (nombre_rol, estado) VALUES 
-('Administrador', 'Activo'),
-('Propietario', 'Activo');
+('ADMINISTRADOR', 'Activo'),
+('PROPIETARIO', 'Activo');
 
 # TABLAAAAAAAA PERMISOSSSSSSSSSS
 create table permisos (
@@ -26,8 +26,8 @@ create table permisos (
 );
 # DATOS PARA LA TABLA PERMISOS.
 INSERT INTO permisos (id_roles, nombre_permiso, estado) VALUES 
-(1, 'Gestión', 'Activo'),
-(2, 'Supervisión', 'Activo');
+(1, 'GESTION', 'Activo'),
+(2, 'SUPERVISION', 'Activo');
 
 # TABLA usuario ( administrador, propietario y otros)
 create table usuario (
@@ -42,28 +42,29 @@ create table usuario (
 );
 # 15 DATOS PARA LA TABLA USUARIOS
 INSERT INTO usuario (dni, nombre, apellido_paterno, apellido_materno, email, telefono) VALUES
-('12345678', 'Juan', 'Pérez', 'López', 'juan.perez@example.com', '912345678'),
-('23456789', 'María', 'Gómez', 'Sánchez', 'maria.gomez@example.com', '923456789'),
-('34567890', 'Carlos', 'Ramírez', 'Martínez', 'carlos.ramirez@example.com', '934567890'),
-('45678901', 'Ana', 'Torres', 'Vargas', 'ana.torres@example.com', '945678901'),
-('56789012', 'Luis', 'Fernández', 'Rojas', 'luis.fernandez@example.com', '956789012'),
-('67890123', 'Lucía', 'Díaz', 'Hernández', 'lucia.diaz@example.com', '967890123'),
-('78901234', 'Pedro', 'Castillo', 'Morales', 'pedro.castillo@example.com', '978901234'),
-('89012345', 'Elena', 'Ramos', 'Guzmán', 'elena.ramos@example.com', '989012345'),
-('90123456', 'Jorge', 'Alvarez', 'Paredes', 'jorge.alvarez@example.com', '900123456'),
-('01234567', 'Camila', 'Ruiz', 'Salas', 'camila.ruiz@example.com', '911234567'),
-('11234567', 'Sofía', 'Mendoza', 'Chávez', 'sofia.mendoza@example.com', '922345678'),
-('22345678', 'Miguel', 'Vega', 'Ortega', 'miguel.vega@example.com', '933456789'),
-('33456789', 'Isabel', 'Cruz', 'Flores', 'isabel.cruz@example.com', '944567890'),
-('44567890', 'Ricardo', 'Lopez', 'Rios', 'ricardo.lopez@example.com', '955678901'),
-('55678901', 'Daniela', 'Ponce', 'Espinoza', 'daniela.ponce@example.com', '966789012');
+('12345678', 'JUAN', 'PÉREZ', 'LÓPEZ', 'juan.perez@example.com', '912345678'),
+('23456789', 'MARÍA', 'GÓMEZ', 'SÁNCHEZ', 'maria.gomez@example.com', '923456789'),
+('34567890', 'CARLOS', 'RAMÍREZ', 'MARTÍNEZ', 'carlos.ramirez@example.com', '934567890'),
+('45678901', 'ANA', 'TORRES', 'VARGAS', 'ana.torres@example.com', '945678901'),
+('56789012', 'LUIS', 'FERNÁNDEZ', 'ROJAS', 'luis.fernandez@example.com', '956789012'),
+('67890123', 'LUCÍA', 'DÍAZ', 'HERNÁNDEZ', 'lucia.diaz@example.com', '967890123'),
+('78901234', 'PEDRO', 'CASTILLO', 'MORALES', 'pedro.castillo@example.com', '978901234'),
+('89012345', 'ELENA', 'RAMOS', 'GUZMÁN', 'elena.ramos@example.com', '989012345'),
+('90123456', 'JORGE', 'ALVAREZ', 'PAREDES', 'jorge.alvarez@example.com', '900123456'),
+('01234567', 'CAMILA', 'RUIZ', 'SALAS', 'camila.ruiz@example.com', '911234567'),
+('11234567', 'SOFÍA', 'MENDOZA', 'CHÁVEZ', 'sofia.mendoza@example.com', '922345678'),
+('22345678', 'MIGUEL', 'VEGA', 'ORTEGA', 'miguel.vega@example.com', '933456789'),
+('33456789', 'ISABEL', 'CRUZ', 'FLORES', 'isabel.cruz@example.com', '944567890'),
+('44567890', 'RICARDO', 'LOPEZ', 'RIOS', 'ricardo.lopez@example.com', '955678901'),
+('55678901', 'DANIELA', 'PONCE', 'ESPINOZA', 'daniela.ponce@example.com', '966789012');
+
 
 # TABLAAAAA CUENTAAAAAAAAAAAAAA
 create table cuenta (
 	id_cuenta int primary key auto_increment,
     id_usuario int not null,
     id_roles int not null,
-    nombre_usuario varchar(20) not null,
+    nombre_usuario varchar(50) not null,
     email varchar(50) not null,
     pass varchar(255) not null,
     estado varchar(15) not null default 'Activo',
@@ -74,24 +75,6 @@ create table cuenta (
     constraint UQ_usuario_cuenta UNIQUE (nombre_usuario),
     constraint UQ_email_cuenta UNIQUE (email)
 );
-# 15 DATOS PARA LA TABLA CUENTA
-INSERT INTO cuenta (id_usuario, id_roles, nombre_usuario, email, pass, estado)
-VALUES
-(1, 2, 'propietario1', 'propietario1@example.com', 'password123', 'Activo'),
-(2, 1, 'admin1', 'admin1@example.com', 'password123', 'Activo'),
-(3, 1, 'admin2', 'admin2@example.com', 'password123', 'Activo'),
-(4, 1, 'admin3', 'admin3@example.com', 'password123', 'Activo'),
-(5, 1, 'admin4', 'admin4@example.com', 'password123', 'Activo'),
-(6, 1, 'admin5', 'admin5@example.com', 'password123', 'Activo'),
-(7, 1, 'admin6', 'admin6@example.com', 'password123', 'Desactivado'),
-(8, 1, 'admin7', 'admin7@example.com', 'password123', 'Desactivado'),
-(9, 1, 'admin8', 'admin8@example.com', 'password123', 'Desactivado'),
-(10, 1, 'admin9', 'admin9@example.com', 'password123', 'Desactivado'),
-(11, 1, 'admin10', 'admin10@example.com', 'password123', 'Desactivado'),
-(12, 1, 'admin11', 'admin11@example.com', 'password123', 'Desactivado'),
-(13, 1, 'admin12', 'admin12@example.com', 'password123', 'Desactivado'),
-(14, 1, 'admin13', 'admin13@example.com', 'password123', 'Desactivado'),
-(15, 1, 'admin14', 'admin14@example.com', 'password123', 'Desactivado');
 
 #TABLA CLIENTESSSSSSSSSSSS
 CREATE TABLE cliente (
@@ -113,25 +96,25 @@ CREATE TABLE cliente (
 );
 # 20 DATOS DE LA TABLA CLIENTE
 INSERT INTO cliente (dni, nombre, apellido_paterno, apellido_materno, telefono, email, direccion, nota_adicional) VALUES
-('12345678', 'Carlos', 'Gomez', 'Lopez', '912345678', 'carlos.gomez@example.com', 'Av. Siempre Viva 123, Lima', 'Sin Discapacidad'),
-('23456789', 'Maria', 'Torres', 'Perez', '923456789', 'maria.torres@example.com', 'Jr. Los Pinos 456, Arequipa', 'Sin Discapacidad'),
-('34567890', 'Juan', 'Ramirez', 'Garcia', '934567890', 'juan.ramirez@example.com', 'Calle Los Olivos 789, Cusco', 'Sin Discapacidad'),
-('45678901', 'Elena', 'Martinez', 'Lopez', '945678901', 'elena.martinez@example.com', 'Av. Las Flores 321, Trujillo', 'Usuario con silla de ruedas'),
-('56789012', 'Luis', 'Fernandez', 'Ramos', '956789012', 'luis.fernandez@example.com', 'Jr. San Juan 654, Ica', 'Sin Discapacidad'),
-('67890123', 'Lucia', 'Diaz', 'Guzman', '967890123', 'lucia.diaz@example.com', 'Calle Principal 987, Piura', 'Usuario con bastón'),
-('78901234', 'Pedro', 'Castillo', 'Alvarez', '978901234', 'pedro.castillo@example.com', 'Av. La Marina 147, Tacna', 'Sin Discapacidad'),
-('89012345', 'Ana', 'Rios', 'Morales', '989012345', 'ana.rios@example.com', 'Jr. Amazonas 258, Chiclayo', 'Sin Discapacidad'),
-('90123456', 'Jorge', 'Paredes', 'Flores', '900123456', 'jorge.paredes@example.com', 'Calle El Sol 369, Huancayo', 'Sin Discapacidad'),
-('01234567', 'Sofia', 'Mendoza', 'Chavez', '911234567', 'sofia.mendoza@example.com', 'Jr. Las Palmeras 111, Puno', 'Sin Discapacidad'),
-('11234567', 'Ricardo', 'Lopez', 'Salazar', '922345678', 'ricardo.lopez@example.com', 'Av. La Cultura 222, Juliaca', 'Usuario con discapacidad auditiva'),
-('22345678', 'Daniela', 'Vega', 'Rojas', '933456789', 'daniela.vega@example.com', 'Calle Los Cedros 333, Tumbes', 'Sin Discapacidad'),
-('33456789', 'Miguel', 'Cruz', 'Hernandez', '944567890', 'miguel.cruz@example.com', 'Jr. Los Claveles 444, Moquegua', 'Usuario con discapacidad visual'),
-('44567890', 'Isabel', 'Ruiz', 'Espinoza', '955678901', 'isabel.ruiz@example.com', 'Av. San Martín 555, Chimbote', 'Sin Discapacidad'),
-('55678901', 'Camila', 'Ponce', 'Vargas', '966789012', 'camila.ponce@example.com', 'Jr. Los Tulipanes 666, Cajamarca', 'Sin Discapacidad'),
-('66789012', 'Jose', 'Alvarez', 'Paredes', '977890123', 'jose.alvarez@example.com', 'Calle Principal 777, Huánuco', 'Sin Discapacidad'),
-('77890123', 'Karina', 'Chavez', 'Garcia', '988901234', 'karina.chavez@example.com', 'Jr. Los Jazmines 888, Ayacucho', 'Usuario con silla de ruedas'),
-('88901234', 'Hector', 'Morales', 'Diaz', '999012345', 'hector.morales@example.com', 'Av. El Progreso 999, Cajamarca', 'Sin Discapacidad'),
-('99012345', 'Paola', 'Garcia', 'Sanchez', '910123456', 'paola.garcia@example.com', 'Jr. Las Margaritas 123, Iquitos', 'Sin Discapacidad');
+('12345678', 'CARLOS', 'GOMEZ', 'LOPEZ', '912345678', 'carlos.gomez@example.com', 'Av. Siempre Viva 123, Lima', 'Sin Discapacidad'),
+('23456789', 'MARIA', 'TORRES', 'PEREZ', '923456789', 'maria.torres@example.com', 'Jr. Los Pinos 456, Arequipa', 'Sin Discapacidad'),
+('34567890', 'JUAN', 'RAMIREZ', 'GARCIA', '934567890', 'juan.ramirez@example.com', 'Calle Los Olivos 789, Cusco', 'Sin Discapacidad'),
+('45678901', 'ELENA', 'MARTINEZ', 'LOPEZ', '945678901', 'elena.martinez@example.com', 'Av. Las Flores 321, Trujillo', 'Usuario con silla de ruedas'),
+('56789012', 'LUIS', 'FERNANDEZ', 'RAMOS', '956789012', 'luis.fernandez@example.com', 'Jr. San Juan 654, Ica', 'Sin Discapacidad'),
+('67890123', 'LUCIA', 'DIAZ', 'GUZMAN', '967890123', 'lucia.diaz@example.com', 'Calle Principal 987, Piura', 'Usuario con bastón'),
+('78901234', 'PEDRO', 'CASTILLO', 'ALVAREZ', '978901234', 'pedro.castillo@example.com', 'Av. La Marina 147, Tacna', 'Sin Discapacidad'),
+('89012345', 'ANA', 'RIOS', 'MORALES', '989012345', 'ana.rios@example.com', 'Jr. Amazonas 258, Chiclayo', 'Sin Discapacidad'),
+('90123456', 'JORGE', 'PAREDES', 'FLORES', '900123456', 'jorge.paredes@example.com', 'Calle El Sol 369, Huancayo', 'Sin Discapacidad'),
+('01234567', 'SOFIA', 'MENDOZA', 'CHAVEZ', '911234567', 'sofia.mendoza@example.com', 'Jr. Las Palmeras 111, Puno', 'Sin Discapacidad'),
+('11234567', 'RICARDO', 'LOPEZ', 'SALAZAR', '922345678', 'ricardo.lopez@example.com', 'Av. La Cultura 222, Juliaca', 'Usuario con discapacidad auditiva'),
+('22345678', 'DANIELA', 'VEGA', 'ROJAS', '933456789', 'daniela.vega@example.com', 'Calle Los Cedros 333, Tumbes', 'Sin Discapacidad'),
+('33456789', 'MIGUEL', 'CRUZ', 'HERNANDEZ', '944567890', 'miguel.cruz@example.com', 'Jr. Los Claveles 444, Moquegua', 'Usuario con discapacidad visual'),
+('44567890', 'ISABEL', 'RUIZ', 'ESPINOZA', '955678901', 'isabel.ruiz@example.com', 'Av. San Martín 555, Chimbote', 'Sin Discapacidad'),
+('55678901', 'CAMILA', 'PONCE', 'VARGAS', '966789012', 'camila.ponce@example.com', 'Jr. Los Tulipanes 666, Cajamarca', 'Sin Discapacidad'),
+('66789012', 'JOSE', 'ALVAREZ', 'PAREDES', '977890123', 'jose.alvarez@example.com', 'Calle Principal 777, Huánuco', 'Sin Discapacidad'),
+('77890123', 'KARINA', 'CHAVEZ', 'GARCIA', '988901234', 'karina.chavez@example.com', 'Jr. Los Jazmines 888, Ayacucho', 'Usuario con silla de ruedas'),
+('88901234', 'HECTOR', 'MORALES', 'DIAZ', '999012345', 'hector.morales@example.com', 'Av. El Progreso 999, Cajamarca', 'Sin Discapacidad'),
+('99012345', 'PAOLA', 'GARCIA', 'SANCHEZ', '910123456', 'paola.garcia@example.com', 'Jr. Las Margaritas 123, Iquitos', 'Sin Discapacidad');
 
 #TABLA ESPACIOSSSSS
 CREATE TABLE espacio (

@@ -27,29 +27,23 @@ public class CuentaControlador {
     public ResponseEntity<String> crearCuenta(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
         String nombreRol = body.get("nombreRol");
-        String email = body.get("email");
         String password = body.get("password");
 
+        // Validar formato del DNI
+        if (dni == null || !dni.matches("\\d{8}")) {
+            return ResponseEntity.badRequest().body("El DNI debe contener exactamente 8 dígitos numéricos.");
+        }
+
+        // Validar formato del nombre del rol
+        if (nombreRol == null || !nombreRol.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) {
+            return ResponseEntity.badRequest().body("El nombre del rol solo puede contener letras y espacios.");
+        }
+
         try {
-            Cuenta cuenta = cuentaNegocio.crearCuenta(dni, nombreRol, email, password);
-            return ResponseEntity.ok("Cuenta creada exitosamente: " + cuenta.getNombreUsuario());
+            Cuenta cuenta = cuentaNegocio.crearCuenta(dni, nombreRol, null, password);
+            return ResponseEntity.ok("Cuenta creada exitosamente: " + cuenta.getNombreUsuario() + ", Email: " + cuenta.getEmail());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al crear la cuenta: " + e.getMessage());
-        }
-    }
-
-    @PutMapping("/actualizar_cuenta")
-    public ResponseEntity<String> actualizarCuenta(@RequestBody Map<String, String> body) {
-        String dni = body.get("dni");
-        String nuevoNombreUsuario = body.get("nuevoNombreUsuario");
-        String nuevoEmail = body.get("nuevoEmail");
-        String nuevaPassword = body.get("nuevaPassword");
-
-        try {
-            Cuenta cuentaActualizada = cuentaNegocio.actualizarCuentaPorDni(dni, nuevoNombreUsuario, nuevoEmail, nuevaPassword);
-            return ResponseEntity.ok("Cuenta actualizada exitosamente. Usuario: " + cuentaActualizada.getNombreUsuario());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al actualizar la cuenta: " + e.getMessage());
         }
     }
 
@@ -57,8 +51,9 @@ public class CuentaControlador {
     public ResponseEntity<String> actualizarEstadoCuenta(@RequestBody Map<String, Object> body) {
         String dni = (String) body.get("dni");
 
-        if (dni == null || dni.isEmpty()) {
-            return ResponseEntity.badRequest().body("El DNI es obligatorio.");
+        // Validar formato del DNI
+        if (dni == null || !dni.matches("\\d{8}")) {
+            return ResponseEntity.badRequest().body("El DNI debe contener exactamente 8 dígitos numéricos.");
         }
 
         try {
@@ -69,14 +64,21 @@ public class CuentaControlador {
         }
     }
 
+
     @PutMapping("/actualizar_pass_automatico")
     public ResponseEntity<String> actualizarContrasena(@RequestBody Map<String, Object> body) {
         String dni = (String) body.get("dni");
         String correo = (String) body.get("correo");
 
-        if (dni == null || dni.isEmpty() || correo == null || correo.isEmpty()) {
-            return ResponseEntity.badRequest().body("El DNI y el correo son obligatorios.");
+        // Validar formato del DNI
+        if (dni == null || !dni.matches("\\d{8}")) {
+            return ResponseEntity.badRequest().body("El DNI debe contener exactamente 8 dígitos numéricos.");
         }
+
+        if (correo == null || !correo.matches("(?i)[A-Za-zÁÉÍÓÚáéíóú]+_\\d{8}@FLEXGUARAJE_PERU.COM")) {
+            return ResponseEntity.badRequest().body("El correo debe tener el formato: apellidoPaterno + DNI + @FLEXGUARAJE_PERU.COM");
+        }
+
 
         try {
             Cuenta cuentaActualizada = cuentaNegocio.actualizarContrasenaPorDniYCorreo(dni, correo);

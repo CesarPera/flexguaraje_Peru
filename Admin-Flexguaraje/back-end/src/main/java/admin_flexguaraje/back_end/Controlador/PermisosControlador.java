@@ -32,13 +32,17 @@ public class PermisosControlador {
         String nombreRol = (String) body.get("nombreRol");
         String nombrePermiso = (String) body.get("nombrePermiso");
 
+        // Convertir los valores a mayúsculas
+        nombreRol = nombreRol != null ? nombreRol.toUpperCase() : null;
+        nombrePermiso = nombrePermiso != null ? nombrePermiso.toUpperCase() : null;
+
         // Validación para el nombreRol (solo letras y espacios)
-        if (!Pattern.matches("^[A-Za-z\\s]+$", nombreRol)) {
+        if (!Pattern.matches("^[A-ZÁÉÍÓÚ\\s]+$", nombreRol)) {
             return ResponseEntity.badRequest().body("El nombre del rol solo puede contener letras y espacios.");
         }
 
         // Validación para nombrePermiso (solo letras y espacios)
-        if (!Pattern.matches("^[A-Za-z\\s]+$", nombrePermiso)) {
+        if (!Pattern.matches("^[A-ZÁÉÍÓÚ\\s]+$", nombrePermiso)) {
             return ResponseEntity.badRequest().body("El nombre del permiso solo puede contener letras y espacios.");
         }
 
@@ -73,14 +77,23 @@ public class PermisosControlador {
 
         Long idPermiso = Long.valueOf(idPermisoStr);
 
+        // Convertir el nuevo nombre a mayúsculas
+        nuevoNombre = nuevoNombre != null ? nuevoNombre.toUpperCase() : null;
+
         // Validación para nuevoNombre (solo letras y espacios)
-        if (nuevoNombre == null || nuevoNombre.isEmpty() || !Pattern.matches("^[A-Za-z\\s]+$", nuevoNombre)) {
+        if (nuevoNombre == null || nuevoNombre.isEmpty() || !Pattern.matches("^[A-ZÁÉÍÓÚ\\s]+$", nuevoNombre)) {
             return ResponseEntity.badRequest().body("El nuevo nombre del permiso solo puede contener letras y espacios.");
         }
 
         // Verificar si el permiso existe
-        if (!permisosNegocio.existePermiso(idPermiso)) {
+        Permisos permisoActual = permisosNegocio.obtenerPermisoPorId(idPermiso);
+        if (permisoActual == null) {
             return ResponseEntity.badRequest().body("El permiso con el ID " + idPermiso + " no existe.");
+        }
+
+        // Verificar si el estado del permiso es ACTIVO
+        if (permisoActual.getEstado() != Permisos.estadoPermisos.Activo) {
+            return ResponseEntity.badRequest().body("El permiso con el ID " + idPermiso + " no está activo, no se puede actualizar.");
         }
 
         // Verificar si ya existe un permiso con el nuevo nombre
@@ -95,6 +108,7 @@ public class PermisosControlador {
             return ResponseEntity.badRequest().body("Error al actualizar el permiso: " + e.getMessage());
         }
     }
+
 
     // Actualizar estado de permiso
     @PutMapping("/actualizar_estado_permiso")

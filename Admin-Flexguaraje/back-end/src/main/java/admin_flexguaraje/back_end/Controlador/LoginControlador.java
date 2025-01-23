@@ -12,7 +12,7 @@ import java.util.Base64;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/cuenta")
+@RequestMapping("/validacion")
 @CrossOrigin(origins = "http://localhost:5173")
 
 public class LoginControlador {
@@ -36,22 +36,28 @@ public class LoginControlador {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de credenciales inválido");
         }
 
-        String email = values[0];
+        String email = values[0].toUpperCase(); // Convertir a mayúsculas
         String password = values[1];
+
+        // Validar el formato del correo
+        if (!email.matches("(?i)[A-Za-zÁÉÍÓÚáéíóú]+_\\d{8}@FLEXGUARAJE_PERU.COM")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El formato del correo no es válido. Debe ser APELLIDO PATERNO + _ + DNI + @flexguaraje_peru.com");
+        }
 
         try {
             Cuenta cuenta = LoginNegocio.autenticarUsuario(email, password);
             return ResponseEntity.ok("Bienvenido, " + cuenta.getNombreUsuario());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            // Devuelve un mensaje claro si el correo y/o contraseña son incorrectos
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Correo y/o contraseña incorrecta");
         }
     }
 
-    @PutMapping("/cambiar_contraseña")
+    @PutMapping("/cambiar_pass")
     public ResponseEntity<String> cambiarPassword(@RequestBody Map<String, String> datos) {
         try {
             // Extraer datos del cuerpo
-            String email = datos.get("email");
+            String email = datos.get("email").toUpperCase(); // Convertir a mayúsculas
             String passwordActual = datos.get("passwordActual");
             String nuevaPassword = datos.get("nuevaPassword");
             String repetirNuevaPassword = datos.get("repetirNuevaPassword");
@@ -61,10 +67,32 @@ public class LoginControlador {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Todos los campos son obligatorios");
             }
 
-            LoginNegocio.cambiarPassword(email, passwordActual, nuevaPassword, repetirNuevaPassword);
-            return ResponseEntity.ok("Contraseña actualizada con éxito");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            // Validar formato del correo
+            if (!email.matches("(?i)[A-Za-zÁÉÍÓÚáéíóú]+_\\d{8}@FLEXGUARAJE_PERU.COM")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El formato del correo no es válido. Debe ser APELLIDO PATERNO + _ + DNI + @flexguaraje_peru.com");
+            }
+
+            // Validar que las contraseñas coincidan
+            if (!nuevaPassword.equals(repetirNuevaPassword)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La nueva contraseña y la confirmación deben coincidir");
+            }
+
+            // Validar la nueva contraseña con la expresión regular
+            String passwordPattern = "^(?=(.*[A-Z]){3})(?=(.*[0-9]){3})(?=(.*[\\W_]){2})(?=.*[a-z]).{10,}$";
+            if (!nuevaPassword.matches(passwordPattern)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La nueva contraseña debe tener minimo 10 caracteres, incluir 3 mayúsculas, 3 números, 2 caracteres especiales y el resto en minúsculas.");
+            }
+
+            // Cambiar la contraseña
+            try {
+                LoginNegocio.cambiarPassword(email, passwordActual, nuevaPassword, repetirNuevaPassword);
+                return ResponseEntity.ok("Contraseña actualizada con éxito");
+            } catch (IllegalArgumentException e) {
+                // Devuelve un mensaje claro si el correo y/o contraseña actual son incorrectos
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Correo y/o contraseña incorrecta");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocurrió un error inesperado: " + e.getMessage());
         }
     }
 }

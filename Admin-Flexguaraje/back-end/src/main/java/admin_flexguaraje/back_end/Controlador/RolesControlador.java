@@ -26,8 +26,11 @@ public class RolesControlador {
     public ResponseEntity<String> crearRol(@RequestBody Map<String, Object> body) {
         String nombreRol = (String) body.get("nombreRol");
 
+        // Convertir a mayúsculas
+        nombreRol = nombreRol != null ? nombreRol.toUpperCase() : null;
+
         // Validación para el nombreRol (solo letras y espacios)
-        if (!Pattern.matches("^[A-Za-z\\s]+$", nombreRol)) {
+        if (!Pattern.matches("^[A-ZÁÉÍÓÚ\\s]+$", nombreRol)) {
             return ResponseEntity.badRequest().body("El nombre del rol solo puede contener letras y espacios.");
         }
 
@@ -52,8 +55,11 @@ public class RolesControlador {
         }
         Long idRol = Long.valueOf(idRolString);
 
+        // Convertir a mayúsculas
+        nombreRol = nombreRol != null ? nombreRol.toUpperCase() : null;
+
         // Validación para nombreRol (solo letras y espacios)
-        if (nombreRol == null || nombreRol.isEmpty() || !Pattern.matches("^[A-Za-z\\s]+$", nombreRol)) {
+        if (nombreRol == null || nombreRol.isEmpty() || !Pattern.matches("^[A-ZÁÉÍÓÚ\\s]+$", nombreRol)) {
             return ResponseEntity.badRequest().body("El nombre del rol solo puede contener letras y espacios.");
         }
 
@@ -61,6 +67,13 @@ public class RolesControlador {
         if (!rolesNegocio.existsById(idRol)) {
             return ResponseEntity.badRequest().body("El rol con el ID " + idRol + " no existe.");
         }
+
+        // Verificar si el estado del rol es ACTIVO
+        Roles rolActual = rolesNegocio.obtenerRolPorId(idRol);
+        if (rolActual.getEstado() != Roles.estadoRoles.Activo) {
+            return ResponseEntity.badRequest().body("El rol con el ID " + idRol + " no está activo, no se puede actualizar.");
+        }
+
 
         // Validación de existencia del rol con el mismo nombre
         try {
@@ -70,6 +83,7 @@ public class RolesControlador {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
     @PutMapping("/actualizar_estado_rol")
     public ResponseEntity<String> actualizarEstadoRol(@RequestBody Map<String, Object> body) {

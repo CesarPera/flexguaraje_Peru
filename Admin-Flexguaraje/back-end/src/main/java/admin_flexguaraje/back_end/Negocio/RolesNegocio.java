@@ -22,6 +22,11 @@ public class RolesNegocio {
         return rolesRepositorio.findByNombreRol(nombreRol).isPresent();
     }
 
+    public Roles obtenerRolPorId(Long idRol) {
+        return rolesRepositorio.findById(idRol)
+                .orElseThrow(() -> new IllegalArgumentException("El rol con el ID " + idRol + " no existe."));
+    }
+
     public boolean existsByNombreRol(String nombreRol) {
         return rolesRepositorio.existsByNombreRol(nombreRol);
     }
