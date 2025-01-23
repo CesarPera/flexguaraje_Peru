@@ -51,44 +51,18 @@ public class CuentaNegocio {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String passwordEncriptada = passwordEncoder.encode(password);
 
+        // Generar correo automático si no se proporciona uno
+        String emailGenerado = (usuario.getApellidoPaterno() + "_" + usuario.getDni() + "@flexguaraje_peru.com").toUpperCase();
+
         // Crear cuenta
         Cuenta cuenta = new Cuenta();
         cuenta.setUsuario(usuario);
         cuenta.setRoles(roles);
         cuenta.setNombreUsuario(nombreUsuario);
-        cuenta.setEmail(email);
+        cuenta.setEmail(email != null && !email.isEmpty() ? email : emailGenerado); // Usar el email proporcionado o el generado
         cuenta.setPassword(passwordEncriptada);
         cuenta.setEstado(Cuenta.estadoCuenta.Activo);
 
-        return cuentaRepositorio.save(cuenta);
-    }
-
-    public Cuenta actualizarCuentaPorDni(String dni, String nuevoNombreUsuario, String nuevoEmail, String nuevaPassword) throws Exception {
-        // Buscar usuario por DNI
-        Usuario usuario = usuarioRepositorio.findByDni(dni)
-                .orElseThrow(() -> new Exception("Usuario con DNI " + dni + " no encontrado."));
-
-        // Buscar cuenta asociada al usuario
-        Optional<Cuenta> cuentaOptional = cuentaRepositorio.findByUsuario(usuario);
-        if (cuentaOptional.isEmpty()) {
-            throw new Exception("No se encontró una cuenta asociada al usuario con DNI " + dni + ".");
-        }
-
-        Cuenta cuenta = cuentaOptional.get();
-
-        // Actualizar los campos permitidos
-        if (nuevoNombreUsuario != null && !nuevoNombreUsuario.isEmpty()) {
-            cuenta.setNombreUsuario(nuevoNombreUsuario);
-        }
-        if (nuevoEmail != null && !nuevoEmail.isEmpty()) {
-            cuenta.setEmail(nuevoEmail);
-        }
-        if (nuevaPassword != null && !nuevaPassword.isEmpty()) {
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            cuenta.setPassword(passwordEncoder.encode(nuevaPassword));
-        }
-
-        // Guardar los cambios
         return cuentaRepositorio.save(cuenta);
     }
 

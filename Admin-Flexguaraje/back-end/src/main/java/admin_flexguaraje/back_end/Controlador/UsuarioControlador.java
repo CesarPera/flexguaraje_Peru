@@ -24,7 +24,7 @@ public class UsuarioControlador {
         return ResponseEntity.ok(usuarios);
     }
 
-    @PostMapping("/buscar_dni")
+    @PostMapping("/buscar_usuario_dni")
     public ResponseEntity<?> buscarUsuarioPorDni(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
         if (dni == null || !dni.matches("\\d{8}")) {
@@ -71,6 +71,11 @@ public class UsuarioControlador {
             return ResponseEntity.badRequest().body("El teléfono debe tener exactamente 9 caracteres numéricos.");
         }
 
+        // Convertir a mayúsculas
+        nombre = nombre != null ? nombre.toUpperCase() : null;
+        apellidoPaterno = apellidoPaterno != null ? apellidoPaterno.toUpperCase() : null;
+        apellidoMaterno = apellidoMaterno != null ? apellidoMaterno.toUpperCase() : null;
+
         // Crear usuario
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setDni(dni);
@@ -83,6 +88,7 @@ public class UsuarioControlador {
         usuarioNegocio.crearUsuario(nuevoUsuario);
         return ResponseEntity.ok("Usuario creado con éxito.");
     }
+
 
     @PutMapping("/actualizar_usuario")
     public ResponseEntity<String> actualizarUsuario(@RequestBody Map<String, String> body) {
@@ -113,14 +119,23 @@ public class UsuarioControlador {
             return ResponseEntity.badRequest().body("El teléfono debe tener exactamente 9 caracteres numéricos.");
         }
 
-        // Actualizar los campos del usuario
-        if (body.containsKey("nombre")) usuario.setNombre(body.get("nombre"));
-        if (body.containsKey("apellidoPaterno")) usuario.setApellidoPaterno(body.get("apellidoPaterno"));
-        if (body.containsKey("apellidoMaterno")) usuario.setApellidoMaterno(body.get("apellidoMaterno"));
+        // Convertir a mayúsculas los campos que se actualizan
+        if (body.containsKey("nombre")) {
+            usuario.setNombre(body.get("nombre").toUpperCase());
+        }
+        if (body.containsKey("apellidoPaterno")) {
+            usuario.setApellidoPaterno(body.get("apellidoPaterno").toUpperCase());
+        }
+        if (body.containsKey("apellidoMaterno")) {
+            usuario.setApellidoMaterno(body.get("apellidoMaterno").toUpperCase());
+        }
+
+        // Actualizar los demás campos
         if (body.containsKey("email")) usuario.setEmail(body.get("email"));
         if (body.containsKey("telefono")) usuario.setTelefono(body.get("telefono"));
 
         usuarioNegocio.actualizarUsuario(usuario);
         return ResponseEntity.ok("Usuario actualizado con éxito.");
     }
+
 }

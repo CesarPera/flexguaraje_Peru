@@ -27,6 +27,10 @@ public class PermisosNegocio {
         return permisosRepositorio.existsById(idPermiso);
     }
 
+    public Permisos obtenerPermisoPorId(Long idPermiso) {
+        return permisosRepositorio.findById(idPermiso).orElse(null); // Retorna null si no se encuentra
+    }
+
     // Listar permisos
     public List<Permisos> listarPermisos() {
         return permisosRepositorio.findAll();
