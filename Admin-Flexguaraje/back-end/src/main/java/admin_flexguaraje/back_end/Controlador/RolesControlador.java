@@ -30,7 +30,7 @@ public class RolesControlador {
         nombreRol = nombreRol != null ? nombreRol.toUpperCase() : null;
 
         // Validación para el nombreRol (solo letras y espacios)
-        if (!Pattern.matches("^[A-Z\\s]+$", nombreRol)) {
+        if (!Pattern.matches("^[A-ZÁÉÍÓÚ\\s]+$", nombreRol)) {
             return ResponseEntity.badRequest().body("El nombre del rol solo puede contener letras y espacios.");
         }
 
@@ -59,7 +59,7 @@ public class RolesControlador {
         nombreRol = nombreRol != null ? nombreRol.toUpperCase() : null;
 
         // Validación para nombreRol (solo letras y espacios)
-        if (nombreRol == null || nombreRol.isEmpty() || !Pattern.matches("^[A-Z\\s]+$", nombreRol)) {
+        if (nombreRol == null || nombreRol.isEmpty() || !Pattern.matches("^[A-ZÁÉÍÓÚ\\s]+$", nombreRol)) {
             return ResponseEntity.badRequest().body("El nombre del rol solo puede contener letras y espacios.");
         }
 

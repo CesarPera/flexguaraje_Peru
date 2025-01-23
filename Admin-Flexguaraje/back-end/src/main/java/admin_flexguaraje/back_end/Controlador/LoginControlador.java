@@ -40,7 +40,7 @@ public class LoginControlador {
         String password = values[1];
 
         // Validar el formato del correo
-        if (!email.matches("[A-Z]+_\\d{8}@FLEXGUARAJE_PERU\\.COM")) {
+        if (!email.matches("(?i)[A-Za-zÁÉÍÓÚáéíóú]+_\\d{8}@FLEXGUARAJE_PERU.COM")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El formato del correo no es válido. Debe ser APELLIDO PATERNO + _ + DNI + @flexguaraje_peru.com");
         }
 
@@ -68,7 +68,7 @@ public class LoginControlador {
             }
 
             // Validar formato del correo
-            if (!email.matches("[A-Z]+_\\d{8}@FLEXGUARAJE_PERU\\.COM")) {
+            if (!email.matches("(?i)[A-Za-zÁÉÍÓÚáéíóú]+_\\d{8}@FLEXGUARAJE_PERU.COM")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El formato del correo no es válido. Debe ser APELLIDO PATERNO + _ + DNI + @flexguaraje_peru.com");
             }
 

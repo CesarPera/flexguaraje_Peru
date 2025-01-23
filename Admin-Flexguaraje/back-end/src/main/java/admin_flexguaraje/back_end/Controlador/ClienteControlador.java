@@ -58,13 +58,13 @@ public class ClienteControlador {
         String apellidoMaterno = ((String) cuerpo.get("apellido_materno")).toLowerCase();
 
         // Validación de que solo se permiten letras y espacios
-        if (!nombre.matches("[a-zA-Z ]+")) {
+        if (!nombre.matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
             return ResponseEntity.badRequest().body("El nombre solo debe contener letras.");
         }
-        if (!apellidoPaterno.matches("[a-zA-Z]+")) {
+        if (!apellidoPaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido paterno solo debe contener letras.");
         }
-        if (!apellidoMaterno.matches("[a-zA-Z]+")) {
+        if (!apellidoMaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido materno solo debe contener letras.");
         }
 
@@ -103,13 +103,13 @@ public class ClienteControlador {
             String apellidoMaterno = ((String) cuerpo.get("apellido_materno")).toUpperCase();  // Convertir a mayúsculas
 
             // Validación de que solo se permiten letras y espacios
-            if (!nombre.matches("[a-zA-Z ]+")) {
+            if (!nombre.matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
                 return ResponseEntity.badRequest().body("El nombre solo debe contener letras.");
             }
-            if (!apellidoPaterno.matches("[a-zA-Z]+")) {
+            if (!apellidoPaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
                 return ResponseEntity.badRequest().body("El apellido paterno solo debe contener letras.");
             }
-            if (!apellidoMaterno.matches("[a-zA-Z]+")) {
+            if (!apellidoMaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
                 return ResponseEntity.badRequest().body("El apellido materno solo debe contener letras.");
             }
 
@@ -183,13 +183,13 @@ public class ClienteControlador {
             nuevosDatos.setNotaAdicional(((String) cuerpo.getOrDefault("nota", "SIN DISCAPACIDAD")).toUpperCase());
 
             // Validación de datos
-            if (!nuevosDatos.getNombre().matches("[a-zA-Z ]+")) {
+            if (!nuevosDatos.getNombre().matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
                 return ResponseEntity.badRequest().body("El nombre solo debe contener letras.");
             }
-            if (!nuevosDatos.getApellidoPaterno().matches("[a-zA-Z]+")) {
+            if (!nuevosDatos.getApellidoPaterno().matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
                 return ResponseEntity.badRequest().body("El apellido paterno solo debe contener letras.");
             }
-            if (!nuevosDatos.getApellidoMaterno().matches("[a-zA-Z]+")) {
+            if (!nuevosDatos.getApellidoMaterno().matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
                 return ResponseEntity.badRequest().body("El apellido materno solo debe contener letras.");
             }
             if (nuevosDatos.getTelefono().length() != 9 || !nuevosDatos.getTelefono().matches("\\d+")) {

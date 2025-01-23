@@ -55,13 +55,13 @@ public class UsuarioControlador {
         if (usuarioNegocio.buscarUsuarioPorDni(dni).isPresent()) {
             return ResponseEntity.badRequest().body("El DNI " + dni + " ya existe.");
         }
-        if (nombre == null || !nombre.matches("[a-zA-Z ]+")) {
+        if (nombre == null || !nombre.matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
             return ResponseEntity.badRequest().body("El nombre solo puede contener letras y espacios.");
         }
-        if (apellidoPaterno == null || !apellidoPaterno.matches("[a-zA-Z]+")) {
+        if (apellidoPaterno == null || !apellidoPaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido paterno solo puede contener letras.");
         }
-        if (apellidoMaterno == null || !apellidoMaterno.matches("[a-zA-Z]+")) {
+        if (apellidoMaterno == null || !apellidoMaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido materno solo puede contener letras.");
         }
         if (email == null || !email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
@@ -103,13 +103,13 @@ public class UsuarioControlador {
         }
 
         Usuario usuario = usuarioExistente.get();
-        if (body.containsKey("nombre") && !body.get("nombre").matches("[a-zA-Z ]+")) {
+        if (body.containsKey("nombre") && !body.get("nombre").matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
             return ResponseEntity.badRequest().body("El nombre solo puede contener letras y espacios.");
         }
-        if (body.containsKey("apellidoPaterno") && !body.get("apellidoPaterno").matches("[a-zA-Z]+")) {
+        if (body.containsKey("apellidoPaterno") && !body.get("apellidoPaterno").matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido paterno solo puede contener letras.");
         }
-        if (body.containsKey("apellidoMaterno") && !body.get("apellidoMaterno").matches("[a-zA-Z]+")) {
+        if (body.containsKey("apellidoMaterno") && !body.get("apellidoMaterno").matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido materno solo puede contener letras.");
         }
         if (body.containsKey("email") && !body.get("email").matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {

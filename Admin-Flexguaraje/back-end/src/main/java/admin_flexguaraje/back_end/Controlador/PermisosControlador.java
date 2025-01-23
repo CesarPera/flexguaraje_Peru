@@ -37,12 +37,12 @@ public class PermisosControlador {
         nombrePermiso = nombrePermiso != null ? nombrePermiso.toUpperCase() : null;
 
         // Validación para el nombreRol (solo letras y espacios)
-        if (!Pattern.matches("^[A-Z\\s]+$", nombreRol)) {
+        if (!Pattern.matches("^[A-ZÁÉÍÓÚ\\s]+$", nombreRol)) {
             return ResponseEntity.badRequest().body("El nombre del rol solo puede contener letras y espacios.");
         }
 
         // Validación para nombrePermiso (solo letras y espacios)
-        if (!Pattern.matches("^[A-Z\\s]+$", nombrePermiso)) {
+        if (!Pattern.matches("^[A-ZÁÉÍÓÚ\\s]+$", nombrePermiso)) {
             return ResponseEntity.badRequest().body("El nombre del permiso solo puede contener letras y espacios.");
         }
 
@@ -81,7 +81,7 @@ public class PermisosControlador {
         nuevoNombre = nuevoNombre != null ? nuevoNombre.toUpperCase() : null;
 
         // Validación para nuevoNombre (solo letras y espacios)
-        if (nuevoNombre == null || nuevoNombre.isEmpty() || !Pattern.matches("^[A-Z\\s]+$", nuevoNombre)) {
+        if (nuevoNombre == null || nuevoNombre.isEmpty() || !Pattern.matches("^[A-ZÁÉÍÓÚ\\s]+$", nuevoNombre)) {
             return ResponseEntity.badRequest().body("El nuevo nombre del permiso solo puede contener letras y espacios.");
         }
 
