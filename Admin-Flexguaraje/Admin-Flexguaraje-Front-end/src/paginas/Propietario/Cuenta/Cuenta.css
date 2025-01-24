@@ -148,15 +148,6 @@ table.tabla-cuenta th {
     transform: scale(1.05); /* Ligero aumento de tamaño */
 }
 
-/* Botón específico para "Crear Usuario" */
-.crear-usuario-btn {
-    background-color: #5cda7b; /* Color verde agradable */
-}
-
-.crear-usuario-btn:hover {
-    background-color: #95dfb5; /* Color más oscuro al pasar el mouse */
-    transform: scale(1.05);
-}
 
 /* Estilo de los botones dentro de la tabla */
 .tabla-cuenta td .acciones {
