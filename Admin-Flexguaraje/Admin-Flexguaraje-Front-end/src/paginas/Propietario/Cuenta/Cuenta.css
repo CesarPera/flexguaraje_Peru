@@ -176,12 +176,22 @@ table.tabla-cuenta th {
     transform: scale(1.05); /* Ligero aumento */
 }
 
-/* Botón para cambiar contraseña */
-.tabla-cuenta td button.cambiar-btn {
-    background-color: #007bff; /* Azul */
+
+.cambiar-pass-btn {
+    background-color: #007bff; /* Verde */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
-.tabla-cuenta td button.cambiar-btn:hover {
-    background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
-    transform: scale(1.05); /* Ligero aumento */
+.cambiar-pass-btn:hover {
+    background-color: #0056b3; /* Hover verde oscuro */
+    transform: scale(1.05);
+}
+
+.cambiar-pass-btn:disabled {
+    background-color: #7e2599; /* Gris cuando está deshabilitado */
+    cursor: not-allowed; /* Cursor para indicar que está deshabilitado */
 }
