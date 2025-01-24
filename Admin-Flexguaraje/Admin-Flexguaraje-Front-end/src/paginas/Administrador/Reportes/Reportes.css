@@ -1,9 +1,7 @@
 /* Estilos generales para la página */
 .reportes-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 100px;
-    font-family: Arial, sans-serif;
     padding: 20px;
+    margin-left: 70px;
+    margin-top: 100px;
+    flex-grow: 1;
 }
