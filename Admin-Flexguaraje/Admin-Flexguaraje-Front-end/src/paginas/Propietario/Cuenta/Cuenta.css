@@ -213,3 +213,54 @@ table.tabla-cuenta th {
     cursor: not-allowed;
     /* Cursor para indicar que está deshabilitado */
 }
+
+.crear-cuenta-modal-btn {
+    background-color: #210559; /* Color verde */
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
+    transition: all 0.3s ease; /* Transición para efectos */
+}
+
+.crear-cuenta-modal-btn:hover {
+    background-color: #060235; /* Color más oscuro al pasar el mouse */
+    transform: scale(1.05); /* Agrandar ligeramente al pasar el mouse */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Sombra más profunda */
+}
+
+.crear-cuenta-modal-btn:active {
+    transform: scale(0.98); /* Disminuir ligeramente al hacer clic */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra más pequeña */
+}
+
+.cancelar-modal-btn {
+    background-color: #9d1208; /* Color rojo */
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
+    transition: all 0.3s ease; /* Transición para efectos */
+}
+
+.cancelar-modal-btn:hover {
+    background-color: #890707; /* Rojo más oscuro al pasar el mouse */
+    transform: scale(1.05); /* Agrandar ligeramente al pasar el mouse */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Sombra más profunda */
+}
+
+.cancelar-modal-btn:active {
+    transform: scale(0.98); /* Disminuir ligeramente al hacer clic */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra más pequeña */
+}
+
+
+

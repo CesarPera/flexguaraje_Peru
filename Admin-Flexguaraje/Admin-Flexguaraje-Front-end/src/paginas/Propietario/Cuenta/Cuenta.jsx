@@ -22,14 +22,19 @@ function GestionCuentas() {
 
     // Función para manejar la creación de cuenta (agregar la cuenta)
     const handleCrearCuenta = async () => {
+        if (formData.nombreRol === "Seleccionar") {
+            alert("Por favor selecciona un rol válido.");
+            return;
+        }
+
         try {
             await CuentaBD.crearCuenta(formData);
             setIsModalOpen(false);
-            alert("Cuenta creada exitosamente");
-            fetchCuentas();
+            alert("Cuenta creada exitosamente.");
+            fetchCuentas(); // Refresca la lista de cuentas
         } catch (error) {
-            console.error("Error al crear la cuenta:", error);
-            alert("Hubo un error al crear la cuenta");
+            console.error("Error al crear la cuenta:", error.response?.data || error.message);
+            alert(error.response?.data || "Hubo un error al crear la cuenta.");
         }
     };
 
@@ -55,27 +60,34 @@ function GestionCuentas() {
     }, []);
 
     // Cambiar el estado de una cuenta (activar/desactivar)
-    const toggleEstado = (index) => {
-        setCuentas((prevCuentas) =>
-            prevCuentas.map((cuenta, i) =>
-                i === index
-                    ? { ...cuenta, estado: cuenta.estado === "Activo" ? "Inactivo" : "Activo" }
-                    : cuenta
-            )
-        );
+    const toggleEstado = async (cuenta, index) => {
+        try {
+            const response = await CuentaBD.actualizarEstadoCuenta(cuenta.usuario.dni);
+            alert(response.data); // Mostrar mensaje del backend
+
+            // Actualizar el estado en la lista de cuentas
+            setCuentas((prevCuentas) =>
+                prevCuentas.map((item, i) =>
+                    i === index ? { ...item, estado: item.estado === "Activo" ? "Inactivo" : "Activo" } : item
+                )
+            );
+        } catch (error) {
+            console.error("Error al cambiar el estado:", error.response?.data || error.message);
+            alert(error.response?.data || "Hubo un error al intentar cambiar el estado de la cuenta.");
+        }
     };
 
     // Función para manejar clic en "Cambiar Contraseña"
     const handleChangePasswordClick = async (cuenta) => {
         const dni = cuenta.usuario?.dni;
         const correo = cuenta.email;
-    
+
         // Validar el formato del correo
         if (!correo.match(/[A-Za-zÁÉÍÓÚáéíóú]+_\d{8}@FLEXGUARAJE_PERU.COM/)) {
             alert("El correo debe tener el formato: apellidoPaterno_DNI@FLEXGUARAJE_PERU.COM");
             return;
         }
-    
+
         try {
             const response = await CuentaBD.actualizarPassAuto(dni, correo);
             console.log("Respuesta del backend:", response.data);
@@ -105,7 +117,7 @@ function GestionCuentas() {
                         <h2>Crear Nueva Cuenta</h2>
                         <label>
                             Rol:
-                            <select name="rol" value={formData.rol} onChange={handleInputChange}>
+                            <select name="nombreRol" value={formData.nombreRol} onChange={handleInputChange}>
                                 <option value="Seleccionar">Seleccionar</option>
                                 <option value="Administrador">Administrador</option>
                                 <option value="Propietario">Propietario</option>
@@ -124,18 +136,17 @@ function GestionCuentas() {
                             Contraseña:
                             <input
                                 type="password"
-                                name="contraseña"
-                                value={formData.contraseña}
+                                name="password"
+                                value={formData.password}
                                 onChange={handleInputChange}
                             />
                         </label>
-                        <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
-                        <button onClick={handleCrearCuenta}>Crear Cuenta</button>
+                        <button className="cancelar-modal-btn" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                        <button className="crear-cuenta-modal-btn" onClick={handleCrearCuenta}>Crear Cuenta</button>
                     </div>
                 </div>
             )}
 
-            <h2>Cuentas Creadas</h2>
             <table className="tabla-cuenta">
                 <thead>
                     <tr>
@@ -160,7 +171,7 @@ function GestionCuentas() {
                                     <div className="acciones">
                                         <button
                                             className="desactivar-btn"
-                                            onClick={() => toggleEstado(index)}
+                                            onClick={() => toggleEstado(cuenta, index)}
                                         >
                                             {cuenta.estado === "Activo" ? "Desactivar" : "Activar"}
                                         </button>
