@@ -10,8 +10,6 @@ function GestionCuentas() {
         rol: "Seleccionar",
     });
     const [cuentas, setCuentas] = useState([]); // Lista de cuentas cargadas del backend
-    const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
-    const [selectedCuenta, setSelectedCuenta] = useState(null);
 
     // Maneja los cambios en el formulario de cuentas
     const handleInputChange = (e) => {
@@ -35,24 +33,24 @@ function GestionCuentas() {
         }
     };
 
-    // Cargar cuentas desde el backend al montar el componente
-    useEffect(() => {
-        const fetchCuentas = async () => {
-            try {
-                const response = await CuentaBD.listarCuentas();
-                console.log(response.data);
-                if (Array.isArray(response.data)) {
-                    setCuentas(response.data);
-                } else {
-                    console.error("La respuesta no es un arreglo:", response.data);
-                    setCuentas([]);
-                }
-            } catch (error) {
-                console.error("Error al obtener las cuentas del backend:", error);
+    // Función para cargar cuentas desde el backend
+    const fetchCuentas = async () => {
+        try {
+            const response = await CuentaBD.listarCuentas();
+            if (Array.isArray(response.data)) {
+                setCuentas(response.data);
+            } else {
+                console.error("La respuesta no es un arreglo:", response.data);
                 setCuentas([]);
             }
-        };
+        } catch (error) {
+            console.error("Error al obtener las cuentas del backend:", error);
+            setCuentas([]);
+        }
+    };
 
+    // Cargar cuentas al montar el componente
+    useEffect(() => {
         fetchCuentas();
     }, []);
 
@@ -67,10 +65,25 @@ function GestionCuentas() {
         );
     };
 
-    // Función para abrir el modal de cambiar contraseña
-    const handleChangePasswordClick = (cuenta) => {
-        setSelectedCuenta(cuenta); // Guarda la cuenta seleccionada
-        setIsChangePasswordModalOpen(true); // Abre el modal para cambiar la contraseña
+    // Función para manejar clic en "Cambiar Contraseña"
+    const handleChangePasswordClick = async (cuenta) => {
+        const dni = cuenta.usuario?.dni;
+        const correo = cuenta.email;
+    
+        // Validar el formato del correo
+        if (!correo.match(/[A-Za-zÁÉÍÓÚáéíóú]+_\d{8}@FLEXGUARAJE_PERU.COM/)) {
+            alert("El correo debe tener el formato: apellidoPaterno_DNI@FLEXGUARAJE_PERU.COM");
+            return;
+        }
+    
+        try {
+            const response = await CuentaBD.actualizarPassAuto(dni, correo);
+            console.log("Respuesta del backend:", response.data);
+            alert(`Contraseña actualizada automáticamente para el usuario: ${cuenta.nombreUsuario}`);
+        } catch (error) {
+            console.error("Error al actualizar la contraseña:", error);
+            alert("Hubo un error al intentar actualizar la contraseña.");
+        }
     };
 
     return (
@@ -91,6 +104,14 @@ function GestionCuentas() {
                     <div className="modal-content">
                         <h2>Crear Nueva Cuenta</h2>
                         <label>
+                            Rol:
+                            <select name="rol" value={formData.rol} onChange={handleInputChange}>
+                                <option value="Seleccionar">Seleccionar</option>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Propietario">Propietario</option>
+                            </select>
+                        </label>
+                        <label>
                             DNI:
                             <input
                                 type="text"
@@ -108,31 +129,8 @@ function GestionCuentas() {
                                 onChange={handleInputChange}
                             />
                         </label>
-                        <label>
-                            Rol:
-                            <select name="rol" value={formData.rol} onChange={handleInputChange}>
-                                <option value="Seleccionar">Seleccionar</option>
-                                <option value="Administrador">Administrador</option>
-                                <option value="Propietario">Propietario</option>
-                            </select>
-                        </label>
                         <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
                         <button onClick={handleCrearCuenta}>Crear Cuenta</button>
-                    </div>
-                </div>
-            )}
-
-            {/* Modal para cambiar la contraseña */}
-            {isChangePasswordModalOpen && selectedCuenta && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <h2>Cambiar Contraseña</h2>
-                        <label>
-                            Nueva Contraseña:
-                            <input type="password" />
-                        </label>
-                        <button onClick={() => setIsChangePasswordModalOpen(false)}>Cancelar</button>
-                        <button onClick={() => { }}>Guardar</button>
                     </div>
                 </div>
             )}
@@ -141,8 +139,8 @@ function GestionCuentas() {
             <table className="tabla-cuenta">
                 <thead>
                     <tr>
-                        <th>Usuario</th>
                         <th>DNI</th>
+                        <th>Usuario</th>
                         <th>Correo Electrónico</th>
                         <th>Rol</th>
                         <th>Estado</th>
@@ -153,12 +151,11 @@ function GestionCuentas() {
                     {Array.isArray(cuentas) && cuentas.length > 0 ? (
                         cuentas.map((cuenta, index) => (
                             <tr key={index}>
-                                <td>{cuenta.nombreUsuario}</td> {/* Mostrar el nombre de usuario */}
                                 <td>{cuenta.usuario.dni}</td>
-                                <td>{cuenta.usuario.email}</td> {/* Mostrar correo electrónico */}
+                                <td>{cuenta.nombreUsuario}</td>
+                                <td>{cuenta.usuario.email}</td>
                                 <td>{cuenta.roles ? cuenta.roles.nombreRol : 'Sin rol'}</td>
-                                <td>{cuenta.roles ? cuenta.roles.estado : 'Sin estado'}</td>
-
+                                <td>{cuenta.estado}</td>
                                 <td>
                                     <div className="acciones">
                                         <button

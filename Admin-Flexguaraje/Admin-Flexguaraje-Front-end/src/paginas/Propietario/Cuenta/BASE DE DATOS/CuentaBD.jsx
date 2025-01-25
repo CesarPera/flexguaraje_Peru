@@ -10,6 +10,12 @@ class CuentaBD {
     listarCuentas() {
         return axios.get(LISTAR_CUENTA_BD_API_URL);
     }
+
+    actualizarPassAuto = async (dni, correo) => {
+        console.log("Enviando al backend:", { dni, correo });
+        return axios.put(ACTUALIZAR_PASS_AUTO_BD_API_URL, { dni, correo });
+    };
 }
+
 
 export default new CuentaBD();

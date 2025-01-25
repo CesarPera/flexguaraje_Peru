@@ -71,7 +71,6 @@ public class CuentaControlador {
         }
     }
 
-
     @PutMapping("/actualizar_pass_automatico")
     public ResponseEntity<String> actualizarContrasena(@RequestBody Map<String, Object> body) {
         String dni = (String) body.get("dni");
