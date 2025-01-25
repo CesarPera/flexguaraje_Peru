@@ -1,65 +1,152 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoginBD from './BASE DE DATOS/LoginBD';  // Asegúrate de que la ruta sea correcta
+import LoginBD from './BASE DE DATOS/LoginBD'; // Asegúrate de que la ruta sea correcta
 import './login.css';
+import Swal from 'sweetalert2'; // Importa SweetAlert2
 
 const Login = () => {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [oldPassword, setOldPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // Para manejar los errores
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    newPassword: '',
+    repeatPassword: '',
+    oldPassword: '',
+  });
+  const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handlePasswordChangeMode = () => {
     setIsChangingPassword(true);
-    setErrorMessage(''); // Limpiar el mensaje de error al cambiar al modo de cambio de contraseña
+    setErrorMessage('');
+    // Limpiar los campos de login cuando se cambia a cambiar contraseña
+    setFormData({
+      email: '',
+      password: '',
+      newPassword: '',
+      repeatPassword: '',
+      oldPassword: '',
+    });
+  };
+
+  const handleLoginMode = () => {
+    setIsChangingPassword(false);
+    setErrorMessage('');
+    // Limpiar los campos de cambio de contraseña cuando se cambia a login
+    setFormData({
+      email: '',
+      password: '',
+      newPassword: '',
+      repeatPassword: '',
+      oldPassword: '',
+    });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación de campos vacíos para el inicio de sesión
     if (!isChangingPassword) {
-      if (!email || !password) {
-        setErrorMessage('Por favor, completa todos los campos');
-        return; // No enviar el formulario si algún campo está vacío
-      }
-    }
-
-    // Validación de campos vacíos para cambiar contraseña
-    if (isChangingPassword) {
-      if (!oldPassword || !newPassword) {
-        setErrorMessage('Por favor, completa todos los campos');
-        return; // No enviar el formulario si algún campo está vacío
-      }
-
-      // Validación para que las contraseñas sean diferentes
-      if (oldPassword === newPassword) {
-        setErrorMessage('La nueva contraseña no puede ser igual a la actual');
+      // Validación de campos vacíos de forma individual
+      if (!formData.email && !formData.password) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Campos Sin Datos',
+          text: 'Por favor, ingresa tu correo electrónico y tu contraseña.',
+        });
         return;
       }
-
-      try {
-        // Cambiar la contraseña
-        await LoginBD.cambiarContraseña(email, oldPassword, newPassword, newPassword);
-        setIsChangingPassword(false); // Regresar al modo inicial
-        setErrorMessage(''); // Limpiar mensaje de error
-        navigate("/bienvenido_a_flexguaraje_peru"); // Redirige a la página de bienvenida
-      } catch (error) {
-        console.error("Error al cambiar la contraseña:", error);
-        setErrorMessage(error.message);  // Mostrar el mensaje de error
+  
+      if (!formData.email) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Completar Datos en el Correo Electrónico',
+          text: 'Por favor, ingresa tu correo electrónico.',
+        });
+        return;
       }
-    } else {
-      // Iniciar sesión
+  
+      if (!formData.password) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Completar Datos en la Contraseña',
+          text: 'Por favor, ingresa tu contraseña.',
+        });
+        return;
+      }
+  
       try {
-        const result = await LoginBD.login(email, password);
-        navigate("/bienvenido_a_flexguaraje_peru"); // Redirige a la página de bienvenida
+        const result = await LoginBD.login(formData.email, formData.password);
+        navigate("/bienvenido_a_flexguaraje_peru");
       } catch (error) {
         console.error("Error al iniciar sesión:", error);
-        setErrorMessage(error.message); // Mostrar el mensaje de error
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message,
+        });
+      }
+    } else {
+      // Si estamos en el modo de cambio de contraseña
+      // Validación de campos vacíos para cambio de contraseña
+      if (!formData.oldPassword || !formData.newPassword || !formData.repeatPassword) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Campos Sin Datos',
+          text: 'Por favor, ingresa todos los campos para cambiar la contraseña.',
+        });
+        return;
+      }
+  
+      // Validación de si las contraseñas coinciden
+      if (formData.newPassword !== formData.repeatPassword) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Las contraseñas no coinciden',
+          text: 'La nueva contraseña y la repetición deben coincidir.',
+        });
+        return;
+      }
+  
+      try {
+        await LoginBD.cambiarContraseña(formData.email, formData.oldPassword, formData.newPassword, formData.repeatPassword);
+        Swal.fire({
+          icon: 'success',
+          title: 'Contraseña Actualizada',
+          text: 'Tu contraseña se ha actualizado exitosamente.',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          // Limpiar los campos después de la actualización de la contraseña
+          setFormData({
+            email: '',
+            password: '',
+            newPassword: '',
+            repeatPassword: '',
+            oldPassword: '',
+          });
+          navigate('/'); // Redirigir al inicio o a la página deseada
+        });
+        setIsChangingPassword(false);
+      } catch (error) {
+        console.error("Error al cambiar la contraseña:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message,
+        });
       }
     }
   };
@@ -73,13 +160,13 @@ const Login = () => {
             <div className="input-group">
               <label htmlFor="email" className="animated-label">Correo Electrónico</label>
               <input
-                type="email"
+                type="text"
                 id="email"
+                name="email"
                 className="animated-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder=" "
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Correo electrónico"
               />
             </div>
             <div className="input-group">
@@ -87,20 +174,15 @@ const Login = () => {
               <input
                 type="password"
                 id="password"
+                name="password"
                 className="animated-input"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder=" "
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Contraseña"
               />
             </div>
-            {errorMessage && <div className="error-message">{errorMessage}</div>} {/* Mostrar error */}
-            <button type="submit" className="animated-button">
-              Iniciar Sesión
-            </button>
-            <p className="toggle-text" onClick={handlePasswordChangeMode}>
-              ¿Olvidaste tu contraseña?
-            </p>
+            <button type="submit" className="animated-button">Iniciar Sesión</button>
+            <p className="toggle-text" onClick={handlePasswordChangeMode}>¿Cambiar Contraseña?</p>
           </form>
         ) : (
           <form className="login-form" onSubmit={handleSubmit}>
@@ -108,13 +190,13 @@ const Login = () => {
             <div className="input-group">
               <label htmlFor="email" className="animated-label">Correo Electrónico</label>
               <input
-                type="email"
+                type="text"
                 id="email"
+                name="email"
                 className="animated-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder=" "
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Correo electrónico"
               />
             </div>
             <div className="input-group">
@@ -122,11 +204,11 @@ const Login = () => {
               <input
                 type="password"
                 id="oldPassword"
+                name="oldPassword"
                 className="animated-input"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                required
-                placeholder=" "
+                value={formData.oldPassword}
+                onChange={handleChange}
+                placeholder="Contraseña actual"
               />
             </div>
             <div className="input-group">
@@ -134,15 +216,27 @@ const Login = () => {
               <input
                 type="password"
                 id="newPassword"
+                name="newPassword"
                 className="animated-input"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                placeholder=" "
+                value={formData.newPassword}
+                onChange={handleChange}
+                placeholder="Nueva contraseña"
               />
             </div>
-            {errorMessage && <div className="error-message">{errorMessage}</div>} {/* Mostrar error */}
+            <div className="input-group">
+              <label htmlFor="repeatPassword" className="animated-label">Repetir Nueva Contraseña</label>
+              <input
+                type="password"
+                id="repeatPassword"
+                name="repeatPassword"
+                className="animated-input"
+                value={formData.repeatPassword}
+                onChange={handleChange}
+                placeholder="Repetir nueva contraseña"
+              />
+            </div>
             <button type="submit" className="animated-button">Actualizar Contraseña</button>
+            <p className="toggle-text" onClick={handleLoginMode}>¿Volver a Iniciar Sesión?</p>
           </form>
         )}
       </div>
