@@ -66,12 +66,25 @@
     font-weight: 700;
 }
 
-
-
-
 /* tablaaaaaaaaaaaaaaaa usuario */
 .tabla-usuario th,
 .tabla-usuario td {
     /* Centra verticalmente */
     vertical-align: middle;
+}
+
+
+/* actualizar usuario css */
+.btn-actualizar-usuario {
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.actualizar-btn-usuario .btn {
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
 }

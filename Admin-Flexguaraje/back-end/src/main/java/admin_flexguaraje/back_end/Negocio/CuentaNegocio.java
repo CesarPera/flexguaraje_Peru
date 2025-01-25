@@ -48,7 +48,6 @@ public class CuentaNegocio {
         String nombreUsuario = (usuario.getApellidoPaterno() + "_" + usuario.getDni() + "_PERU").toUpperCase();
 
         // Encriptar la contraseña
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String passwordEncriptada = passwordEncoder.encode(password);
 
         // Generar correo automático si no se proporciona uno
@@ -117,4 +116,7 @@ public class CuentaNegocio {
         return cuenta;
     }
 
+    public Cuenta guardarCuenta(Cuenta cuenta) {
+        return cuentaRepositorio.save(cuenta);
+    }
 }

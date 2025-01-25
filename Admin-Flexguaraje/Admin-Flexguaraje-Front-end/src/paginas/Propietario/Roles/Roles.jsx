@@ -145,7 +145,7 @@ function Roles() {
                     <div className="modal-overlay">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5>Crear Nuevo Rol</h5>
+                                <h3>CREAR NUEVO ROL</h3>
                             </div>
                             <div className="modal-body">
                                 <form>
@@ -191,7 +191,7 @@ function Roles() {
                             <td>{role.nombreRol}</td>
                             <td className="table-acciones-roles">
                                 <button
-                                    className={`btn ${role.estado === "Activo" ? "btn-warning" : "btn-warning"}`}
+                                    className={`btn ${role.estado === "Activo" ? "btn-light" : "btn-dark"}`}
                                     onClick={() => toggleRoleStatus(role.idRoles, role.estado)}>
                                     {role.estado || "Activo"}
                                 </button>
