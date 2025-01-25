@@ -1,6 +1,7 @@
 package admin_flexguaraje.back_end.Controlador;
 
 import admin_flexguaraje.back_end.Modelo.Permisos;
+import admin_flexguaraje.back_end.Modelo.Roles;
 import admin_flexguaraje.back_end.Negocio.PermisosNegocio;
 import admin_flexguaraje.back_end.Negocio.RolesNegocio;
 import admin_flexguaraje.back_end.Repositorio.RolesRepositorio;
@@ -8,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/permisos")
 public class PermisosControlador {
@@ -25,6 +28,12 @@ public class PermisosControlador {
     @GetMapping("/listar_permisos")
     public ResponseEntity<?> listarPermisos() {
         return ResponseEntity.ok(permisosNegocio.listarPermisos());
+    }
+
+    @GetMapping("/roles_activos")
+    public ResponseEntity<List<Roles>> obtenerRolesActivos() {
+        List<Roles> rolesActivos = permisosNegocio.obtenerRolesActivos();
+        return ResponseEntity.ok(rolesActivos);
     }
 
     @PostMapping("/crear_permisos")
@@ -133,6 +142,28 @@ public class PermisosControlador {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al actualizar el estado del permiso: " + e.getMessage());
         }
+    }
+
+    @DeleteMapping("/eliminar_permiso")
+    public ResponseEntity<String> eliminarPermiso(@RequestBody Map<String, Object> body) {
+        // Extraemos el idPermiso desde el cuerpo de la solicitud
+        String idPermisoStr = String.valueOf(body.get("idPermiso"));
+
+        // Validación para asegurarse de que idPermiso es numérico
+        if (idPermisoStr == null || !idPermisoStr.matches("[0-9]+")) {
+            return ResponseEntity.badRequest().body("El idPermiso debe ser un número válido.");
+        }
+
+        Long idPermiso = Long.valueOf(idPermisoStr);
+
+        // Llamamos al negocio para eliminar el permiso
+        String result = permisosNegocio.eliminarPermiso(idPermiso);
+
+        if (result.contains("no existe")) {
+            return ResponseEntity.badRequest().body("El permiso con el ID " + idPermiso + " no existe.");
+        }
+
+        return ResponseEntity.ok(result);
     }
 
 }

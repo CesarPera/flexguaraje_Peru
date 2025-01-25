@@ -36,6 +36,11 @@ public class PermisosNegocio {
         return permisosRepositorio.findAll();
     }
 
+    public List<Roles> obtenerRolesActivos() {
+        return rolesRepositorio.findByEstado(Roles.estadoRoles.Activo);
+    }
+
+
     public Permisos crearPermiso(String nombreRol, String nombrePermiso) {
         Roles rol = rolesRepositorio.findByNombreRol(nombreRol)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
@@ -74,5 +79,14 @@ public class PermisosNegocio {
         permiso.setEstado(permiso.getEstado() == Permisos.estadoPermisos.Activo ?
                 Permisos.estadoPermisos.Desactivado : Permisos.estadoPermisos.Activo);
         return permisosRepositorio.save(permiso);
+    }
+
+    // Método para eliminar el permiso
+    public String eliminarPermiso(Long idPermiso) {
+        if (!permisosRepositorio.existsById(idPermiso)) {
+            return "El permiso con el ID " + idPermiso + " no existe.";
+        }
+        permisosRepositorio.deleteById(idPermiso); // Eliminar el permiso por ID
+        return "Permiso con ID " + idPermiso + " eliminado exitosamente.";
     }
 }

@@ -77,4 +77,12 @@ public class RolesNegocio {
         }
         return rolesRepositorio.save(rol);
     }
+
+    public String eliminarRol(Long idRol) {
+        if (!rolesRepositorio.existsById(idRol)) {
+            return "El rol con el ID " + idRol + " no existe.";
+        }
+        rolesRepositorio.deleteById(idRol);  // Eliminar el rol por ID
+        return "Rol con ID " + idRol + " eliminado exitosamente.";
+    }
 }

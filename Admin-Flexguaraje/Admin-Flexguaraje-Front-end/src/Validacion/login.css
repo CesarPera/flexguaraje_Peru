@@ -40,8 +40,8 @@
 }
 
 .form-title {
-    text-align: center;
-    font-size: 24px;
+    text-align: 10px;
+    font-size: 34px;
     font-weight: bold;
     color: #ff7e5f;
     margin-bottom: 20px;
@@ -62,6 +62,7 @@
     transition: all 0.3s ease;
 }
 
+/* Aquí es donde aplicamos el estilo para el campo de entrada */
 .animated-input {
     width: 100%;
     padding: 14px 12px;
@@ -74,11 +75,18 @@
     transition: border-color 0.3s ease;
 }
 
+/* El texto del placeholder desaparecerá cuando el usuario empiece a escribir */
+.animated-input::placeholder {
+    color: transparent; /* El placeholder es transparente cuando se empieza a escribir */
+}
+
+/* Estilos cuando el campo está en foco */
 .animated-input:focus {
     border-color: #ff7e5f;
     background: #fff;
 }
 
+/* Cuando el campo tiene foco o no tiene placeholder visible */
 .animated-input:focus~.animated-label,
 .animated-input:not(:placeholder-shown)~.animated-label {
     top: -8px;

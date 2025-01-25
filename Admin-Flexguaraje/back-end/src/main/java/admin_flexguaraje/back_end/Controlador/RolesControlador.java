@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/roles")
 public class RolesControlador {
@@ -107,5 +108,27 @@ public class RolesControlador {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @DeleteMapping("/eliminar_rol")
+    public ResponseEntity<String> eliminarRol(@RequestBody Map<String, Object> body) {
+        // Extraemos el idRol desde el cuerpo de la solicitud
+        String idRolStr = String.valueOf(body.get("idRol"));
+
+        // Validación para asegurarse de que idRol es numérico
+        if (idRolStr == null || !idRolStr.matches("[0-9]+")) {
+            return ResponseEntity.badRequest().body("El idRol debe ser un número válido.");
+        }
+
+        Long idRol = Long.valueOf(idRolStr);
+
+        // Llamamos al negocio para eliminar el rol
+        String result = rolesNegocio.eliminarRol(idRol);
+
+        if (result.contains("no existe")) {
+            return ResponseEntity.badRequest().body("El rol con el ID " + idRol + " no existe.");
+        }
+
+        return ResponseEntity.ok(result);
     }
 }

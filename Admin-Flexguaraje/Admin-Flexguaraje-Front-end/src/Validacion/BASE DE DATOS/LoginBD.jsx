@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // URLs de la API REST
-const LOGIN_BD_API_REST_URL = "http://localhost:8080/cuenta/login";
-const CAMBIO_PASS_BD_API_REST_URL = "http://localhost:8080/cuenta/cambiar_contraseña";
+const LOGIN_BD_API_REST_URL = "http://127.0.0.1:8080/validacion/login";
+const CAMBIO_PASS_BD_API_REST_URL = "http://127.0.0.1:8080/validacion/cambiar_pass";
 
 class LoginBD {
 
@@ -58,14 +58,15 @@ class LoginBD {
         console.log("Contraseña cambiada con éxito:", response.data);
         return response.data;
       })
-      .catch(error => {
-        if (error.response) {
-          console.error("Error al cambiar la contraseña:", error.response.data);
-          throw new Error(error.response.data);
-        } else {
-          console.error("Error de red o conexión:", error.message);
-          throw new Error("Error de red o conexión");
-        }
+.catch(error => {
+  console.error("Error de conexión o red:", error);
+  if (error.response) {
+    console.error("Error del servidor:", error.response.data);
+    throw new Error(error.response.data); // Error detallado del servidor
+  } else {
+    console.error("Error de red o conexión:", error.message);
+    throw new Error("Error de red o conexión");
+  }
       });
   }
 }
