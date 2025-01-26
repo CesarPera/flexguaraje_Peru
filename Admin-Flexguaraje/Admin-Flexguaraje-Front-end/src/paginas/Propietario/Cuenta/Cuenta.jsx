@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./Cuenta.css";
-import CuentaBD from "./BASE DE DATOS/CuentaBD"; // Importa CuentaBD para acceder a la API
+import CuentaBD from "./BASE DE DATOS/CuentaBD";
 import Swal from 'sweetalert2';
 
 
@@ -129,7 +129,7 @@ function GestionCuentas() {
 
         // Mostrar alerta de confirmación con SweetAlert2
         const result = await Swal.fire({
-            title: `¿Está seguro de ${cuenta.estado === "Activo" ? "desactivar" : "activar"} la cuenta?`,
+            title: `¿Estás seguro de ${cuenta.estado === "Activo" ? "desactivar" : "activar"} la cuenta?`,
             text: `La cuenta de ${cuenta.nombreUsuario} será ${cuenta.estado === "Activo" ? "desactivada" : "activada"}.`,
             icon: 'warning',
             showCancelButton: true,
@@ -183,24 +183,59 @@ function GestionCuentas() {
         const dni = cuenta.usuario?.dni;
         const correo = cuenta.email;
 
-        // Validar el formato del correo
-
-        if (!correo.match(/[A-Za-zÁÉÍÓÚáéíóú]+_\d{8}@FLEXGUARAJE_PERU.COM/)) {
+        // Validar si la cuenta está activa
+        if (cuenta.estado !== "Activo") {
             Swal.fire({
                 icon: "warning",
-                title: "Formato de correo inválido",
-                text: "El correo debe tener el formato: apellidoPaterno_DNI@FLEXGUARAJE_PERU.COM",
+                title: "Cuenta desactivada",
+                text: "No se puede cambiar la contraseña porque la cuenta está desactivada.",
+                showConfirmButton: false,
+                timer: 3000
             });
             return;
         }
 
+        // Confirmación antes de proceder
+        const confirmacion = await Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Se actualizará automáticamente la contraseña de esta cuenta.",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Sí, actualizar",
+            cancelButtonText: "Cancelar",
+            allowOutsideClick: false, // Evita clics fuera del modal
+            allowEscapeKey: false, // Evita cerrar el modal con la tecla Esc
+        });
+
+        if (!confirmacion.isConfirmed) {
+            Swal.fire({
+                icon: "info",
+                title: "Operación cancelada",
+                text: "No se ha realizado ningún cambio.",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        // Mostrar loader mientras se procesa la solicitud
+        Swal.fire({
+            title: "Procesando...",
+            text: "Por favor espera mientras se actualiza la contraseña.",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+        });
+
         try {
-            // eslint-disable-next-line no-unused-vars
+            // Actualizar la contraseña automáticamente
             const response = await CuentaBD.actualizarPassAuto(dni, correo);
+            Swal.close();
             Swal.fire({
                 icon: "success",
                 title: "Contraseña actualizada",
                 text: `Contraseña actualizada automáticamente para el usuario: ${cuenta.nombreUsuario}`,
+                showConfirmButton: false,
+                timer: 3000
             });
         } catch (error) {
             console.error("Error al actualizar la contraseña:", error);
@@ -277,7 +312,7 @@ function GestionCuentas() {
                             <tr key={index}>
                                 <td>{cuenta.usuario.dni}</td>
                                 <td>{cuenta.nombreUsuario}</td>
-                                <td>{cuenta.usuario.email}</td>
+                                <td>{cuenta.email}</td>
                                 <td>{cuenta.roles ? cuenta.roles.nombreRol : 'Sin rol'}</td>
                                 <td className="tabla-cuenta-estado">
                                     <button

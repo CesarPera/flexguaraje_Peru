@@ -92,7 +92,12 @@
 
 
 
-/* Botón para desactivar */
+/* Botón de estado */
+.tabla-cuenta-estado .btn {
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
 
 
 /* formulario modal crear cuenta */
