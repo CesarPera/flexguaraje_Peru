@@ -6,19 +6,16 @@
     flex-grow: 1;
 }
 
-.cuenta-page h2 {
-    text-align: center;
-    /* Centra el texto */
-    text-decoration: underline;
-    /* Añade subrayado */
-    color: #131313;
-    /* Color del texto */
+.titulo-cuenta h2 {
     font-size: 2rem;
-    /* Tamaño de la fuente */
     font-family: sans-serif;
     font-weight: bold;
-    margin-top: 20px;
-    /* Espaciado superior */
+    border-bottom: 5px solid black;
+    text-align: center;
+    width: 330px;
+    margin: 30px auto 30px auto;
+    color: #333;
+    vertical-align: middle;
 }
 
 /* Modal */
@@ -83,181 +80,37 @@
     cursor: pointer;
 }
 
-/* Tabla específica con clase tabla-cuenta */
-table.tabla-cuenta {
-    width: 80%;
-    /* Ancho reducido */
-    max-width: 900px;
-    /* Ancho máximo para evitar desbordes */
-    border-collapse: collapse;
-    margin: 20px auto;
-    /* Centra la tabla */
-    background: white;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-table.tabla-cuenta th,
-table.tabla-cuenta td {
-    border: 1px solid #3b3838;
-    padding: 13px;
-    /* Ajusta el espacio interno */
-    text-align: left;
-    font-size: 15px;
-    /* Ajusta el tamaño de fuente */
-}
-
-table.tabla-cuenta th {
-    background-color: #c6b1ce;
-    font-weight: bold;
-    color: #1a1a1a;
-    text-align: center;
-}
-
-/* Contenedor para los botones */
-.botones-crear {
-    display: flex;
-    /* Alineación horizontal */
-    justify-content: center;
-    /* Centra los botones horizontalmente */
-    gap: 10px;
-    /* Espaciado entre los botones */
-    margin: 20px auto;
-    /* Centrado general y espaciado superior */
-}
-
-/* Estilo genérico para los botones */
-.crear-cuenta-btn,
-.crear-usuario-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    color: white;
-}
-
-/* Botón específico para "Crear Cuenta" */
+/* boton de crear cuenta */
 .crear-cuenta-btn {
-    background-color: #5c7bda;
-    /* Color violeta agradable */
-}
-
-.crear-cuenta-btn:hover {
-    background-color: #95cadf;
-    /* Color más oscuro al pasar el mouse */
-    transform: scale(1.05);
-    /* Ligero aumento de tamaño */
-}
-
-
-/* Estilo de los botones dentro de la tabla */
-.tabla-cuenta td .acciones {
-    display: flex;
-    /* Alineación horizontal */
-    gap: 10px;
-    /* Espaciado entre botones */
-    justify-content: center;
-    /* Centrado horizontal */
-}
-
-.tabla-cuenta td button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    color: white;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 10px auto;
+    display: flex;
 }
+
+
 
 /* Botón para desactivar */
-.tabla-cuenta td button.desactivar-btn {
-    background-color: #dc3545;
-    /* Rojo */
+
+
+/* formulario modal crear cuenta */
+.modal-footer-cuenta {
+    display: flex;
+    margin: 10px auto;
 }
 
-.tabla-cuenta td button.desactivar-btn:hover {
-    background-color: #c82333;
-    /* Rojo más oscuro al pasar el mouse */
-    transform: scale(1.05);
-    /* Ligero aumento */
+.modal-footer-cuenta .btn {
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
 }
 
 
+/* cambiar contraseña button */
 .cambiar-pass-btn {
-    background-color: #007bff;
-    /* Verde */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
 }
-
-.cambiar-pass-btn:hover {
-    background-color: #0056b3;
-    /* Hover verde oscuro */
-    transform: scale(1.05);
-}
-
-.cambiar-pass-btn:disabled {
-    background-color: #7e2599;
-    /* Gris cuando está deshabilitado */
-    cursor: not-allowed;
-    /* Cursor para indicar que está deshabilitado */
-}
-
-.crear-cuenta-modal-btn {
-    background-color: #210559; /* Color verde */
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px; /* Bordes redondeados */
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
-    transition: all 0.3s ease; /* Transición para efectos */
-}
-
-.crear-cuenta-modal-btn:hover {
-    background-color: #060235; /* Color más oscuro al pasar el mouse */
-    transform: scale(1.05); /* Agrandar ligeramente al pasar el mouse */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Sombra más profunda */
-}
-
-.crear-cuenta-modal-btn:active {
-    transform: scale(0.98); /* Disminuir ligeramente al hacer clic */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra más pequeña */
-}
-
-.cancelar-modal-btn {
-    background-color: #9d1208; /* Color rojo */
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px; /* Bordes redondeados */
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
-    transition: all 0.3s ease; /* Transición para efectos */
-}
-
-.cancelar-modal-btn:hover {
-    background-color: #890707; /* Rojo más oscuro al pasar el mouse */
-    transform: scale(1.05); /* Agrandar ligeramente al pasar el mouse */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Sombra más profunda */
-}
-
-.cancelar-modal-btn:active {
-    transform: scale(0.98); /* Disminuir ligeramente al hacer clic */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra más pequeña */
-}
-
-
-

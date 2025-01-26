@@ -345,7 +345,6 @@ function Roles() {
                                 <button className="btn btn-secondary" onClick={handleCloseModal}>
                                     Cancelar
                                 </button>
-
                             </div>
                         </div>
                     </div>

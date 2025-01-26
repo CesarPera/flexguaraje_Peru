@@ -34,6 +34,9 @@ public class CuentaNegocio {
         return cuentaRepositorio.findAll();
     }
 
+    public List<Roles> obtenerRolesActivos() {
+        return rolesRepositorio.findByEstado(Roles.estadoRoles.Activo);
+    }
 
     public Cuenta crearCuenta(String dni, String nombreRol, String email, String password) throws Exception {
         // Buscar usuario por DNI

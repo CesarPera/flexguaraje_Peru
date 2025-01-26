@@ -2,6 +2,7 @@ package admin_flexguaraje.back_end.Controlador;
 
 
 import admin_flexguaraje.back_end.Modelo.Cuenta;
+import admin_flexguaraje.back_end.Modelo.Roles;
 import admin_flexguaraje.back_end.Modelo.Usuario;
 import admin_flexguaraje.back_end.Negocio.CuentaNegocio;
 import admin_flexguaraje.back_end.Negocio.EnvioCorreo;
@@ -37,6 +38,12 @@ public class CuentaControlador {
     public ResponseEntity<List<Cuenta>> listarCuentas() {
         List<Cuenta> cuentas = cuentaNegocio.listarCuentas();
         return ResponseEntity.ok(cuentas);
+    }
+
+    @GetMapping("/roles_activos")
+    public ResponseEntity<List<Roles>> obtenerRolesActivos() {
+        List<Roles> rolesActivos = cuentaNegocio.obtenerRolesActivos();
+        return ResponseEntity.ok(rolesActivos);
     }
 
     @PostMapping("/crear_cuenta")
