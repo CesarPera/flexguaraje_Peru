@@ -17,11 +17,6 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   const handlePasswordChangeMode = () => {
     setIsChangingPassword(true);
     setErrorMessage('');
@@ -56,6 +51,14 @@ const Login = () => {
     }));
   };
 
+  const normalizeString = (str) => {
+    const map = {
+      'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+      'ñ': 'n', 'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U',
+    };
+    return str.split('').map(char => map[char] || char).join('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -69,7 +72,7 @@ const Login = () => {
         });
         return;
       }
-  
+
       if (!formData.email) {
         Swal.fire({
           icon: 'error',
@@ -78,7 +81,7 @@ const Login = () => {
         });
         return;
       }
-  
+
       if (!formData.password) {
         Swal.fire({
           icon: 'error',
@@ -87,9 +90,11 @@ const Login = () => {
         });
         return;
       }
-  
+
+      const normalizedEmail = normalizeString(formData.email.toLowerCase());
+
       try {
-        const result = await LoginBD.login(formData.email, formData.password);
+        const result = await LoginBD.login(normalizedEmail, formData.password);
         navigate("/bienvenido_a_flexguaraje_peru");
       } catch (error) {
         console.error("Error al iniciar sesión:", error);
@@ -110,7 +115,7 @@ const Login = () => {
         });
         return;
       }
-  
+
       // Validación de si las contraseñas coinciden
       if (formData.newPassword !== formData.repeatPassword) {
         Swal.fire({
@@ -120,7 +125,7 @@ const Login = () => {
         });
         return;
       }
-  
+
       try {
         await LoginBD.cambiarContraseña(formData.email, formData.oldPassword, formData.newPassword, formData.repeatPassword);
         Swal.fire({
@@ -156,9 +161,8 @@ const Login = () => {
       <div className="login-container">
         {!isChangingPassword ? (
           <form className="login-form" onSubmit={handleSubmit}>
-            <h2 className="form-title">Iniciar Sesión</h2>
+            <h2 className="form-title">INICIAR SESIÓN</h2>
             <div className="input-group">
-              <label htmlFor="email" className="animated-label">Correo Electrónico</label>
               <input
                 type="text"
                 id="email"
@@ -170,7 +174,6 @@ const Login = () => {
               />
             </div>
             <div className="input-group">
-              <label htmlFor="password" className="animated-label">Contraseña</label>
               <input
                 type="password"
                 id="password"
@@ -188,7 +191,6 @@ const Login = () => {
           <form className="login-form" onSubmit={handleSubmit}>
             <h2 className="form-title">Cambiar Contraseña</h2>
             <div className="input-group">
-              <label htmlFor="email" className="animated-label">Correo Electrónico</label>
               <input
                 type="text"
                 id="email"
@@ -200,7 +202,6 @@ const Login = () => {
               />
             </div>
             <div className="input-group">
-              <label htmlFor="oldPassword" className="animated-label">Contraseña Actual</label>
               <input
                 type="password"
                 id="oldPassword"
@@ -212,7 +213,6 @@ const Login = () => {
               />
             </div>
             <div className="input-group">
-              <label htmlFor="newPassword" className="animated-label">Nueva Contraseña</label>
               <input
                 type="password"
                 id="newPassword"
@@ -224,7 +224,6 @@ const Login = () => {
               />
             </div>
             <div className="input-group">
-              <label htmlFor="repeatPassword" className="animated-label">Repetir Nueva Contraseña</label>
               <input
                 type="password"
                 id="repeatPassword"

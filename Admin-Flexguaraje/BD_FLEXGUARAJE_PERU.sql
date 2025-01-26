@@ -190,7 +190,7 @@ CREATE TABLE boleta (
 
 # ---------- CONSULTASSSSSSSSSS -----------
 use flexguaraje_peru;
-select * from roles;
+select * from roles; 
 select * from permisos;
 select * from usuario;
 select * from cuenta;

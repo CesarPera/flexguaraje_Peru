@@ -2,7 +2,10 @@
     margin: 0;
     position: fixed;
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
+        url('https://static.vecteezy.com/system/resources/previews/030/054/733/non_2x/a-large-warehouse-with-two-garage-doors-and-a-sky-ai-generated-free-photo.jpg');
+    background-size: cover;
+    background-position: center;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -40,11 +43,12 @@
 }
 
 .form-title {
-    text-align: 10px;
+    text-align: center;
     font-size: 34px;
     font-weight: bold;
-    color: #ff7e5f;
+    color: #2e1010;
     margin-bottom: 20px;
+    font-family: cursive;
 }
 
 .input-group {
@@ -75,11 +79,6 @@
     transition: border-color 0.3s ease;
 }
 
-/* El texto del placeholder desaparecerá cuando el usuario empiece a escribir */
-.animated-input::placeholder {
-    color: transparent; /* El placeholder es transparente cuando se empieza a escribir */
-}
-
 /* Estilos cuando el campo está en foco */
 .animated-input:focus {
     border-color: #ff7e5f;
@@ -102,15 +101,16 @@
     padding: 12px 0;
     font-size: 16px;
     color: #fff;
-    background: #ff7e5f;
+    background: #21207c;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-family: cursive;
 }
 
 .animated-button:hover {
-    background-color: #e8694f;
+    background-color: #333edb;
 }
 
 .toggle-text {
@@ -120,8 +120,9 @@
     color: #666;
     cursor: pointer;
     transition: color 0.3s ease;
+    font-family: cursive;
 }
 
 .toggle-text:hover {
-    color: #ff7e5f;
+    color: #333edb;
 }
