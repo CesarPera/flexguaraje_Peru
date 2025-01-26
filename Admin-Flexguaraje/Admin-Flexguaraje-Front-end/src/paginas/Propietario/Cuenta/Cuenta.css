@@ -60,13 +60,10 @@
     /* Color del texto */
     font-weight: bold;
     /* Negrita para destacarlo */
-    margin-left: 60px;
-    /* Añade un margen izquierdo para mayor separación */
 }
 
 .modal-content label {
     display: block;
-    margin: 10px 0 5px;
 }
 
 .modal-content input,

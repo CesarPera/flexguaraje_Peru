@@ -41,3 +41,34 @@
     /* Centra verticalmente */
     vertical-align: middle;
 }
+
+.tabla-estado-permisos .btn {
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.tabla-acciones-permisos {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
+.tabla-acciones-permisos .btn {
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/* formulario modal crear */
+.select-permiso-rol {
+    width: auto !important;
+    text-align: center;
+    margin: 15px auto;
+    display: flex;
+    font-size: 15px;
+    padding: 10px;
+}

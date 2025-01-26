@@ -132,7 +132,7 @@ public class ClienteControlador {
                 return ResponseEntity.badRequest().body("Todos los campos son requeridos.");
             }
 
-            // Verificar si el cliente ya existe en base al DNI o email
+            // Verificar si el cliente ya existe en base al DNI
             if (clienteNegocio.existeClientePorDni(dni)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ya existe un cliente con este DNI " + dni + ".");
             }

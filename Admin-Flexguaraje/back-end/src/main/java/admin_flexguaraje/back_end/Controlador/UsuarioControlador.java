@@ -28,15 +28,20 @@ public class UsuarioControlador {
     @PostMapping("/buscar_usuario_dni")
     public ResponseEntity<?> buscarUsuarioPorDni(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
+
+        // Verificar si el DNI es válido
         if (dni == null || !dni.matches("\\d{8}")) {
             return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres numéricos.");
         }
 
         Optional<Usuario> usuario = usuarioNegocio.buscarUsuarioPorDni(dni);
+
+        // Si no se encuentra el usuario, se devuelve un mensaje dentro del cuerpo con un código 200 (OK)
         if (usuario.isEmpty()) {
-            return ResponseEntity.status(404).body("El cliente con DNI " + dni + " no se encuentra.");
+            return ResponseEntity.ok("El cliente con DNI " + dni + " no se encuentra.");
         }
 
+        // Si el usuario se encuentra, se devuelve el usuario con código 200
         return ResponseEntity.ok(usuario.get());
     }
 

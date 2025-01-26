@@ -91,35 +91,6 @@
     vertical-align: middle;
 }
 
-/* LOS ESPACIOS DE CADA COLUMNA */
-/*
-.espacios-dni,
-.espacios-n {
-    width: 80px;
-}
-
-.espacios-na {
-    width: 250px;
-}
-
-.espacios-t {
-    width: 100px;
-}
-
-.espacio-costo {
-    width: 70px;
-}
-
-.espacios-fecha {
-    width: 10%;
-}
-
-.espacios-e {
-    width: 100px;
-}
-*/
-
-
 /* VENTANAAAAAA FLOTANTEEEEEEEEEEEE */
 .modal-backdrop {
     top: 0;
@@ -153,7 +124,6 @@
 /* AGREGARRRRRRRRRRRRRRRRRR BTN */
 .modal-btn {
     display: flex;
-    gap: 60px;
     margin: 10px auto;
 }
 

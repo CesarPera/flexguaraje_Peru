@@ -109,7 +109,6 @@
 .modal-buttons {
     display: flex;
     justify-content: center;
-    gap: 60px;
 }
 
 .modal-buttons .btn {

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import UsuarioBD from './BASE DE DATOS/UsuarioBD';
+import Swal from 'sweetalert2';
 import './Usuario.css';
 
 
 function Usuario() {
-
     const [usuarios, setUsuarios] = useState([]);
     const [dniBuscar, setDniBuscar] = useState('');
     const [modalVisible, setModalVisible] = useState(false); // Estado para mostrar el modal
@@ -16,6 +16,17 @@ function Usuario() {
         email: '',
         telefono: ''
     });
+    // Función para limpiar el formulario
+    const limpiarFormulario = () => {
+        setNuevoUsuario({
+            dni: '',
+            nombre: '',
+            apellidoPaterno: '',
+            apellidoMaterno: '',
+            email: '',
+            telefono: ''
+        });
+    };
     const [modalVisibleActualizar, setModalVisibleActualizar] = useState(false);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState({
         dni: '',
@@ -25,13 +36,26 @@ function Usuario() {
         email: '',
         telefono: ''
     });
+    const [usuarioOriginal, setUsuarioOriginal] = useState({
+        dni: '',
+        nombre: '',
+        apellidoPaterno: '',
+        apellidoMaterno: '',
+        email: '',
+        telefono: ''
+    });
     // Abrir y cerrar el modal
     const abrirModal = () => setModalVisible(true);
-    const cerrarModal = () => setModalVisible(false);
+    const cerrarModal = () => {
+        limpiarFormulario(); // Limpiar el formulario al cerrar el modal
+        setModalVisible(false); // Suponiendo que tienes un estado para el modal
+    };
     const abrirModalActualizar = (usuario) => {
-        setUsuarioSeleccionado(usuario);
+        setUsuarioSeleccionado(usuario); // Establece los datos actuales en el formulario
+        setUsuarioOriginal({ ...usuario }); // Guarda una copia de los datos originales
         setModalVisibleActualizar(true);
     };
+
     const cerrarModalActualizar = () => setModalVisibleActualizar(false);
 
     useEffect(() => {
@@ -42,6 +66,12 @@ function Usuario() {
             })
             .catch(error => {
                 console.error("Error al listar usuarios:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al listar usuarios',
+                    text: error.message || 'Ocurrió un error inesperado al obtener los usuarios.',
+                    showConfirmButton: true,
+                });
             });
     }, []);
 
@@ -53,56 +83,275 @@ function Usuario() {
         const { name, value } = e.target;
         setUsuarioSeleccionado({ ...usuarioSeleccionado, [name]: value });
     };
-    const manejarCambioBuscar = (e) => {
-        setDniBuscar(e.target.value);
-    };
 
-    // Función para realizar la búsqueda
     const buscarUsuario = () => {
-        if (dniBuscar.trim() !== '') {
-            // Buscar el usuario por el DNI
-            UsuarioBD.buscarUsuarioPorDni(dniBuscar)
-                .then(response => {
-                    setUsuarios([response.data]); // Mostrar solo el usuario encontrado
-                })
-                .catch(error => {
-                    console.error("Error al buscar usuario:", error);
-                    alert("Usuario no encontrado");
-                });
-        } else {
-            // Si el campo está vacío, cargar todos los usuarios
-            UsuarioBD.listarUsuarios()
-                .then(response => {
-                    setUsuarios(response.data); // Mostrar todos los usuarios
-                })
-                .catch(error => {
-                    console.error("Error al listar usuarios:", error);
-                });
+        // Verificar si el campo DNI está vacío
+        if (dniBuscar.trim() === '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Formulario vacío',
+                text: 'Por favor, ingrese un DNI.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
         }
+
+        // Verificar que el DNI contenga solo 8 caracteres numéricos
+        if (!/^\d{8}$/.test(dniBuscar)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Dato inválido',
+                text: 'El DNI a buscar debe tener 8 caracteres numéricos.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        // Mostrar alert de búsqueda en proceso
+        Swal.fire({
+            title: 'Buscando...',
+            text: 'Estamos buscando al usuario, por favor espere.',
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // Realizar la búsqueda en la base de datos
+        UsuarioBD.buscarUsuarioPorDni(dniBuscar)
+            .then(response => {
+                Swal.close(); // Cerrar el alerta de búsqueda
+
+                // Verificar si la respuesta contiene un mensaje indicando que no se encuentra el usuario
+                if (typeof response.data === 'string' && response.data.includes("no se encuentra")) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Usuario no encontrado',
+                        text: response.data, // El mensaje que indica que no se encontró el cliente
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                } else if (response.data) {
+                    // Si la respuesta es un objeto de usuario válido, mostrar los datos
+                    setUsuarios([response.data]);
+                }
+
+                // Limpiar el campo de búsqueda después de la búsqueda
+                setDniBuscar('');
+            })
+            .catch(error => {
+                Swal.close(); // Cerrar el alerta de búsqueda
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al buscar usuario',
+                    text: 'Ocurrió un error inesperado.',
+                });
+                // Limpiar el campo de búsqueda después de un error
+                setDniBuscar('');
+            });
     };
 
     // Enviar los datos al backend para crear un usuario
     const CrearUsuario = () => {
-        // Aquí puedes llamar a tu backend para guardar el usuario
+        // Validar si el formulario está vacío
+        const formulariovacio = `${nuevoUsuario.dni || ''} ${nuevoUsuario.nombre || ''} ${nuevoUsuario.apellidoPaterno || ''}
+            ${nuevoUsuario.apellidoMaterno || ''} ${nuevoUsuario.email || ''} ${nuevoUsuario.telefono || ''}`;
+        if (!formulariovacio.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Formulario Vacio',
+                text: 'El formulario no puede estar vacio, por favor rellenar datos.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        const errores = [];
+
+        // Validar el DNI: solo 8 caracteres numéricos
+        if (!nuevoUsuario.dni || nuevoUsuario.dni.trim() === "") {
+            errores.push("El DNI no puede estar vacío.");
+        } else if (!/^\d{8}$/.test(nuevoUsuario.dni.trim())) {
+            errores.push("El DNI debe tener exactamente 8 caracteres numéricos.");
+        }
+
+        // Validar el nombre: no vacío y solo letras y espacios
+        if (!nuevoUsuario.nombre || nuevoUsuario.nombre.trim() === "") {
+            errores.push("El nombre no puede estar vacío.");
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/.test(nuevoUsuario.nombre.trim())) {
+            errores.push("El nombre solo puede contener letras y espacios.");
+        }
+
+        // Validar apellido paterno: no vacío y solo acepta letras
+        if (!nuevoUsuario.apellidoPaterno || nuevoUsuario.apellidoPaterno.trim() === "") {
+            errores.push("El apellido paterno no puede estar vacío.");
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ]+$/.test(nuevoUsuario.apellidoPaterno.trim())) {
+            errores.push("El apellido paterno solo puede contener letras.");
+        }
+
+        // Validar apellido materno: no vacío y solo acepta letras
+        if (!nuevoUsuario.apellidoMaterno || nuevoUsuario.apellidoMaterno.trim() === "") {
+            errores.push("El apellido materno no puede estar vacío.");
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ]+$/.test(nuevoUsuario.apellidoMaterno.trim())) {
+            errores.push("El apellido materno solo puede contener letras.");
+        }
+
+        // Validar correo electrónico: no vacío y debe seguir el formato estándar
+        if (!nuevoUsuario.email || nuevoUsuario.email.trim() === "") {
+            errores.push("El correo electrónico no puede estar vacío.");
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(nuevoUsuario.email.trim())) {
+            errores.push("El correo electrónico no tiene un formato válido.");
+        }
+
+        // Validar teléfono: no vacío y debe tener 9 caracteres numéricos
+        if (!nuevoUsuario.telefono || nuevoUsuario.telefono.trim() === "") {
+            errores.push("El teléfono no puede estar vacío.");
+        } else if (!/^\d{9}$/.test(nuevoUsuario.telefono.trim())) {
+            errores.push("El teléfono debe tener 9 caracteres numéricos.");
+        }
+
+        // Si hay errores, mostrar el alert con los mensajes
+        if (errores.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al crear usuario',
+                html: errores.join('<br>'),
+                showConfirmButton: true
+            });
+            return;
+        }
+        // Si no hay errores, continuar con la creación del usuario
         UsuarioBD.crearUsuario(nuevoUsuario)
             .then(response => {
-                alert("Usuario creado con éxito");
-                cerrarModal();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Usuario creado con éxito',
+                    text: 'El nuevo usuario ha sido creado correctamente.',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                limpiarFormulario(); // Limpiar el formulario después de crear el usuario
+                cerrarModal(); // Cerrar el modal
                 // Recargar la lista de usuarios después de crear uno
                 UsuarioBD.listarUsuarios()
                     .then(res => setUsuarios(res.data))
                     .catch(err => console.error(err));
             })
             .catch(error => {
-                console.error("Error al crear usuario:", error);
-                alert("Error al crear usuario");
+                // Verificar si el backend devuelve un error con el mensaje "El DNI {dni} ya existe."
+                if (error.response && error.response.data.includes("ya existe")) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'DNI Duplicado',
+                        text: error.response.data,
+                        showConfirmButton: true
+                    });
+                } else {
+                    // Manejar otros errores del backend
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al crear usuario',
+                        text: 'Ocurrió un error al intentar guardar el usuario. Inténtalo nuevamente.',
+                        showConfirmButton: true
+                    });
+                }
             });
     };
 
     const actualizarUsuario = () => {
+        const formulariovacio = `${usuarioSeleccionado.nombre || ''} ${usuarioSeleccionado.apellidoPaterno || ''} 
+            ${usuarioSeleccionado.apellidoMaterno || ''} ${usuarioSeleccionado.email || ''} ${usuarioSeleccionado.telefono || ''}`;
+
+        if (!formulariovacio.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Formulario Vacío',
+                text: 'El formulario no puede estar vacío, por favor rellene los datos.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        const errores = [];
+
+        // Validar el nombre: no vacío y solo letras y espacios
+        if (!usuarioSeleccionado.nombre || usuarioSeleccionado.nombre.trim() === "") {
+            errores.push("El nombre no puede estar vacío.");
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/.test(usuarioSeleccionado.nombre.trim())) {
+            errores.push("El nombre solo puede contener letras y espacios.");
+        }
+
+        // Validar apellido paterno: no vacío y solo acepta letras
+        if (!usuarioSeleccionado.apellidoPaterno || usuarioSeleccionado.apellidoPaterno.trim() === "") {
+            errores.push("El apellido paterno no puede estar vacío.");
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ]+$/.test(usuarioSeleccionado.apellidoPaterno.trim())) {
+            errores.push("El apellido paterno solo puede contener letras.");
+        }
+
+        // Validar apellido materno: no vacío y solo acepta letras
+        if (!usuarioSeleccionado.apellidoMaterno || usuarioSeleccionado.apellidoMaterno.trim() === "") {
+            errores.push("El apellido materno no puede estar vacío.");
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ]+$/.test(usuarioSeleccionado.apellidoMaterno.trim())) {
+            errores.push("El apellido materno solo puede contener letras.");
+        }
+
+        // Validar correo electrónico: no vacío y debe seguir el formato estándar
+        if (!usuarioSeleccionado.email || usuarioSeleccionado.email.trim() === "") {
+            errores.push("El correo electrónico no puede estar vacío.");
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(usuarioSeleccionado.email.trim())) {
+            errores.push("El correo electrónico no tiene un formato válido.");
+        }
+
+        // Validar teléfono: no vacío y debe tener 9 caracteres numéricos
+        if (!usuarioSeleccionado.telefono || usuarioSeleccionado.telefono.trim() === "") {
+            errores.push("El teléfono no puede estar vacío.");
+        } else if (!/^\d{9}$/.test(usuarioSeleccionado.telefono.trim())) {
+            errores.push("El teléfono debe tener 9 caracteres numéricos.");
+        }
+
+        const noCambios =
+            usuarioSeleccionado.nombre === usuarioOriginal.nombre &&
+            usuarioSeleccionado.apellidoPaterno === usuarioOriginal.apellidoPaterno &&
+            usuarioSeleccionado.apellidoMaterno === usuarioOriginal.apellidoMaterno &&
+            usuarioSeleccionado.email === usuarioOriginal.email &&
+            usuarioSeleccionado.telefono === usuarioOriginal.telefono;
+
+        if (noCambios) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Sin cambios',
+                text: 'No se realizaron cambios en la información del usuario.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return; // Detener la ejecución si no hubo cambios
+        }
+
+        // Si hay errores, mostrar el alert con los mensajes
+        if (errores.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al actualizar usuario',
+                html: errores.join('<br>'),
+                showConfirmButton: true
+            });
+            return;
+        }
+
+        // Si no hay errores, continuar con la actualización del usuario
         UsuarioBD.actualizarUsuario(usuarioSeleccionado)
             .then(response => {
-                alert("Usuario actualizado con éxito");
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Usuario actualizado con éxito',
+                    text: 'El usuario ha sido actualizado correctamente.',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
                 setModalVisibleActualizar(false);
                 // Recargar la lista de usuarios después de actualizar uno
                 UsuarioBD.listarUsuarios()
@@ -111,7 +360,12 @@ function Usuario() {
             })
             .catch(error => {
                 console.error("Error al actualizar usuario:", error);
-                alert("Error al actualizar usuario");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al actualizar usuario',
+                    text: 'Ocurrió un error al intentar actualizar el usuario. Inténtalo nuevamente.',
+                    showConfirmButton: true
+                });
             });
     };
 
@@ -127,35 +381,35 @@ function Usuario() {
                     {modalVisible && (
                         <div className="modal">
                             <div className="modal-content">
-                                <h3>Crear Usuario</h3>
+                                <h3>CREAR USUARIO</h3>
                                 <form>
                                     <div className="form-group">
-                                        <label>DNI</label>
+                                        <label>DNI:</label>
                                         <input type="text" name="dni" value={nuevoUsuario.dni} onChange={manejarCambio} />
                                     </div>
                                     <div className="form-group">
-                                        <label>Nombre</label>
+                                        <label>Nombre:</label>
                                         <input type="text" name="nombre" value={nuevoUsuario.nombre} onChange={manejarCambio} />
                                     </div>
                                     <div className="form-group">
-                                        <label>Apellido Paterno</label>
+                                        <label>Apellido Paterno:</label>
                                         <input type="text" name="apellidoPaterno" value={nuevoUsuario.apellidoPaterno} onChange={manejarCambio} />
                                     </div>
                                     <div className="form-group">
-                                        <label>Apellido Materno</label>
+                                        <label>Apellido Materno:</label>
                                         <input type="text" name="apellidoMaterno" value={nuevoUsuario.apellidoMaterno} onChange={manejarCambio} />
                                     </div>
                                     <div className="form-group">
-                                        <label>Email</label>
+                                        <label>Email:</label>
                                         <input type="email" name="email" value={nuevoUsuario.email} onChange={manejarCambio} />
                                     </div>
                                     <div className="form-group">
-                                        <label>Teléfono</label>
+                                        <label>Teléfono:</label>
                                         <input type="text" name="telefono" value={nuevoUsuario.telefono} onChange={manejarCambio} />
                                     </div>
                                 </form>
                                 <div className="modal-actions">
-                                    <button className='btn btn-success' onClick={CrearUsuario}>Guardar</button>
+                                    <button className='btn btn-success' onClick={CrearUsuario}>Crear</button>
                                     <button className='btn btn-secondary' onClick={cerrarModal}>Cancelar</button>
                                 </div>
                             </div>
@@ -182,7 +436,7 @@ function Usuario() {
                                     console.error("Error al listar usuarios:", error);
                                 });
                         }}>
-                            Limpiar
+                            Normalidad
                         </button>
                     </div>
                 </div>
@@ -199,87 +453,95 @@ function Usuario() {
                     </tr>
                 </thead>
                 <tbody>
-                    {usuarios.map(usuario => (
-                        <tr key={usuario.dni}>
-                            <td>{usuario.dni}</td>
-                            <td>{`${usuario.nombre} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno}`}</td>
-                            <td>{usuario.email}</td>
-                            <td>{usuario.telefono}</td>
-                            <td>
-                                <button className='btn btn-primary btn-actualizar-usuario' onClick={() => abrirModalActualizar(usuario)}>Actualizar</button>
+                    {Array.isArray(usuarios) && usuarios.length > 0 ? (
 
-                                {/* Modal Actualizar Usuario */}
-                                {modalVisibleActualizar && usuarioSeleccionado.dni === usuario.dni && (
-                                    <div className="modal">
-                                        <div className="modal-content">
-                                            <h3>Actualizar Usuario</h3>
-                                            <form>
-                                                <div className="form-group">
-                                                    <label>DNI</label>
-                                                    <input
-                                                        type="text"
-                                                        name="dni"
-                                                        value={usuarioSeleccionado.dni}
-                                                        disabled // No editable
-                                                    />
+
+                        usuarios.map(usuario => (
+                            <tr key={usuario.dni}>
+                                <td>{usuario.dni}</td>
+                                <td>{`${usuario.nombre} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno}`}</td>
+                                <td>{usuario.email}</td>
+                                <td>{usuario.telefono}</td>
+                                <td>
+                                    <button className='btn btn-primary btn-actualizar-usuario' onClick={() => abrirModalActualizar(usuario)}>Actualizar</button>
+
+                                    {/* Modal Actualizar Usuario */}
+                                    {modalVisibleActualizar && usuarioSeleccionado.dni === usuario.dni && (
+                                        <div className="modal">
+                                            <div className="modal-content">
+                                                <h3>ACTUALIZAR USUARIO</h3>
+                                                <form>
+                                                    <div className="form-group">
+                                                        <label>DNI:</label>
+                                                        <input
+                                                            type="text"
+                                                            name="dni"
+                                                            value={usuarioSeleccionado.dni}
+                                                            disabled // No editable
+                                                        />
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Nombre:</label>
+                                                        <input
+                                                            type="text"
+                                                            name="nombre"
+                                                            value={usuarioSeleccionado.nombre}
+                                                            onChange={manejarCambioActualizar}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Apellido Paterno:</label>
+                                                        <input
+                                                            type="text"
+                                                            name="apellidoPaterno"
+                                                            value={usuarioSeleccionado.apellidoPaterno}
+                                                            onChange={manejarCambioActualizar}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Apellido Materno:</label>
+                                                        <input
+                                                            type="text"
+                                                            name="apellidoMaterno"
+                                                            value={usuarioSeleccionado.apellidoMaterno}
+                                                            onChange={manejarCambioActualizar}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Email:</label>
+                                                        <input
+                                                            type="email"
+                                                            name="email"
+                                                            value={usuarioSeleccionado.email}
+                                                            onChange={manejarCambioActualizar}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Teléfono:</label>
+                                                        <input
+                                                            type="text"
+                                                            name="telefono"
+                                                            value={usuarioSeleccionado.telefono}
+                                                            onChange={manejarCambioActualizar}
+                                                        />
+                                                    </div>
+                                                </form>
+                                                <div className="actualizar-btn-usuario">
+                                                    <button className="btn btn-primary" onClick={actualizarUsuario}>Actualizar</button>
+                                                    <button className="btn btn-secondary" onClick={cerrarModalActualizar}>Cancelar</button>
                                                 </div>
-                                                <div className="form-group">
-                                                    <label>Nombre</label>
-                                                    <input
-                                                        type="text"
-                                                        name="nombre"
-                                                        value={usuarioSeleccionado.nombre}
-                                                        onChange={manejarCambioActualizar}
-                                                    />
-                                                </div>
-                                                <div className="form-group">
-                                                    <label>Apellido Paterno</label>
-                                                    <input
-                                                        type="text"
-                                                        name="apellidoPaterno"
-                                                        value={usuarioSeleccionado.apellidoPaterno}
-                                                        onChange={manejarCambioActualizar}
-                                                    />
-                                                </div>
-                                                <div className="form-group">
-                                                    <label>Apellido Materno</label>
-                                                    <input
-                                                        type="text"
-                                                        name="apellidoMaterno"
-                                                        value={usuarioSeleccionado.apellidoMaterno}
-                                                        onChange={manejarCambioActualizar}
-                                                    />
-                                                </div>
-                                                <div className="form-group">
-                                                    <label>Email</label>
-                                                    <input
-                                                        type="email"
-                                                        name="email"
-                                                        value={usuarioSeleccionado.email}
-                                                        onChange={manejarCambioActualizar}
-                                                    />
-                                                </div>
-                                                <div className="form-group">
-                                                    <label>Teléfono</label>
-                                                    <input
-                                                        type="text"
-                                                        name="telefono"
-                                                        value={usuarioSeleccionado.telefono}
-                                                        onChange={manejarCambioActualizar}
-                                                    />
-                                                </div>
-                                            </form>
-                                            <div className="actualizar-btn-usuario">
-                                                <button className="btn btn-primary" onClick={actualizarUsuario}>Actualizar</button>
-                                                <button className="btn btn-secondary" onClick={cerrarModalActualizar}>Cancelar</button>
+
                                             </div>
-
                                         </div>
-                                    </div>
-                                )}
-                            </td>
+                                    )}
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="6">No hay usuarios disponibles</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
         </div>

@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./Cuenta.css";
 import CuentaBD from "./BASE DE DATOS/CuentaBD"; // Importa CuentaBD para acceder a la API
 import Swal from 'sweetalert2';
@@ -103,6 +103,8 @@ function GestionCuentas() {
     const handleChangePasswordClick = async (cuenta) => {
         const dni = cuenta.usuario?.dni;
         const correo = cuenta.email;
+
+        // Validar el formato del correo
 
         if (!correo.match(/[A-Za-zÁÉÍÓÚáéíóú]+_\d{8}@FLEXGUARAJE_PERU.COM/)) {
             Swal.fire({

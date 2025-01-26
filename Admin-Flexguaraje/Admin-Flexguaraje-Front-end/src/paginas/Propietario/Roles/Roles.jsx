@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import RolesBD from "./BASE DE DATOS/RolesBD";
+import Swal from "sweetalert2"; // Importar SweetAlert2
 import './Roles.css';
 
 
@@ -16,7 +17,12 @@ function Roles() {
             const response = await RolesBD.listarRoles();
             setRoles(response.data); // Actualizamos el estado con los datos recibidos
         } catch (error) {
-            console.error("Error al obtener los roles:", error);
+            console.error("Error al obtener la lista de roles:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Error al obtener los roles",
+                text: `Hubo un problema al cargar los roles: ${error.message}`,
+            });
         }
     };
 
@@ -31,23 +37,66 @@ function Roles() {
     };
 
     const handleCreateRole = async () => {
-        try {
-            if (!roleName.trim()) {
-                alert("El nombre del rol no puede estar vacío.");
-                return;
-            }
+        // Validar que el campo no esté vacío
+        if (!roleName.trim()) {
+            Swal.fire({
+                icon: "error",
+                title: "Campo vacío",
+                text: "El nombre del rol no puede estar vacío.",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
 
+        // Validar que el nombre del rol solo tenga letras y espacios
+        const nameRegex = /^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/;
+        if (!nameRegex.test(roleName)) {
+            Swal.fire({
+                icon: "error",
+                title: "Nombre inválido",
+                text: "El nombre del rol solo puede contener letras y espacios.",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        // Verificar si el rol ya existe
+        const roleExists = roles.some((role) => role.nombreRol.toLowerCase() === roleName.toLowerCase());
+        if (roleExists) {
+            Swal.fire({
+                icon: "warning",
+                title: "Rol duplicado",
+                text: "Este rol ya existe. Intenta con un nombre diferente.",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        try {
             // Llamar al backend para crear el nuevo rol
             await RolesBD.crearRol(roleName);
 
             // Actualizar la lista de roles después de crear uno nuevo
             fetchRoles();
 
-            alert("Rol creado exitosamente.");
+            Swal.fire({
+                icon: "success",
+                title: "¡Rol creado!",
+                text: "El rol se creó exitosamente.",
+                showConfirmButton: false,
+                timer: 3000
+            });
+
             handleCloseModal(); // Cerrar el modal
         } catch (error) {
-            console.error("Error al crear el rol:", error);
-            alert("No se pudo crear el rol. Verifica los datos e intenta nuevamente.");
+            Swal.fire({
+                icon: "error",
+                title: "Error al actualizar",
+                text: `No se pudo actualizar el rol. Por favor, inténtalo nuevamente. Detalle: ${error.message}`,
+            });
         }
     };
 
@@ -65,71 +114,199 @@ function Roles() {
 
     const handleUpdateRole = async () => {
         try {
+            // Validar que el campo no esté vacío
             if (!roleName.trim()) {
-                alert("El nombre del rol no puede estar vacío.");
+                Swal.fire({
+                    icon: "warning",
+                    title: "Campo vacío",
+                    text: "El nombre del rol no puede estar vacío.",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
                 return;
             }
 
-            // Verificar qué datos se están enviando
-            console.log("Datos enviados para actualizar el rol:", {
-                idRol: String(currentRole.idRoles), // Convertir idRol a string
-                nombreRol: roleName
-            });
+            // Validar que solo contenga letras y espacios
+            const regex = /^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/;
+            if (!regex.test(roleName)) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Nombre no válido",
+                    text: "El nombre del rol solo puede contener letras y espacios.",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                return;
+            }
 
-            // Llamar al backend para actualizar el nombre del rol
-            await RolesBD.actualizarNombreRol(String(currentRole.idRoles), roleName); // Pasar roleName sin convertir a mayúsculas
+            // Validar que no sea el mismo nombre actual
+            if (roleName.trim() === currentRole.nombreRol.trim()) {
+                Swal.fire({
+                    icon: "info",
+                    title: "Sin cambios",
+                    text: "El nuevo nombre debe ser diferente al actual.",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                return;
+            }
+
+            // Verificar si el nombre ya existe
+            const nombreExiste = roles.some(
+                (role) => role.nombreRol.trim().toLowerCase() === roleName.trim().toLowerCase()
+            );
+            if (nombreExiste) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Nombre duplicado",
+                    text: "El nombre del rol ya existe. Por favor, ingrese un nombre diferente.",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                return;
+            }
+
+            // Verificar si el rol está desactivado
+            if (currentRole.estado === "Desactivado") {
+                Swal.fire({
+                    icon: "error",
+                    title: "Rol desactivado",
+                    text: "No se puede actualizar un rol desactivado. Actívalo antes de realizar cambios.",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                return;
+            }
+
+            // Actualizar el nombre del rol en el backend
+            await RolesBD.actualizarNombreRol(String(currentRole.idRoles), roleName);
 
             // Actualizar la lista de roles para reflejar los cambios
             fetchRoles();
-            alert("Rol actualizado exitosamente.");
-            handleCloseUpdateModal(); // Cerrar el modal
+
+            // Alerta de éxito
+            Swal.fire({
+                icon: "success",
+                title: "Rol actualizado",
+                text: "El rol se ha actualizado exitosamente.",
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            // Cerrar el modal
+            handleCloseUpdateModal();
         } catch (error) {
-            console.error("Error al actualizar el rol:", error);
-            alert("No se pudo actualizar el rol. Verifica los datos e intenta nuevamente.");
+            // Alerta de error
+            Swal.fire({
+                icon: "error",
+                title: "Error al actualizar",
+                text: `No se pudo actualizar el rol. Por favor, inténtalo nuevamente. Detalle: ${error.message}`,
+            });
         }
     };
 
-
-
     const toggleRoleStatus = async (roleId, currentStatus) => {
         try {
-            // Cambiar el estado entre 'Activo' y 'Desactivado'
+            // Determinar el nuevo estado
             const newStatus = currentStatus === "Activo" ? "Desactivado" : "Activo";
 
-            // Convertir el idRol a String
-            const idRolString = String(roleId);
+            // Mostrar una alerta de confirmación
+            const result = await Swal.fire({
+                title: `¿Estás seguro de cambiar el estado del rol a "${newStatus}"?`,
+                text: `El rol será marcado como "${newStatus}". Este cambio puede afectar su funcionalidad.`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cambiar",
+                cancelButtonText: "Cancelar",
+            });
 
-            // Llamar al backend para actualizar el estado
-            await RolesBD.actualizarEstadoRol(idRolString, newStatus);
+            // Verificar si el usuario confirmó la acción
+            if (result.isConfirmed) {
+                // Convertir el idRol a String
+                const idRolString = String(roleId);
 
-            // Actualizar el estado en el frontend
-            const updatedRoles = roles.map((role) =>
-                role.idRoles === roleId ? { ...role, estado: newStatus } : role
-            );
-            setRoles(updatedRoles);
+                // Llamar al backend para actualizar el estado
+                await RolesBD.actualizarEstadoRol(idRolString, newStatus);
 
-            alert(`Estado actualizado a: ${newStatus}`);
+                // Actualizar el estado en el frontend
+                const updatedRoles = roles.map((role) =>
+                    role.idRoles === roleId ? { ...role, estado: newStatus } : role
+                );
+                setRoles(updatedRoles);
+
+                // Mostrar una alerta de éxito
+                Swal.fire({
+                    icon: "success",
+                    title: "Estado actualizado",
+                    text: `El estado del rol ha sido cambiado a "${newStatus}".`,
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            } else {
+                // Mostrar una alerta de cancelación (opcional)
+                Swal.fire({
+                    icon: "info",
+                    title: "Cambio cancelado",
+                    text: "No se realizaron cambios en el estado del rol.",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
         } catch (error) {
-            console.error("Error al actualizar el estado del rol:", error);
-            alert("No se pudo actualizar el estado del rol. Verifica los datos e intenta nuevamente.");
+            // Mostrar una alerta de error
+            Swal.fire({
+                icon: "error",
+                title: "Error al actualizar el estado",
+                text: `No se pudo cambiar el estado del rol. Detalles: ${error.message}`,
+            });
         }
     };
 
     const handleDeleteRole = async (idRol) => {
         try {
-            const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este rol?");
-            if (!confirmDelete) return;
+            // Mostrar una alerta de confirmación
+            const result = await Swal.fire({
+                title: "¿Estás seguro?",
+                text: "Esta acción eliminará el rol permanentemente. No podrás deshacer este cambio.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar",
+            });
 
-            // Llamar al backend para eliminar el rol
-            await RolesBD.eliminarRol(idRol);
+            // Verificar si el usuario confirmó la eliminación
+            if (result.isConfirmed) {
+                // Llamar al backend para eliminar el rol
+                await RolesBD.eliminarRol(idRol);
 
-            // Actualizar la lista de roles después de eliminar el rol
-            fetchRoles();
+                // Actualizar la lista de roles después de eliminar el rol
+                await fetchRoles();
 
-            alert("Rol eliminado exitosamente.");
+                // Mostrar una alerta de éxito
+                Swal.fire({
+                    icon: "success",
+                    title: "Rol eliminado",
+                    text: "El rol se eliminó exitosamente.",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            } else {
+                // Mostrar una alerta de cancelación (opcional)
+                Swal.fire({
+                    icon: "info",
+                    title: "Operación cancelada",
+                    text: "El rol no fue eliminado.",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
         } catch (error) {
-            console.error("Error al eliminar el rol:", error);
-            alert("No se pudo eliminar el rol. Verifica los datos e intenta nuevamente.");
+            // Mostrar una alerta de error
+            Swal.fire({
+                icon: "error",
+                title: "Error al eliminar el rol",
+                text: `No se pudo eliminar el rol. Detalles: ${error.message}`,
+            });
         }
     };
 
@@ -138,7 +315,7 @@ function Roles() {
             <h2 className="titulo-roles">Gestion de Roles</h2>
 
             <div className="button-acciones-roles">
-                <button className="btn btn-success" onClick={handleOpenModal}>Crear Permisos</button>
+                <button className="btn btn-success" onClick={handleOpenModal}>Crear Rol</button>
 
                 {/* Modal personalizado */}
                 {isModalOpen && (
@@ -150,7 +327,7 @@ function Roles() {
                             <div className="modal-body">
                                 <form>
                                     <div className="form-group">
-                                        <label htmlFor="roleName">Nombre del Rol</label>
+                                        <label htmlFor="roleName">Nombre del Rol:</label>
                                         <input
                                             type="text"
                                             id="roleName"
@@ -162,7 +339,7 @@ function Roles() {
                                 </form>
                             </div>
                             <div className="modal-footer">
-                                <button className="btn btn-primary" onClick={handleCreateRole}>
+                                <button className="btn btn-success" onClick={handleCreateRole}>
                                     Crear
                                 </button>
                                 <button className="btn btn-secondary" onClick={handleCloseModal}>
@@ -185,59 +362,64 @@ function Roles() {
                     </tr>
                 </thead>
                 <tbody>
-                    {roles.map((role) => (
-                        <tr key={role.idRoles}>
-                            <th>{role.idRoles}</th>
-                            <td>{role.nombreRol}</td>
-                            <td className="table-acciones-roles">
-                                <button
-                                    className={`btn ${role.estado === "Activo" ? "btn-light" : "btn-dark"}`}
-                                    onClick={() => toggleRoleStatus(role.idRoles, role.estado)}>
-                                    {role.estado || "Activo"}
-                                </button>
-                            </td>
-                            <td className="table-acciones-roles">
-                                <button className="btn btn-primary" onClick={() => handleOpenUpdateModal(role)}
-                                >Actualizar</button>
+                    {Array.isArray(roles) && roles.length > 0 ? (
+                        roles.map((role) => (
+                            <tr key={role.idRoles}>
+                                <th>{role.idRoles}</th>
+                                <td>{role.nombreRol}</td>
+                                <td className="table-estado-roles">
+                                    <button
+                                        className={`btn ${role.estado === "Activo" ? "btn-light" : "btn-dark"}`}
+                                        onClick={() => toggleRoleStatus(role.idRoles, role.estado)}>
+                                        {role.estado || "Activo"}
+                                    </button>
+                                </td>
+                                <td className="table-acciones-roles">
+                                    <button className="btn btn-primary" onClick={() => handleOpenUpdateModal(role)}
+                                    >Actualizar</button>
 
-                                {/* Modal para actualizar roles */}
-                                {isUpdateModalOpen && (
-                                    <div className="modal-overlay">
-                                        <div className="modal-content">
-                                            <div className="modal-header">
-                                                <h5>Actualizar Rol</h5>
-                                            </div>
-                                            <div className="modal-body">
-                                                <form>
-                                                    <div className="form-group">
-                                                        <label htmlFor="roleName">Nombre del Rol</label>
-                                                        <input
-                                                            type="text"
-                                                            id="roleName"
-                                                            value={roleName}
-                                                            onChange={(e) => setRoleName(e.target.value)}
-                                                            placeholder="Ingrese el nuevo nombre del rol"
-                                                        />
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div className="modal-footer">
-                                                <button className="btn btn-primary" onClick={handleUpdateRole}>
-                                                    Guardar
-                                                </button>
-                                                <button className="btn btn-secondary" onClick={handleCloseUpdateModal}>
-                                                    Cancelar
-                                                </button>
+                                    {/* Modal para actualizar roles */}
+                                    {isUpdateModalOpen && (
+                                        <div className="modal-overlay">
+                                            <div className="modal-content">
+                                                <div className="modal-header">
+                                                    <h3>ACTUALIZAR ROL</h3>
+                                                </div>
+                                                <div className="modal-body">
+                                                    <form>
+                                                        <div className="form-group">
+                                                            <label htmlFor="roleName">Nombre del Rol:</label>
+                                                            <input
+                                                                type="text"
+                                                                id="roleName"
+                                                                value={roleName}
+                                                                onChange={(e) => setRoleName(e.target.value)}
+                                                                placeholder="Ingrese el nuevo nombre del rol"
+                                                            />
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div className="modal-footer">
+                                                    <button className="btn btn-primary" onClick={handleUpdateRole}>
+                                                        Actualizar
+                                                    </button>
+                                                    <button className="btn btn-secondary" onClick={handleCloseUpdateModal}>
+                                                        Cancelar
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
 
-                                <button className="btn btn-danger" onClick={() => handleDeleteRole(role.idRoles)}
-                                >Eliminar</button>
-                            </td>
+                                    <button className="btn btn-danger" onClick={() => handleDeleteRole(role.idRoles)}
+                                    >Eliminar</button>
+                                </td>
+                            </tr>
+                        ))) : (
+                        <tr>
+                            <td colSpan="4">No hay Roles disponibles</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
         </div>

@@ -91,19 +91,19 @@ function Clientes() {
 
         if (!nuevoCliente.nombre.trim()) {
             errores.push('El Nombre no puede ir vacío.');
-        } else if (!/^[a-zA-Z ]+$/.test(nuevoCliente.nombre.trim())) {
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ ]+$/.test(nuevoCliente.nombre.trim())) {
             errores.push('El Nombre solo debe contener letras.');
         }
 
         if (!nuevoCliente.apellido_paterno.trim()) {
             errores.push('El Apellido Paterno no puede ir vacío.');
-        } else if (!/^[a-zA-Z]+$/.test(nuevoCliente.apellido_paterno.trim())) {
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ]+$/.test(nuevoCliente.apellido_paterno.trim())) {
             errores.push('El Apellido Paterno solo debe contener letras y una palabra.');
         }
 
         if (!nuevoCliente.apellido_materno.trim()) {
             errores.push('El Apellido Materno no puede ir vacío.');
-        } else if (!/^[a-zA-Z]+$/.test(nuevoCliente.apellido_materno.trim())) {
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ]+$/.test(nuevoCliente.apellido_materno.trim())) {
             errores.push('El Apellido Materno solo debe contener letras y una palabra.');
         }
 
@@ -115,7 +115,7 @@ function Clientes() {
 
         if (!nuevoCliente.email.trim()) {
             errores.push('El Correo Electrónico no puede ir vacío.');
-        } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(nuevoCliente.email.trim())) {
+        } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(nuevoCliente.email.trim())) {
             // Cambié la expresión regular para aceptar cualquier dominio válido (no solo .com y .pe)
             errores.push('El Correo Electrónico debe ser válido (ejemplo@dominio.com).');
         }
@@ -126,7 +126,7 @@ function Clientes() {
 
         if (nuevoCliente.nota === 'Con discapacidad' && !discapacidad.trim()) {
             errores.push('Por favor, especifique la discapacidad.');
-        } else if (nuevoCliente.nota === 'Con discapacidad' && !/^[a-zA-Z\s,.'-]+$/.test(discapacidad.trim())) {
+        } else if (nuevoCliente.nota === 'Con discapacidad' && !/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s,.'-]+$/.test(discapacidad.trim())) {
             // Permite letras, espacios, comas, puntos, comillas y guiones
             errores.push('La discapacidad solo puede contener letras, espacios, comas, puntos, comillas y guiones.');
         }
@@ -214,17 +214,11 @@ function Clientes() {
                 const cliente = response.data;
                 if (cliente) {
                     navigate('/solicitudesclientes', { state: { cliente } });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Cliente no encontrado',
-                        text: `Cliente con DNI "${busqueda}" no existe.`,
-                    });
                 }
             })
             .catch((error) => {
                 Swal.close();
-                if (error.response && error.response.status === 404) {
+                if (error.response && error.response.status !== 404) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Cliente no encontrado',

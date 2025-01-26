@@ -26,14 +26,12 @@ class PermisosBD {
         return axios.put(BD_PERMISOS_API_REST_URL.ACTUALIZAR_NOMBRE, permisoData);
     }
 
-    actualizarEstadoPermiso(idPermiso) {
-        return axios.put(BD_PERMISOS_API_REST_URL.ACTUALIZAR_ESTADO, { idPermiso });
+    actualizarEstadoPermiso(idPermiso, newStatus) {
+        return axios.put(BD_PERMISOS_API_REST_URL.ACTUALIZAR_ESTADO, { idPermiso, status: newStatus });
     }
 
     eliminarPermiso(idPermiso) {
-        return axios.delete(BD_PERMISOS_API_REST_URL.ELIMINAR, {
-            data: { idPermiso }  // Enviamos el id del permiso a eliminar en el cuerpo de la solicitud
-        });
+        return axios.delete(BD_PERMISOS_API_REST_URL.ELIMINAR, { data: { idPermiso } });
     }
 }
 

@@ -41,6 +41,20 @@
     vertical-align: middle;
 }
 
+.table-estado-roles .btn {
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.table-acciones-roles {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
 .table-acciones-roles .btn {
     cursor: pointer;
     border-radius: 10px;
@@ -48,4 +62,13 @@
     font-size: 1.2rem;
 }
 
-.modal-header h3 {}
+/* formulario modal actualizar y crear */
+.modal-header h3 {
+    display: flex;
+    margin: 10px auto;
+}
+
+.modal-footer {
+    display: flex;
+    margin: 10px auto;
+}

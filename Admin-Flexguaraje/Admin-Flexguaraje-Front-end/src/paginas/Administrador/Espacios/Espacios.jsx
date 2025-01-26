@@ -91,6 +91,12 @@ function Espacios() {
             setEspacios(response.data);
         } catch (error) {
             console.error("Error al cargar los espacios:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al cargar los espacios',
+                text: error.message || 'Ocurrió un error inesperado al cargar los espacios.',
+                showConfirmButton: true,
+            });
         }
     };
     // para cargar la tabla alquiler
@@ -100,6 +106,12 @@ function Espacios() {
             setAlquileres(response.data);
         } catch (error) {
             console.error("Error al cargar los alquileres:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al cargar los alquileres',
+                text: error.message || 'Ocurrió un error inesperado al cargar los alquileres.',
+                showConfirmButton: true,
+            });
         }
     };
     // para cargar los dos juntos al mismo tiempo
@@ -736,42 +748,48 @@ function Espacios() {
                     </tr>
                 </thead>
                 <tbody>
-                    {espaciosFiltrados.map((dato) => (
-                        <tr key={dato.codigoEspacio}>
-                            <th scope="row">{dato.codigoEspacio}</th>
-                            <td>{dato.dni}</td>
-                            <td>{dato.nombrescompleto}</td>
-                            <td>{dato.telefono}</td>
-                            <td>
-                                <button
-                                    className="btn btn-info btn-sm ml-2"
-                                    onClick={() => handleVerMas(dato)}>
-                                    VER MÁS
-                                </button>
-                            </td>
+                    {Array.isArray(espaciosFiltrados) && espaciosFiltrados.length > 0 ? (
 
-                            {MasshowModal && MasmodalData && (
-                                <div>
-                                    <div className="modal-backdrop">
-                                        <div className="modal-content">
+                        espaciosFiltrados.map((dato) => (
+                            <tr key={dato.codigoEspacio}>
+                                <th scope="row">{dato.codigoEspacio}</th>
+                                <td>{dato.dni}</td>
+                                <td>{dato.nombrescompleto}</td>
+                                <td>{dato.telefono}</td>
+                                <td>
+                                    <button
+                                        className="btn btn-info btn-sm ml-2"
+                                        onClick={() => handleVerMas(dato)}>
+                                        VER MÁS
+                                    </button>
+                                </td>
 
-                                            <label>Nota:</label>
-                                            <p>{MasmodalData.nota}</p>
+                                {MasshowModal && MasmodalData && (
+                                    <div>
+                                        <div className="modal-backdrop">
+                                            <div className="modal-content">
 
-                                            <div className="modal-btn">
-                                                <button type="button" className="btn btn-secondary" onClick={() => MassetShowModal(false)}>Cerrar</button>
+                                                <label>Nota:</label>
+                                                <p>{MasmodalData.nota}</p>
+
+                                                <div className="modal-btn">
+                                                    <button type="button" className="btn btn-secondary" onClick={() => MassetShowModal(false)}>Cerrar</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                            <td>S/ {dato.costo}</td>
-                            <td>{dato.fechaInicioAlquiler}</td>
-                            <td>{dato.fechaFinAlquiler}</td>
-                            <td>{dato.diasAlquiler}</td>
-                            <td>{dato.estado}</td>
+                                )}
+                                <td>S/ {dato.costo}</td>
+                                <td>{dato.fechaInicioAlquiler}</td>
+                                <td>{dato.fechaFinAlquiler}</td>
+                                <td>{dato.diasAlquiler}</td>
+                                <td>{dato.estado}</td>
+                            </tr>
+                        ))) : (
+                        <tr>
+                            <td colSpan="10">No hay Alquileres y/o espacios disponibles</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
         </div>
