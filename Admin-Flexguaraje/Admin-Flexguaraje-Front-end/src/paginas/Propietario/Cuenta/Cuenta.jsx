@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import "./Cuenta.css";
 import CuentaBD from "./BASE DE DATOS/CuentaBD"; // Importa CuentaBD para acceder a la API
+import Swal from 'sweetalert2';
+
 
 function GestionCuentas() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,22 +25,33 @@ function GestionCuentas() {
     // Función para manejar la creación de cuenta (agregar la cuenta)
     const handleCrearCuenta = async () => {
         if (formData.nombreRol === "Seleccionar") {
-            alert("Por favor selecciona un rol válido.");
+            Swal.fire({
+                icon: "warning",
+                title: "Rol inválido",
+                text: "Por favor selecciona un rol válido.",
+            });
             return;
         }
 
         try {
             await CuentaBD.crearCuenta(formData);
             setIsModalOpen(false);
-            alert("Cuenta creada exitosamente.");
+            Swal.fire({
+                icon: "success",
+                title: "Cuenta creada",
+                text: "La cuenta ha sido creada exitosamente.",
+            });
             fetchCuentas(); // Refresca la lista de cuentas
         } catch (error) {
             console.error("Error al crear la cuenta:", error.response?.data || error.message);
-            alert(error.response?.data || "Hubo un error al crear la cuenta.");
+            Swal.fire({
+                icon: "error",
+                title: "Error al crear cuenta",
+                text: error.response?.data || "Hubo un error al crear la cuenta.",
+            });
         }
     };
 
-    // Función para cargar cuentas desde el backend
     const fetchCuentas = async () => {
         try {
             const response = await CuentaBD.listarCuentas();
@@ -50,22 +63,28 @@ function GestionCuentas() {
             }
         } catch (error) {
             console.error("Error al obtener las cuentas del backend:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Error al cargar cuentas",
+                text: "Hubo un problema al obtener la lista de cuentas.",
+            });
             setCuentas([]);
         }
     };
 
-    // Cargar cuentas al montar el componente
     useEffect(() => {
         fetchCuentas();
     }, []);
 
-    // Cambiar el estado de una cuenta (activar/desactivar)
     const toggleEstado = async (cuenta, index) => {
         try {
             const response = await CuentaBD.actualizarEstadoCuenta(cuenta.usuario.dni);
-            alert(response.data); // Mostrar mensaje del backend
+            Swal.fire({
+                icon: "success",
+                title: "Estado actualizado",
+                text: response.data, // Mostrar mensaje del backend
+            });
 
-            // Actualizar el estado en la lista de cuentas
             setCuentas((prevCuentas) =>
                 prevCuentas.map((item, i) =>
                     i === index ? { ...item, estado: item.estado === "Activo" ? "Inactivo" : "Activo" } : item
@@ -73,28 +92,42 @@ function GestionCuentas() {
             );
         } catch (error) {
             console.error("Error al cambiar el estado:", error.response?.data || error.message);
-            alert(error.response?.data || "Hubo un error al intentar cambiar el estado de la cuenta.");
+            Swal.fire({
+                icon: "error",
+                title: "Error al cambiar estado",
+                text: error.response?.data || "Hubo un error al intentar cambiar el estado de la cuenta.",
+            });
         }
     };
 
-    // Función para manejar clic en "Cambiar Contraseña"
     const handleChangePasswordClick = async (cuenta) => {
         const dni = cuenta.usuario?.dni;
         const correo = cuenta.email;
 
-        // Validar el formato del correo
         if (!correo.match(/[A-Za-zÁÉÍÓÚáéíóú]+_\d{8}@FLEXGUARAJE_PERU.COM/)) {
-            alert("El correo debe tener el formato: apellidoPaterno_DNI@FLEXGUARAJE_PERU.COM");
+            Swal.fire({
+                icon: "warning",
+                title: "Formato de correo inválido",
+                text: "El correo debe tener el formato: apellidoPaterno_DNI@FLEXGUARAJE_PERU.COM",
+            });
             return;
         }
 
         try {
+            // eslint-disable-next-line no-unused-vars
             const response = await CuentaBD.actualizarPassAuto(dni, correo);
-            console.log("Respuesta del backend:", response.data);
-            alert(`Contraseña actualizada automáticamente para el usuario: ${cuenta.nombreUsuario}`);
+            Swal.fire({
+                icon: "success",
+                title: "Contraseña actualizada",
+                text: `Contraseña actualizada automáticamente para el usuario: ${cuenta.nombreUsuario}`,
+            });
         } catch (error) {
             console.error("Error al actualizar la contraseña:", error);
-            alert("Hubo un error al intentar actualizar la contraseña.");
+            Swal.fire({
+                icon: "error",
+                title: "Error al cambiar contraseña",
+                text: "Hubo un error al intentar actualizar la contraseña.",
+            });
         }
     };
 
