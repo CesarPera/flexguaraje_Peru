@@ -155,14 +155,12 @@ CREATE TABLE alquileres (
 	id_alquiler INT auto_increment PRIMARY KEY,
     id_cliente INT NOT NULL,
     id_espacio INT NOT NULL,
-    id_cuenta INT NOT NULL,
     fecha_inicio_alquiler DATE NOT NULL,
     fecha_fin_alquiler DATE NOT NULL,
 	total_dias_alquiler VARCHAR(20) NOT NULL,
     estado varchar(15) NOT NULL default 'No_Ignorar',
     CONSTRAINT FK_Alquiler_Cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
     CONSTRAINT FK_Alquiler_Espacio FOREIGN KEY (id_espacio) REFERENCES espacio(id_espacio),
-    CONSTRAINT fk_alquileres_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta),
 	CONSTRAINT CHK_Alquiler_estado CHECK (estado IN ('Ignorar','No_Ignorar')),
     CONSTRAINT CHK_Fechas_Alquiler CHECK (fecha_inicio_alquiler <= fecha_fin_alquiler)
 );
@@ -171,7 +169,6 @@ CREATE TABLE alquileres (
 CREATE TABLE boleta (
     id_boleta INT auto_increment PRIMARY KEY,
     id_alquiler INT NOT NULL,
-    id_cuenta INT NOT NULL,
     codigo_boleta VARCHAR(15) NOT NULL,
     metodo_pago VARCHAR(30) NOT NULL default "Efectivo",
     fecha_emision DATE NOT NULL,
@@ -179,7 +176,6 @@ CREATE TABLE boleta (
     monto_igv DECIMAL(10, 2) NOT NULL,
     monto_pagar DECIMAL(10, 2) NOT NULL,
     CONSTRAINT FK_boleta_Alquiler FOREIGN KEY (id_alquiler) REFERENCES alquileres(id_alquiler),
-    CONSTRAINT fk_boleta_cuenta FOREIGN KEY (id_cuenta) REFERENCES Cuenta(id_cuenta),
     constraint UQ_codigo_boleta UNIQUE (codigo_boleta),
     CONSTRAINT UQ_id_alquiler UNIQUE (id_alquiler),
     CONSTRAINT CHK_metodo_pago CHECK (metodo_pago IN ('Efectivo','tarjeta_credito','Tarjeta_debito'))
