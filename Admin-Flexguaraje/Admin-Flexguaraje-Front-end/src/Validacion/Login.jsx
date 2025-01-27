@@ -100,7 +100,7 @@ const Login = () => {
       const normalizedEmail = normalizeString(formData.email.toLowerCase());
 
       try {
-        const result = await LoginBD.login(normalizedEmail, formData.password);
+        const result = await LoginBD.login(normalizedEmail.trim(), formData.password);
 
         const nombreCompleto = `${result.nombre} ${result.apellidoPaterno} ${result.apellidoMaterno}`;
         localStorage.setItem("nombreUsuario", nombreCompleto); // Guardar en localStorage
@@ -206,7 +206,7 @@ const Login = () => {
           </form>
         ) : (
           <form className="login-form" onSubmit={handleSubmit}>
-            <h2 className="form-title">Cambiar Contraseña</h2>
+            <h2 className="form-title">CAMBIAR CONTRASEÑA</h2>
             <div className="input-group">
               <input
                 type="text"

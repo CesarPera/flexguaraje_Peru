@@ -112,6 +112,8 @@ function GestionCuentas() {
                 icon: "success",
                 title: "Cuenta creada",
                 text: "La cuenta ha sido creada exitosamente.",
+                showConfirmButton: false,
+                timer: 3000
             });
             fetchCuentas();
         } catch (error) {
@@ -268,9 +270,9 @@ function GestionCuentas() {
                         <h3>CREAR NUEVA CUENTA</h3>
                         <label>Rol:</label>
                         <select name="nombreRol" value={formData.nombreRol} onChange={handleInputChange}>
-                            <option value="">Seleccionar</option>
+                            <option value="" className="text-center">Seleccionar</option>
                             {rolesActivos.map((rol, index) => (
-                                <option key={index} value={rol.nombreRol}>
+                                <option className="text-center" key={index} value={rol.nombreRol}>
                                     {rol.nombreRol}
                                 </option>
                             ))}
