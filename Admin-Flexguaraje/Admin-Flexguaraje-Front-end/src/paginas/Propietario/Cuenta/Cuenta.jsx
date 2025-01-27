@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./Cuenta.css";
 import CuentaBD from "./BASE DE DATOS/CuentaBD";
 import Swal from 'sweetalert2';
-import { Eye, EyeOff } from 'lucide-react'; // Íconos para mostrar/ocultar contraseña
+
 
 function GestionCuentas() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,18 +13,6 @@ function GestionCuentas() {
         contraseña: "",
         rol: "Seleccionar"
     });
-    const [passwordVisibility, setPasswordVisibility] = useState({
-        password: false,
-        oldPassword: false,
-        newPassword: false,
-        repeatPassword: false,
-    });
-    const togglePasswordVisibility = (field) => {
-        setPasswordVisibility((prevState) => ({
-            ...prevState,
-            [field]: !prevState[field],
-        }));
-    };
 
     const fetchCuentas = async () => {
         try {
@@ -280,44 +268,29 @@ function GestionCuentas() {
                 <div className="modal">
                     <div className="modal-content">
                         <h3>CREAR NUEVA CUENTA</h3>
-                        <div>
-                            <label>Rol:</label>
-                            <select name="nombreRol" value={formData.nombreRol} onChange={handleInputChange}>
-                                <option value="" className="text-center">Seleccionar</option>
-                                {rolesActivos.map((rol, index) => (
-                                    <option className="text-center" key={index} value={rol.nombreRol}>
-                                        {rol.nombreRol}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label>DNI:</label>
-                            <input
-                                type="text"
-                                name="dni"
-                                value={formData.dni}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-
-                        <div className="contraseña-visible-cuenta">
-                            <label>Contraseña:</label>
-                            <input
-                                type={passwordVisibility.password ? 'text' : 'password'}
-                                name="password"
-                                value={formData.password}
-                                onChange={handleInputChange}
-                            />
-                            <span
-                                className="password-toggle"
-                                onClick={() => togglePasswordVisibility('password')}
-                            >
-                                {passwordVisibility.password ? <EyeOff size={20} /> : <Eye size={20} />}
-                            </span>
-                        </div>
-
+                        <label>Rol:</label>
+                        <select name="nombreRol" value={formData.nombreRol} onChange={handleInputChange}>
+                            <option value="" className="text-center">Seleccionar</option>
+                            {rolesActivos.map((rol, index) => (
+                                <option className="text-center" key={index} value={rol.nombreRol}>
+                                    {rol.nombreRol}
+                                </option>
+                            ))}
+                        </select>
+                        <label>DNI:</label>
+                        <input
+                            type="text"
+                            name="dni"
+                            value={formData.dni}
+                            onChange={handleInputChange}
+                        />
+                        <label>Contraseña:</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                        />
                         <div className="modal-footer-cuenta">
                             <button className="btn btn-success" onClick={handleCrearCuenta}>Crear</button>
                             <button className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
@@ -370,7 +343,7 @@ function GestionCuentas() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="7">No hay cuentas disponibles</td>
+                            <td colSpan="6">No hay cuentas disponibles</td>
                         </tr>
                     )}
                 </tbody>
