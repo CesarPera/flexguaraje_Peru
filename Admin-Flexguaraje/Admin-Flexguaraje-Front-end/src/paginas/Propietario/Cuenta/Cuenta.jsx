@@ -299,9 +299,10 @@ function GestionCuentas() {
                 <thead>
                     <tr>
                         <th>DNI</th>
+                        <th>Rol</th>
                         <th>Usuario</th>
                         <th>Correo Electrónico</th>
-                        <th>Rol</th>
+                        <th>Contraseña</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -311,9 +312,10 @@ function GestionCuentas() {
                         cuentas.map((cuenta, index) => (
                             <tr key={index}>
                                 <td>{cuenta.usuario.dni}</td>
+                                <td>{cuenta.roles ? cuenta.roles.nombreRol : 'Sin rol'}</td>
                                 <td>{cuenta.nombreUsuario}</td>
                                 <td>{cuenta.email}</td>
-                                <td>{cuenta.roles ? cuenta.roles.nombreRol : 'Sin rol'}</td>
+                                <td>{cuenta.password} </td>
                                 <td className="tabla-cuenta-estado">
                                     <button
                                         className={`btn ${cuenta.estado === "Activo" ? "btn-light" : "btn-dark"}`} // Condición para aplicar la clase correcta

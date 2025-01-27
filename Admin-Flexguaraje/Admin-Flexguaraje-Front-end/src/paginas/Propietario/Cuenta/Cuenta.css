@@ -90,7 +90,12 @@
     display: flex;
 }
 
-
+/* tablaaaaaaaaaaaaaaaaa */
+.tabla-cuenta th,
+.tabla-cuenta td {
+    /* Centra verticalmente */
+    vertical-align: middle;
+}
 
 /* Botón de estado */
 .tabla-cuenta-estado .btn {

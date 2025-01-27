@@ -5,7 +5,6 @@ import admin_flexguaraje.back_end.Modelo.Cuenta;
 import admin_flexguaraje.back_end.Modelo.Roles;
 import admin_flexguaraje.back_end.Modelo.Usuario;
 import admin_flexguaraje.back_end.Negocio.CuentaNegocio;
-import admin_flexguaraje.back_end.Negocio.EnvioCorreo;
 import admin_flexguaraje.back_end.Negocio.UsuarioNegocio;
 import admin_flexguaraje.back_end.seguridad.GeneradorPassSeguro;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +25,6 @@ public class CuentaControlador {
 
     @Autowired
     private UsuarioNegocio usuarioNegocio;
-
-    @Autowired
-    private EnvioCorreo EnvioCorreo;
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
 
     // Listar todas las cuentas
     @GetMapping("/listar_cuentas")
@@ -68,7 +61,7 @@ public class CuentaControlador {
         }
 
         try {
-            Cuenta cuenta = cuentaNegocio.crearCuenta(dni, nombreRol, null, password);
+            Cuenta cuenta = cuentaNegocio.crearCuenta(dni, nombreRol, null, password); // Sin encriptación
             return ResponseEntity.ok("Cuenta creada exitosamente: " + cuenta.getNombreUsuario() + ", Email: " + cuenta.getEmail());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al crear la cuenta: " + e.getMessage());
@@ -111,29 +104,16 @@ public class CuentaControlador {
             Usuario usuario = usuarioNegocio.buscarUsuarioPorDni(dni)
                     .orElseThrow(() -> new Exception("Usuario con DNI " + dni + " no encontrado."));
 
-            // Buscar la cuenta asociada al usuario
-            Cuenta cuentaActualizada = cuentaNegocio.actualizarContrasenaPorDniYCorreo(dni, correo);
-
-            // Obtener el correo personal del usuario
-            String correoPersonal = usuario.getEmail();
-
             // Generar una nueva contraseña segura
             String nuevaContrasena = GeneradorPassSeguro.generarContrasenaSegura();
 
-            // Encriptar la nueva contraseña
-            cuentaActualizada.setPassword(passwordEncoder.encode(nuevaContrasena));
+            // Actualizar la contraseña pasando el DNI, correo y la nueva contraseña
+            Cuenta cuentaActualizada = cuentaNegocio.actualizarContrasenaPorDniYCorreo(dni, correo, nuevaContrasena);
 
-            // Guardar la cuenta actualizada usando el servicio de negocio
-            cuentaNegocio.guardarCuenta(cuentaActualizada);  // Usamos el servicio de negocio para guardar la cuenta
-
-            // Enviar la nueva contraseña al correo personal del usuario
-            EnvioCorreo.enviarCorreo(correoPersonal, nuevaContrasena);
-
-            return ResponseEntity.ok("Contraseña actualizada exitosamente. La nueva contraseña se ha enviado al correo personal del usuario.");
+            return ResponseEntity.ok("Contraseña actualizada exitosamente. La nueva contraseña es: " + nuevaContrasena);
         } catch (Exception e) {
-            e.printStackTrace();  // Agregar esto para ver más detalles del error
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Error al actualizar la contraseña: " + e.getMessage());
         }
     }
-
 }

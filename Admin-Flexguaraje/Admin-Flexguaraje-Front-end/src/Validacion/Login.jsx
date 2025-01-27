@@ -69,6 +69,8 @@ const Login = () => {
           icon: 'error',
           title: 'Campos Sin Datos',
           text: 'Por favor, ingresa tu correo electrónico y tu contraseña.',
+          showConfirmButton: false,
+          timer: 3000
         });
         return;
       }
@@ -78,6 +80,8 @@ const Login = () => {
           icon: 'error',
           title: 'Completar Datos en el Correo Electrónico',
           text: 'Por favor, ingresa tu correo electrónico.',
+          showConfirmButton: false,
+          timer: 3000
         });
         return;
       }
@@ -87,6 +91,8 @@ const Login = () => {
           icon: 'error',
           title: 'Completar Datos en la Contraseña',
           text: 'Por favor, ingresa tu contraseña.',
+          showConfirmButton: false,
+          timer: 3000
         });
         return;
       }
@@ -112,6 +118,8 @@ const Login = () => {
           icon: 'error',
           title: 'Campos Sin Datos',
           text: 'Por favor, ingresa todos los campos para cambiar la contraseña.',
+          showConfirmButton: false,
+          timer: 3000
         });
         return;
       }
@@ -122,6 +130,8 @@ const Login = () => {
           icon: 'error',
           title: 'Las contraseñas no coinciden',
           text: 'La nueva contraseña y la repetición deben coincidir.',
+          showConfirmButton: false,
+          timer: 3000
         });
         return;
       }
@@ -132,7 +142,8 @@ const Login = () => {
           icon: 'success',
           title: 'Contraseña Actualizada',
           text: 'Tu contraseña se ha actualizado exitosamente.',
-          confirmButtonText: 'OK'
+          showConfirmButton: false,
+          timer: 3000
         }).then(() => {
           // Limpiar los campos después de la actualización de la contraseña
           setFormData({

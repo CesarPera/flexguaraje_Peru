@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 public class LoginNegocio {
     @Autowired
     private LoginRepositorio loginRepositorio;
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Cuenta autenticarUsuario(String email, String password) {
         // Buscar la cuenta por email
@@ -22,8 +21,8 @@ public class LoginNegocio {
             throw new IllegalArgumentException("La cuenta está desactivada");
         }
 
-        // Comparar la contraseña proporcionada con la encriptada en la base de datos
-        if (!passwordEncoder.matches(password, cuenta.getPassword())) {
+        // Comparar la contraseña proporcionada con la almacenada en texto plano
+        if (!password.equals(cuenta.getPassword())) {
             throw new IllegalArgumentException("Credenciales inválidas");
         }
 
@@ -46,18 +45,15 @@ public class LoginNegocio {
             throw new IllegalArgumentException("La cuenta está desactivada");
         }
 
-        // Verificar la contraseña actual utilizando el encoder
-        if (!passwordEncoder.matches(passwordActual, cuenta.getPassword())) {
+        // Verificar la contraseña actual en texto plano
+        if (!passwordActual.equals(cuenta.getPassword())) {
             throw new IllegalArgumentException("La contraseña actual es incorrecta");
         }
 
-        // Encriptar la nueva contraseña antes de guardarla
-        String nuevaPasswordEncriptada = passwordEncoder.encode(nuevaPassword);
+        // Actualizar la contraseña directamente
+        cuenta.setPassword(nuevaPassword);
 
-        // Actualizar la contraseña en la cuenta
-        cuenta.setPassword(nuevaPasswordEncriptada);
-
-        // Guardar la cuenta con la nueva contraseña encriptada
+        // Guardar la cuenta con la nueva contraseña
         loginRepositorio.save(cuenta);
     }
 }

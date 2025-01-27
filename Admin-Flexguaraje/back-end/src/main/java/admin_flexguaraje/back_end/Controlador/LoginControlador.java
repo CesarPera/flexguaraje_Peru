@@ -48,7 +48,6 @@ public class LoginControlador {
             Cuenta cuenta = LoginNegocio.autenticarUsuario(email, password);
             return ResponseEntity.ok("Bienvenido, " + cuenta.getNombreUsuario());
         } catch (IllegalArgumentException e) {
-            // Devuelve un mensaje claro si el correo y/o contraseña son incorrectos
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Correo y/o contraseña incorrecta");
         }
     }
@@ -77,18 +76,11 @@ public class LoginControlador {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La nueva contraseña y la confirmación deben coincidir");
             }
 
-            // Validar la nueva contraseña con la expresión regular
-            String passwordPattern = "^(?=(.*[A-Z]){3})(?=(.*[0-9]){3})(?=(.*[\\W_]){2})(?=.*[a-z]).{10,}$";
-            if (!nuevaPassword.matches(passwordPattern)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La nueva contraseña debe tener minimo 10 caracteres, incluir 3 mayúsculas, 3 números, 2 caracteres especiales y el resto en minúsculas.");
-            }
-
             // Cambiar la contraseña
             try {
                 LoginNegocio.cambiarPassword(email, passwordActual, nuevaPassword, repetirNuevaPassword);
                 return ResponseEntity.ok("Contraseña actualizada con éxito");
             } catch (IllegalArgumentException e) {
-                // Devuelve un mensaje claro si el correo y/o contraseña actual son incorrectos
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Correo y/o contraseña incorrecta");
             }
         } catch (Exception e) {

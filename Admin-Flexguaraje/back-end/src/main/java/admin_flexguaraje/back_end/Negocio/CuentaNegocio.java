@@ -26,9 +26,6 @@ public class CuentaNegocio {
     @Autowired
     private CuentaRepositorio cuentaRepositorio;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
     // Método para listar todas las cuentas
     public List<Cuenta> listarCuentas() {
         return cuentaRepositorio.findAll();
@@ -50,9 +47,6 @@ public class CuentaNegocio {
         // Generar nombre de usuario
         String nombreUsuario = (usuario.getApellidoPaterno() + "_" + usuario.getDni() + "_PERU").toUpperCase();
 
-        // Encriptar la contraseña
-        String passwordEncriptada = passwordEncoder.encode(password);
-
         // Generar correo automático si no se proporciona uno
         String emailGenerado = (usuario.getApellidoPaterno() + "_" + usuario.getDni() + "@flexguaraje_peru.com").toUpperCase();
 
@@ -62,7 +56,7 @@ public class CuentaNegocio {
         cuenta.setRoles(roles);
         cuenta.setNombreUsuario(nombreUsuario);
         cuenta.setEmail(email != null && !email.isEmpty() ? email : emailGenerado); // Usar el email proporcionado o el generado
-        cuenta.setPassword(passwordEncriptada);
+        cuenta.setPassword(password);
         cuenta.setEstado(Cuenta.estadoCuenta.Activo);
 
         return cuentaRepositorio.save(cuenta);
@@ -92,7 +86,7 @@ public class CuentaNegocio {
         return cuentaRepositorio.save(cuenta);
     }
 
-    public Cuenta actualizarContrasenaPorDniYCorreo(String dni, String correo) throws Exception {
+    public Cuenta actualizarContrasenaPorDniYCorreo(String dni, String correo, String nuevaContrasena) throws Exception {
         // Buscar usuario por DNI
         Usuario usuario = usuarioRepositorio.findByDni(dni)
                 .orElseThrow(() -> new Exception("Usuario con DNI " + dni + " no encontrado."));
@@ -105,21 +99,10 @@ public class CuentaNegocio {
         if (!cuenta.getEmail().equalsIgnoreCase(correo)) {
             throw new Exception("El correo no coincide con la cuenta registrada.");
         }
-
-        // Generar una nueva contraseña segura
-        String nuevaContrasena = GeneradorPassSeguro.generarContrasenaSegura();
-
-        // Encriptar la contraseña
-        cuenta.setPassword(passwordEncoder.encode(nuevaContrasena));
+        // Actualizar la contraseña sin encriptación
+        cuenta.setPassword(nuevaContrasena);
 
         // Guardar la cuenta actualizada
-        cuentaRepositorio.save(cuenta);
-
-        // Retornar la cuenta actualizada (opcional)
-        return cuenta;
-    }
-
-    public Cuenta guardarCuenta(Cuenta cuenta) {
         return cuentaRepositorio.save(cuenta);
     }
 }
