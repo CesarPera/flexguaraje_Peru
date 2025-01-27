@@ -124,3 +124,14 @@
     font-weight: 700;
     font-size: 1.2rem;
 }
+
+/* mostrar o ocultar contraseña */
+.contraseña-visible-cuenta input {
+    position: relative;
+}
+
+.contraseña-visible-cuenta span {
+    position: absolute;
+    bottom: 30%;
+    right: 8%;
+}
