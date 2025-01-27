@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import LoginBD from './BASE DE DATOS/LoginBD'; // Asegúrate de que la ruta sea correcta
 import './login.css';
 import Swal from 'sweetalert2'; // Importa SweetAlert2
+import { Eye, EyeOff } from 'lucide-react'; // Íconos para mostrar/ocultar contraseña
 
 const Login = () => {
   const [nombreUsuario, setNombreUsuario] = useState(""); // Declaración del estado
@@ -13,6 +14,12 @@ const Login = () => {
     newPassword: '',
     repeatPassword: '',
     oldPassword: '',
+  });
+  const [passwordVisibility, setPasswordVisibility] = useState({
+    password: false,
+    oldPassword: false,
+    newPassword: false,
+    repeatPassword: false,
   });
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
@@ -48,6 +55,13 @@ const Login = () => {
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
+    }));
+  };
+
+  const togglePasswordVisibility = (field) => {
+    setPasswordVisibility((prevState) => ({
+      ...prevState,
+      [field]: !prevState[field],
     }));
   };
 
@@ -190,9 +204,9 @@ const Login = () => {
                 placeholder="Correo electrónico"
               />
             </div>
-            <div className="input-group">
+            <div className="input-group contraseña-visible">
               <input
-                type="password"
+                type={passwordVisibility.password ? 'text' : 'password'}
                 id="password"
                 name="password"
                 className="animated-input"
@@ -200,6 +214,12 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="Contraseña"
               />
+              <span
+                className="password-toggle"
+                onClick={() => togglePasswordVisibility('password')}
+              >
+                {passwordVisibility.password ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
             </div>
             <button type="submit" className="animated-button">Iniciar Sesión</button>
             <p className="toggle-text" onClick={handlePasswordChangeMode}>¿Cambiar Contraseña?</p>
@@ -218,9 +238,9 @@ const Login = () => {
                 placeholder="Correo electrónico"
               />
             </div>
-            <div className="input-group">
+            <div className="input-group contraseña-visible">
               <input
-                type="password"
+                type={passwordVisibility.oldPassword ? 'text' : 'password'}
                 id="oldPassword"
                 name="oldPassword"
                 className="animated-input"
@@ -228,10 +248,16 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="Contraseña actual"
               />
+              <span
+                className="password-toggle"
+                onClick={() => togglePasswordVisibility('oldPassword')}
+              >
+                {passwordVisibility.oldPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
             </div>
-            <div className="input-group">
+            <div className="input-group contraseña-visible">
               <input
-                type="password"
+                type={passwordVisibility.newPassword ? 'text' : 'password'}
                 id="newPassword"
                 name="newPassword"
                 className="animated-input"
@@ -239,10 +265,16 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="Nueva contraseña"
               />
+              <span
+                className="password-toggle"
+                onClick={() => togglePasswordVisibility('newPassword')}
+              >
+                {passwordVisibility.newPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
             </div>
-            <div className="input-group">
+            <div className="input-group contraseña-visible">
               <input
-                type="password"
+                type={passwordVisibility.repeatPassword ? 'text' : 'password'}
                 id="repeatPassword"
                 name="repeatPassword"
                 className="animated-input"
@@ -250,6 +282,12 @@ const Login = () => {
                 onChange={handleChange}
                 placeholder="Repetir nueva contraseña"
               />
+              <span
+                className="password-toggle"
+                onClick={() => togglePasswordVisibility('repeatPassword')}
+              >
+                {passwordVisibility.repeatPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
             </div>
             <button type="submit" className="animated-button">Actualizar Contraseña</button>
             <p className="toggle-text" onClick={handleLoginMode}>¿Volver a Iniciar Sesión?</p>
