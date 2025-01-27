@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -21,9 +23,9 @@ public class LoginControlador {
     private LoginNegocio LoginNegocio;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<Map<String, Object>> login(@RequestHeader("Authorization") String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Basic ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Encabezado de autorización requerido");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Encabezado de autorización requerido"));
         }
 
         // Extraer y decodificar credenciales
@@ -33,7 +35,7 @@ public class LoginControlador {
         String[] values = credentials.split(":", 2);
 
         if (values.length != 2) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de credenciales inválido");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", "Formato de credenciales inválido"));
         }
 
         String email = values[0].toUpperCase(); // Convertir a mayúsculas
@@ -41,14 +43,23 @@ public class LoginControlador {
 
         // Validar el formato del correo
         if (!email.matches("(?i)[A-Za-zÁÉÍÓÚáéíóú]+_\\d{8}@FLEXGUARAJE_PERU.COM")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El formato del correo no es válido. Debe ser APELLIDO PATERNO + _ + DNI + @flexguaraje_peru.com");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", "El formato del correo no es válido. Debe ser APELLIDO PATERNO + _ + DNI + @flexguaraje_peru.com"));
         }
 
         try {
             Cuenta cuenta = LoginNegocio.autenticarUsuario(email, password);
-            return ResponseEntity.ok("Bienvenido, " + cuenta.getNombreUsuario());
+
+            // Crear un mapa con todos los datos que quieres enviar
+            Map<String, Object> response = new HashMap<>();
+            response.put("nombreUsuario", cuenta.getNombreUsuario());
+            response.put("nombre", cuenta.getUsuario().getNombre());
+            response.put("apellidoPaterno", cuenta.getUsuario().getApellidoPaterno());
+            response.put("apellidoMaterno", cuenta.getUsuario().getApellidoMaterno());
+
+            // Enviar respuesta con todos los datos
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Correo y/o contraseña incorrecta");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecta"));
         }
     }
 

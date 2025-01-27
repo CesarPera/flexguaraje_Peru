@@ -5,6 +5,7 @@ import './login.css';
 import Swal from 'sweetalert2'; // Importa SweetAlert2
 
 const Login = () => {
+  const [nombreUsuario, setNombreUsuario] = useState(""); // Declaración del estado
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -14,7 +15,6 @@ const Login = () => {
     oldPassword: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
-
   const navigate = useNavigate();
 
   const handlePasswordChangeMode = () => {
@@ -101,6 +101,12 @@ const Login = () => {
 
       try {
         const result = await LoginBD.login(normalizedEmail, formData.password);
+
+        const nombreCompleto = `${result.nombre} ${result.apellidoPaterno} ${result.apellidoMaterno}`;
+        localStorage.setItem("nombreUsuario", nombreCompleto); // Guardar en localStorage
+
+        setNombreUsuario(nombreCompleto); // Actualizar el estado
+
         navigate("/bienvenido_a_flexguaraje_peru");
       } catch (error) {
         console.error("Error al iniciar sesión:", error);

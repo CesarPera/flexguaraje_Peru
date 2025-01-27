@@ -1,11 +1,25 @@
-import React from "react";
-import { Link } from "react-router-dom"; // Importar Link de react-router-dom
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function HeaderAdmin() {
     const navigate = useNavigate();
+    const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem("nombreUsuario") || ""); // Inicializa con lo que está en localStorage
+
+    useEffect(() => {
+        // Actualizar el estado cuando el componente se monta
+        const nombreCompleto = localStorage.getItem("nombreUsuario");
+        setNombreUsuario(nombreCompleto || ""); // Actualiza el estado con el nombre
+    }, []); // Solo se ejecuta una vez al montar el componente
+
     const handleBackToHome = () => {
-        navigate("/");  // Redirige a la página de login o página principal
+        // Limpiar el nombre del usuario en localStorage
+        localStorage.removeItem("nombreUsuario");
+
+        // Actualizar el estado de nombreUsuario para que se refleje en la UI
+        setNombreUsuario("");
+
+        // Redirigir al login o página principal
+        navigate("/");
     };
 
     return (
@@ -19,10 +33,10 @@ function HeaderAdmin() {
                         </h1>
                     </div>
 
-                    {/*<button>Cerrar Sesión</button>*/}
                     <div className="login-datos">
-                        <h3>CESAR DANIEL CARHUAS ALDANA</h3>
-                        <button onClick={handleBackToHome}>cerrar sesion</button>
+                        {/* Mostrar el nombre completo o "Usuario Invitado" si no está disponible */}
+                        <h3>{nombreUsuario || "Usuario Invitado"}</h3>
+                        <button onClick={handleBackToHome}>Cerrar sesión</button>
                     </div>
 
                 </div>
