@@ -237,6 +237,8 @@ function GestionCuentas() {
                 showConfirmButton: false,
                 timer: 3000
             });
+            await fetchCuentas();
+            await fetchRolesActivos();
         } catch (error) {
             console.error("Error al actualizar la contraseña:", error);
             Swal.fire({
