@@ -32,47 +32,31 @@ INSERT INTO permisos (id_roles, nombre_permiso, estado) VALUES
 # TABLA usuario ( administrador, propietario y otros)
 create table usuario (
 	id_usuario int primary key auto_increment,
+    id_roles int not null,
     dni varchar(8) not null,
     nombre varchar(30) not null,
     apellido_paterno varchar(20) not null,
     apellido_materno varchar(20) not null,
+    nombre_usuario varchar(70) not null,
     email varchar(30) not null,
     telefono varchar(9) not null,
-	CONSTRAINT UQ_dni UNIQUE (dni)
+	estado varchar(15) not null default 'Activo',
+	CONSTRAINT FK_roles_usuario foreign key (id_roles) references roles(id_roles),
+	CONSTRAINT valores_estado_usuario CHECK (estado IN ('Activo', 'Desactivado')),
+	CONSTRAINT UQ_dni UNIQUE (dni),
+	constraint UQ_nombre_usuario UNIQUE (nombre_usuario)
 );
-# 15 DATOS PARA LA TABLA USUARIOS
-INSERT INTO usuario (dni, nombre, apellido_paterno, apellido_materno, email, telefono) VALUES
-('12345678', 'JUAN', 'PÉREZ', 'LÓPEZ', 'juan.perez@example.com', '912345678'),
-('23456789', 'MARÍA', 'GÓMEZ', 'SÁNCHEZ', 'maria.gomez@example.com', '923456789'),
-('34567890', 'CARLOS', 'RAMÍREZ', 'MARTÍNEZ', 'carlos.ramirez@example.com', '934567890'),
-('45678901', 'ANA', 'TORRES', 'VARGAS', 'ana.torres@example.com', '945678901'),
-('56789012', 'LUIS', 'FERNÁNDEZ', 'ROJAS', 'luis.fernandez@example.com', '956789012'),
-('67890123', 'LUCÍA', 'DÍAZ', 'HERNÁNDEZ', 'lucia.diaz@example.com', '967890123'),
-('78901234', 'PEDRO', 'CASTILLO', 'MORALES', 'pedro.castillo@example.com', '978901234'),
-('89012345', 'ELENA', 'RAMOS', 'GUZMÁN', 'elena.ramos@example.com', '989012345'),
-('90123456', 'JORGE', 'ALVAREZ', 'PAREDES', 'jorge.alvarez@example.com', '900123456'),
-('01234567', 'CAMILA', 'RUIZ', 'SALAS', 'camila.ruiz@example.com', '911234567'),
-('11234567', 'SOFÍA', 'MENDOZA', 'CHÁVEZ', 'sofia.mendoza@example.com', '922345678'),
-('22345678', 'MIGUEL', 'VEGA', 'ORTEGA', 'miguel.vega@example.com', '933456789'),
-('33456789', 'ISABEL', 'CRUZ', 'FLORES', 'isabel.cruz@example.com', '944567890'),
-('44567890', 'RICARDO', 'LOPEZ', 'RIOS', 'ricardo.lopez@example.com', '955678901'),
-('55678901', 'DANIELA', 'PONCE', 'ESPINOZA', 'daniela.ponce@example.com', '966789012');
-
 
 # TABLAAAAA CUENTAAAAAAAAAAAAAA
 create table cuenta (
 	id_cuenta int primary key auto_increment,
     id_usuario int not null,
-    id_roles int not null,
-    nombre_usuario varchar(50) not null,
     email varchar(50) not null,
     pass varchar(255) not null,
     estado varchar(15) not null default 'Activo',
 	constraint FK_usuario_cuenta foreign key (id_usuario) references usuario(id_usuario),
-    constraint FK_roles_cuenta foreign key (id_roles) references roles(id_roles),
 	CONSTRAINT valores_estado_cuenta CHECK (estado IN ('Activo', 'Desactivado')),
     constraint UQ_usuario_unico UNIQUE (id_usuario),
-    constraint UQ_usuario_cuenta UNIQUE (nombre_usuario),
     constraint UQ_email_cuenta UNIQUE (email)
 );
 

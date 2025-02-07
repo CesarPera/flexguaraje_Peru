@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 @Table(name = "cuenta",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "id_usuario"),
-                @UniqueConstraint(columnNames = "nombre_usuario"),
                 @UniqueConstraint(columnNames = "email")
 })
 public class Cuenta {
@@ -19,14 +18,6 @@ public class Cuenta {
     @JoinColumn(name = "id_usuario", nullable = false,
             foreignKey = @ForeignKey(name = "FK_usuario_cuenta"))
     private Usuario usuario; // Relación con la entidad Usuario
-
-    @ManyToOne
-    @JoinColumn(name = "id_roles", nullable = false,
-            foreignKey = @ForeignKey(name = "FK_roles_cuenta"))
-    private Roles roles; // Relación con la entidad Roles
-
-    @Column(name = "nombre_usuario", nullable = false, length = 50)
-    private String nombreUsuario;
 
     @Column(name = "email", nullable = false, length = 50)
     private String email;
@@ -52,22 +43,6 @@ public class Cuenta {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-    }
-
-    public Roles getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Roles roles) {
-        this.roles = roles;
-    }
-
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
-
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
     }
 
     public String getEmail() {

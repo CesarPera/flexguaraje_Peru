@@ -12,18 +12,19 @@ public class LoginNegocio {
     private LoginRepositorio loginRepositorio;
 
     public Cuenta autenticarUsuario(String email, String password) {
-        // Buscar la cuenta por email
-        Cuenta cuenta = loginRepositorio.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Credenciales inválidas"));
+        // Buscar la cuenta por email, ignorando el case
+        Cuenta cuenta = loginRepositorio.findByEmail(email.toUpperCase())
+                .orElseThrow(() -> new IllegalArgumentException("Correo y/o contraseña incorrecto"));
 
         // Verificar que la cuenta esté activa
         if (cuenta.getEstado() != Cuenta.estadoCuenta.Activo) {
-            throw new IllegalArgumentException("La cuenta está desactivada");
+            String dni = cuenta.getUsuario().getDni();
+            throw new IllegalArgumentException("La cuenta asociada al DNI " + dni + " se encuentra desactivada.");
         }
 
         // Comparar la contraseña proporcionada con la almacenada en texto plano
         if (!password.equals(cuenta.getPassword())) {
-            throw new IllegalArgumentException("Credenciales inválidas");
+            throw new IllegalArgumentException("Correo y/o contraseña incorrecto");
         }
 
         return cuenta;
@@ -36,18 +37,23 @@ public class LoginNegocio {
             throw new IllegalArgumentException("Las nuevas contraseñas no coinciden");
         }
 
-        // Buscar la cuenta por email
-        Cuenta cuenta = loginRepositorio.findByEmail(email)
+        // Buscar la cuenta por email, ignorando el case
+        Cuenta cuenta = loginRepositorio.findByEmail(email.toUpperCase())
                 .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada"));
 
         // Verificar que la cuenta esté activa
         if (cuenta.getEstado() != Cuenta.estadoCuenta.Activo) {
-            throw new IllegalArgumentException("La cuenta está desactivada");
+            throw new IllegalArgumentException("La cuenta con DNI " + cuenta.getUsuario().getDni() + " se encuentra desactivada");
         }
 
         // Verificar la contraseña actual en texto plano
         if (!passwordActual.equals(cuenta.getPassword())) {
             throw new IllegalArgumentException("La contraseña actual es incorrecta");
+        }
+
+        // Verificar que la nueva contraseña sea completamente diferente
+        if (nuevaPassword.equals(passwordActual)) {
+            throw new IllegalArgumentException("La nueva contraseña debe ser completamente diferente de la actual");
         }
 
         // Actualizar la contraseña directamente

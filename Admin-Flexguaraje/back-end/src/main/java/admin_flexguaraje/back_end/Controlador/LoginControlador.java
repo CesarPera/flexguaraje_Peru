@@ -38,28 +38,31 @@ public class LoginControlador {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", "Formato de credenciales inválido"));
         }
 
-        String email = values[0].toUpperCase(); // Convertir a mayúsculas
+        String email = values[0];
         String password = values[1];
 
-        // Validar el formato del correo
-        if (!email.matches("(?i)[A-Za-zÁÉÍÓÚáéíóú]+_\\d{8}@FLEXGUARAJE_PERU.COM")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", "El formato del correo no es válido. Debe ser APELLIDO PATERNO + _ + DNI + @flexguaraje_peru.com"));
+        // Validación del formato correcto del correo electrónico
+        if (!email.toUpperCase().matches("(?i)[A-Za-zÁÉÍÓÚáéíóú]+_\\d{8}@FLEXGUARAJE_PERU.COM")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecto"));
+        }
+
+        // Validación del formato seguro de contraseña
+        String passwordPattern = "^(?=.*[A-Z].*[A-Z].*[A-Z])(?=.*\\d.*\\d.*\\d)(?=.*[!@#$%^&*()_+=-].*[!@#$%^&*()_+=-]).{10,}$";
+        if (!password.matches(passwordPattern)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecto"));
         }
 
         try {
-            Cuenta cuenta = LoginNegocio.autenticarUsuario(email, password);
+            // Autenticación del usuario
+            Cuenta cuenta = LoginNegocio.autenticarUsuario(email.toUpperCase(), password);
 
-            // Crear un mapa con todos los datos que quieres enviar
+            // Crear la respuesta con el mensaje de bienvenida
             Map<String, Object> response = new HashMap<>();
-            response.put("nombreUsuario", cuenta.getNombreUsuario());
-            response.put("nombre", cuenta.getUsuario().getNombre());
-            response.put("apellidoPaterno", cuenta.getUsuario().getApellidoPaterno());
-            response.put("apellidoMaterno", cuenta.getUsuario().getApellidoMaterno());
+            response.put("message", "Bienvenido " + cuenta.getUsuario().getNombre() + " " + cuenta.getUsuario().getApellidoPaterno() + " " + cuenta.getUsuario().getApellidoMaterno());
 
-            // Enviar respuesta con todos los datos
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecta"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecto"));
         }
     }
 
@@ -92,10 +95,11 @@ public class LoginControlador {
                 LoginNegocio.cambiarPassword(email, passwordActual, nuevaPassword, repetirNuevaPassword);
                 return ResponseEntity.ok("Contraseña actualizada con éxito");
             } catch (IllegalArgumentException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Correo y/o contraseña incorrecta");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocurrió un error inesperado: " + e.getMessage());
         }
     }
+
 }

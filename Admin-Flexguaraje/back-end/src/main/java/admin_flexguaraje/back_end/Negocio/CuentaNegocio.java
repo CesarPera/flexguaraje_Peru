@@ -21,42 +21,44 @@ public class CuentaNegocio {
     private UsuarioRepositorio usuarioRepositorio;
 
     @Autowired
-    private RolesRepositorio rolesRepositorio;
-
-    @Autowired
     private CuentaRepositorio cuentaRepositorio;
 
     // Método para listar todas las cuentas
     public List<Cuenta> listarCuentas() {
-        return cuentaRepositorio.findAll();
+        return cuentaRepositorio.findTop20ByOrderByIdCuentaDesc();
     }
 
-    public List<Roles> obtenerRolesActivos() {
-        return rolesRepositorio.findByEstado(Roles.estadoRoles.Activo);
+    public Cuenta buscarCuentaPorDni(String dni) throws Exception {
+        // Buscar cuenta asociada al DNI
+        return cuentaRepositorio.findByUsuarioDni(dni)
+                .orElseThrow(() -> new Exception("No se encontró una cuenta asociada al DNI: " + dni));
     }
 
-    public Cuenta crearCuenta(String dni, String nombreRol, String email, String password) throws Exception {
-        // Buscar usuario por DNI
+    public Cuenta crearCuenta(String dni) throws Exception {
+        // Buscar usuario por DNI y verificar su estado
         Usuario usuario = usuarioRepositorio.findByDni(dni)
                 .orElseThrow(() -> new Exception("Usuario con DNI " + dni + " no encontrado."));
 
-        // Buscar rol por nombre
-        Roles roles = rolesRepositorio.findByNombreRol(nombreRol)
-                .orElseThrow(() -> new Exception("Rol con nombre " + nombreRol + " no encontrado."));
+        if (usuario.getEstado() == Usuario.estadoUsuario.Desactivado) {
+            throw new Exception("El usuario con DNI " + dni + " está desactivado. No se puede crear una cuenta.");
+        }
 
-        // Generar nombre de usuario
-        String nombreUsuario = (usuario.getApellidoPaterno() + "_" + usuario.getDni() + "_PERU").toUpperCase();
+        // Verificar si ya existe una cuenta asociada al DNI
+        if (cuentaRepositorio.existsByUsuarioDni(dni)) {
+            throw new Exception("El DNI " + dni + " ya tiene una cuenta registrada. No se puede crear una cuenta adicional.");
+        }
 
-        // Generar correo automático si no se proporciona uno
+        // Generar correo automático
         String emailGenerado = (usuario.getApellidoPaterno() + "_" + usuario.getDni() + "@flexguaraje_peru.com").toUpperCase();
+
+        // Generar contraseña automática
+        String passwordGenerada = GeneradorPassSeguro.generarContrasenaSegura();
 
         // Crear cuenta
         Cuenta cuenta = new Cuenta();
         cuenta.setUsuario(usuario);
-        cuenta.setRoles(roles);
-        cuenta.setNombreUsuario(nombreUsuario);
-        cuenta.setEmail(email != null && !email.isEmpty() ? email : emailGenerado); // Usar el email proporcionado o el generado
-        cuenta.setPassword(password);
+        cuenta.setEmail(emailGenerado);
+        cuenta.setPassword(passwordGenerada);
         cuenta.setEstado(Cuenta.estadoCuenta.Activo);
 
         return cuentaRepositorio.save(cuenta);
@@ -86,7 +88,7 @@ public class CuentaNegocio {
         return cuentaRepositorio.save(cuenta);
     }
 
-    public Cuenta actualizarContrasenaPorDniYCorreo(String dni, String correo, String nuevaContrasena) throws Exception {
+    public Cuenta actualizarContrasenaPorDni(String dni, String nuevaContrasena) throws Exception {
         // Buscar usuario por DNI
         Usuario usuario = usuarioRepositorio.findByDni(dni)
                 .orElseThrow(() -> new Exception("Usuario con DNI " + dni + " no encontrado."));
@@ -95,14 +97,14 @@ public class CuentaNegocio {
         Cuenta cuenta = cuentaRepositorio.findByUsuario(usuario)
                 .orElseThrow(() -> new Exception("No se encontró una cuenta asociada al usuario con DNI " + dni + "."));
 
-        // Validar que el correo coincida
-        if (!cuenta.getEmail().equalsIgnoreCase(correo)) {
-            throw new Exception("El correo no coincide con la cuenta registrada.");
-        }
-        // Actualizar la contraseña sin encriptación
-        cuenta.setPassword(nuevaContrasena);
+        // Obtener el correo de la cuenta
+        String correo = cuenta.getEmail();
+
+        // Generar una nueva contraseña segura (esto es opcional, puedes modificar cómo generas la nueva contraseña)
+        cuenta.setPassword(nuevaContrasena); // Aquí usas la nueva contraseña generada o proporcionada
 
         // Guardar la cuenta actualizada
         return cuentaRepositorio.save(cuenta);
     }
+
 }

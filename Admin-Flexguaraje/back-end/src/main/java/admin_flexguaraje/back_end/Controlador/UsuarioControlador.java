@@ -1,6 +1,7 @@
 package admin_flexguaraje.back_end.Controlador;
 
 
+import admin_flexguaraje.back_end.Modelo.Roles;
 import admin_flexguaraje.back_end.Modelo.Usuario;
 import admin_flexguaraje.back_end.Negocio.UsuarioNegocio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,9 @@ public class UsuarioControlador {
     private UsuarioNegocio usuarioNegocio;
 
     @GetMapping("/listar_usuario_general")
-    public ResponseEntity<List<Usuario>> listarUsuarios() {
-        List<Usuario> usuarios = usuarioNegocio.listarUsuarios();
-        return ResponseEntity.ok(usuarios);
+    public List<Usuario> listarUsuarios() {
+        return usuarioNegocio.listarUsuarios();
+
     }
 
     @PostMapping("/buscar_usuario_dni")
@@ -47,13 +48,13 @@ public class UsuarioControlador {
 
     @PostMapping("/crear_usuario")
     public ResponseEntity<String> crearUsuario(@RequestBody Map<String, String> body) {
-        // Validaciones
         String dni = body.get("dni");
         String nombre = body.get("nombre");
         String apellidoPaterno = body.get("apellidoPaterno");
         String apellidoMaterno = body.get("apellidoMaterno");
         String email = body.get("email");
         String telefono = body.get("telefono");
+        String nombreRol = body.get("nombreRol");
 
         if (dni == null || !dni.matches("\\d{8}")) {
             return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres numéricos.");
@@ -76,11 +77,15 @@ public class UsuarioControlador {
         if (telefono == null || !telefono.matches("\\d{9}")) {
             return ResponseEntity.badRequest().body("El teléfono debe tener exactamente 9 caracteres numéricos.");
         }
+        if (nombreRol == null) {
+            return ResponseEntity.badRequest().body("El nombre del rol es obligatorio.");
+        }
 
         // Convertir a mayúsculas
-        nombre = nombre != null ? nombre.toUpperCase() : null;
-        apellidoPaterno = apellidoPaterno != null ? apellidoPaterno.toUpperCase() : null;
-        apellidoMaterno = apellidoMaterno != null ? apellidoMaterno.toUpperCase() : null;
+        nombre = nombre.toUpperCase();
+        apellidoPaterno = apellidoPaterno.toUpperCase();
+        apellidoMaterno = apellidoMaterno.toUpperCase();
+        nombreRol = nombreRol.toUpperCase();
 
         // Crear usuario
         Usuario nuevoUsuario = new Usuario();
@@ -91,24 +96,38 @@ public class UsuarioControlador {
         nuevoUsuario.setEmail(email);
         nuevoUsuario.setTelefono(telefono);
 
-        usuarioNegocio.crearUsuario(nuevoUsuario);
-        return ResponseEntity.ok("Usuario creado con éxito.");
-    }
+        // Asignación de rol por nombre
+        Roles rol = new Roles();
+        rol.setNombreRol(nombreRol);
+        nuevoUsuario.setRoles(rol);
 
+        // Generar nombre de usuario automático
+        String nombreUsuario = apellidoPaterno + "_" + dni + "_PERU";
+        nuevoUsuario.setNombreUsuario(nombreUsuario);
+
+        try {
+            usuarioNegocio.crearUsuario(nuevoUsuario);
+            return ResponseEntity.ok("Usuario creado con éxito.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @PutMapping("/actualizar_usuario")
     public ResponseEntity<String> actualizarUsuario(@RequestBody Map<String, String> body) {
         String dni = body.get("dni");
+
         if (dni == null || !dni.matches("\\d{8}")) {
             return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres numéricos.");
         }
 
         Optional<Usuario> usuarioExistente = usuarioNegocio.buscarUsuarioPorDni(dni);
         if (usuarioExistente.isEmpty()) {
-            return ResponseEntity.status(404).body("El cliente con DNI " + dni + " no se encuentra.");
+            return ResponseEntity.status(404).body("El usuario con DNI " + dni + " no se encuentra.");
         }
 
         Usuario usuario = usuarioExistente.get();
+
         if (body.containsKey("nombre") && !body.get("nombre").matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
             return ResponseEntity.badRequest().body("El nombre solo puede contener letras y espacios.");
         }
@@ -136,12 +155,39 @@ public class UsuarioControlador {
             usuario.setApellidoMaterno(body.get("apellidoMaterno").toUpperCase());
         }
 
-        // Actualizar los demás campos
         if (body.containsKey("email")) usuario.setEmail(body.get("email"));
         if (body.containsKey("telefono")) usuario.setTelefono(body.get("telefono"));
 
-        usuarioNegocio.actualizarUsuario(usuario);
-        return ResponseEntity.ok("Usuario actualizado con éxito.");
+        if (body.containsKey("nombreRol")) {
+            String nombreRol = body.get("nombreRol").toUpperCase();
+            Roles nuevoRol = new Roles();
+            nuevoRol.setNombreRol(nombreRol);
+            usuario.setRoles(nuevoRol); // Se asigna el rol para validación en el negocio
+        }
+
+        try {
+            usuarioNegocio.actualizarUsuario(usuario);
+            return ResponseEntity.ok("Usuario actualizado con éxito.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/actualizar_estado_usuario")
+    public ResponseEntity<String> actualizarEstadoUsuario(@RequestBody Map<String, String> body) {
+        String dni = body.get("dni");
+
+        // Validación de DNI
+        if (dni == null || !dni.matches("\\d{8}")) {
+            return ResponseEntity.badRequest().body("El DNI debe tener exactamente 8 caracteres numéricos.");
+        }
+
+        try {
+            String resultado = usuarioNegocio.actualizarEstadoUsuario(dni);
+            return ResponseEntity.ok(resultado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }
