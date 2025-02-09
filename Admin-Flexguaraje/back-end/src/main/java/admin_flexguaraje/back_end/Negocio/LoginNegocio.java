@@ -19,7 +19,7 @@ public class LoginNegocio {
         // Verificar que la cuenta esté activa
         if (cuenta.getEstado() != Cuenta.estadoCuenta.Activo) {
             String dni = cuenta.getUsuario().getDni();
-            throw new IllegalArgumentException("La cuenta asociada al DNI " + dni + " se encuentra desactivada.");
+            throw new IllegalArgumentException("La cuenta se encuentra desactivada.");
         }
 
         // Comparar la contraseña proporcionada con la almacenada en texto plano
@@ -33,22 +33,21 @@ public class LoginNegocio {
     // Método para cambiar la contraseña
     public void cambiarPassword(String email, String passwordActual, String nuevaPassword, String repetirNuevaPassword) {
         // Verificar que las nuevas contraseñas coinciden
+
         if (!nuevaPassword.equals(repetirNuevaPassword)) {
             throw new IllegalArgumentException("Las nuevas contraseñas no coinciden");
         }
 
         // Buscar la cuenta por email, ignorando el case
         Cuenta cuenta = loginRepositorio.findByEmail(email.toUpperCase())
-                .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada"));
+                .orElseThrow(() -> new IllegalArgumentException("Correo y/o contraseña incorrecta"));
 
+        if (!passwordActual.equals(cuenta.getPassword())) {
+            throw new IllegalArgumentException("Correo y/o contraseña incorrecta");
+        }
         // Verificar que la cuenta esté activa
         if (cuenta.getEstado() != Cuenta.estadoCuenta.Activo) {
-            throw new IllegalArgumentException("La cuenta con DNI " + cuenta.getUsuario().getDni() + " se encuentra desactivada");
-        }
-
-        // Verificar la contraseña actual en texto plano
-        if (!passwordActual.equals(cuenta.getPassword())) {
-            throw new IllegalArgumentException("La contraseña actual es incorrecta");
+            throw new IllegalArgumentException("La cuenta se encuentra desactivada");
         }
 
         // Verificar que la nueva contraseña sea completamente diferente

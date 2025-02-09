@@ -28,7 +28,6 @@ public class LoginControlador {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Encabezado de autorización requerido"));
         }
 
-        // Extraer y decodificar credenciales
         String base64Credentials = authHeader.substring("Basic ".length()).trim();
         byte[] decodedBytes = Base64.getDecoder().decode(base64Credentials);
         String credentials = new String(decodedBytes);
@@ -41,12 +40,10 @@ public class LoginControlador {
         String email = values[0];
         String password = values[1];
 
-        // Validación del formato correcto del correo electrónico
         if (!email.toUpperCase().matches("(?i)[A-Za-zÁÉÍÓÚáéíóú]+_\\d{8}@FLEXGUARAJE_PERU.COM")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecto"));
         }
 
-        // Validación del formato seguro de contraseña
         String passwordPattern = "^(?=.*[A-Z].*[A-Z].*[A-Z])(?=.*\\d.*\\d.*\\d)(?=.*[!@#$%^&*()_+=-].*[!@#$%^&*()_+=-]).{10,}$";
         if (!password.matches(passwordPattern)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecto"));
@@ -56,13 +53,18 @@ public class LoginControlador {
             // Autenticación del usuario
             Cuenta cuenta = LoginNegocio.autenticarUsuario(email.toUpperCase(), password);
 
-            // Crear la respuesta con el mensaje de bienvenida
             Map<String, Object> response = new HashMap<>();
-            response.put("message", "Bienvenido " + cuenta.getUsuario().getNombre() + " " + cuenta.getUsuario().getApellidoPaterno() + " " + cuenta.getUsuario().getApellidoMaterno());
+            response.put("message", "Bienvenido, " + cuenta.getUsuario().getNombre() + " " + cuenta.getUsuario().getApellidoPaterno() + " " + cuenta.getUsuario().getApellidoMaterno());
 
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecto"));
+            String errorMessage = e.getMessage();
+
+            if (errorMessage.contains("desactivada")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Collections.singletonMap("message", errorMessage));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecto"));
+            }
         }
     }
 
@@ -101,5 +103,4 @@ public class LoginControlador {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocurrió un error inesperado: " + e.getMessage());
         }
     }
-
 }

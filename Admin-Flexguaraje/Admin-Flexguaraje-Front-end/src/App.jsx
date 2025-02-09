@@ -1,8 +1,8 @@
 import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HeaderAdmin from './Componentes/HeaderAdmin';
 import ListaAdmin from './Componentes/ListaAdmin';
 import ContenidoInicio from './Componentes/ContenidoInicio';  // Verifica esta línea
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // Aquí definimos las páginas (pueden ser otros componentes)
 // propietario
@@ -20,6 +20,7 @@ import Reportes from './paginas/Administrador/Reportes/Reportes';
 
 // para los dos
 import Login from './Validacion/Login';
+import CambiarPassManual from './Validacion/CambiarPassManual';
 
 function App() {
   return (
@@ -31,7 +32,8 @@ function App() {
 
         <div className="content-container">
           <Routes>
-            <Route path="/" element={<Login />} /> {/* Página por defecto */}
+            <Route path="/" element={<Login />} />
+            <Route path="/cambiar_contraseña" element={<CambiarPassManual />} />
             <Route path="/bienvenido_a_flexguaraje_peru" element={<ContenidoInicio />} />
             {/* Página para propietario */}
             <Route path="/cuenta" element={<Cuenta />} />

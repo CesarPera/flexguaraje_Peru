@@ -1,4 +1,4 @@
-.general-login {
+.general-PassManual {
     margin: 0;
     position: fixed;
     font-family: 'Arial', sans-serif;
@@ -15,7 +15,7 @@
     z-index: 1000 !important;
 }
 
-.login-container {
+.PassManual-container {
     width: 100%;
     max-width: 380px;
     background: #fff;
@@ -37,7 +37,7 @@
     }
 }
 
-.form-title {
+.form-title-Manual {
     text-align: center;
     font-size: 34px;
     font-weight: bold;
@@ -46,13 +46,8 @@
     font-family: cursive;
 }
 
-.input-group {
-    position: relative;
-    margin-bottom: 20px;
-}
-
 /* Aquí es donde aplicamos el estilo para el campo de entrada */
-.animated-input {
+.animated-input-PassManual {
     width: 100%;
     padding: 14px 12px;
     font-size: 16px;
@@ -65,11 +60,11 @@
 }
 
 /* Estilos cuando el campo está en foco */
-.animated-input:focus {
+.animated-input-PassManual:focus {
     border-color: #2e71d6;
 }
 
-.animated-button {
+.animated-button-PassManual {
     width: 100%;
     padding: 12px 0;
     font-size: 16px;
@@ -82,14 +77,13 @@
     font-family: cursive;
 }
 
-.animated-button:hover {
+.animated-button-PassManual:hover {
     background-color: #333edb;
 }
 
 /* para visualizar contraseña diseño */
 .contraseña-visible input {
     position: relative;
-    padding-right: 40px;
 }
 
 .contraseña-visible span {

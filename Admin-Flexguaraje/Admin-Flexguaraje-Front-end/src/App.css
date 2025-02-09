@@ -465,6 +465,20 @@ input {
   text-align: center;
 }
 
+/* LOGIN Y CAMBIO DE CONTRASEÑA */
+.toggle-text {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  font-family: cursive;
+}
+
+.toggle-text:hover {
+  color: #333edb;
+}
 
 /* NO TOCARRRRRRRRRRRR CODIGO DE AQUI PARA ARRIBA */
 /* PUEDES AGREGAR DE AQUI PARA ABAJOOOOOOOOO */
