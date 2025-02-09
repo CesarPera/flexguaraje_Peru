@@ -19,10 +19,6 @@ public class ClienteControlador {
     @Autowired
     private ClienteNegocio clienteNegocio;
 
-    public void setClienteNegocio(ClienteNegocio clienteNegocio) {
-        this.clienteNegocio = clienteNegocio;
-    }
-
     @GetMapping ("/listar_cliente")
     public List<Cliente> ListarClientes() {
         return clienteNegocio.ListarClientes();

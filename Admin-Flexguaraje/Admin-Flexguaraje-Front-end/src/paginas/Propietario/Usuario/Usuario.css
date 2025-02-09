@@ -88,3 +88,10 @@
     font-weight: 700;
     font-size: 1.2rem;
 }
+
+/* BOTON DE ESTADO */
+.tabla-estado-usuario .btn {
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+}

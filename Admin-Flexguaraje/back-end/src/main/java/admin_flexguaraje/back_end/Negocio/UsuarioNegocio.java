@@ -19,9 +19,12 @@ public class UsuarioNegocio {
     @Autowired
     private RolesRepositorio rolesRepositorio;
 
-
     public List<Usuario> listarUsuarios() {
         return usuarioRepositorio.findTop20ByOrderByIdUsuarioDesc();
+    }
+
+    public List<Roles> obtenerRolesActivos() {
+        return rolesRepositorio.findByEstado(Roles.estadoRoles.Activo);
     }
 
     public Optional<Usuario> buscarUsuarioPorDni(String dni) {

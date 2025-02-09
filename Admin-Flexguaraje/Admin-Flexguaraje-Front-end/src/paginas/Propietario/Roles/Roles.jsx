@@ -216,7 +216,7 @@ function Roles() {
                 text: `El rol será marcado como "${newStatus}". Este cambio puede afectar su funcionalidad.`,
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonText: "Sí, cambiar",
+                confirmButtonText: "Sí, actualizar estado",
                 cancelButtonText: "Cancelar",
             });
 

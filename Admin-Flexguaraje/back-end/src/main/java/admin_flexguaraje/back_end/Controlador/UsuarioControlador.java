@@ -1,8 +1,10 @@
 package admin_flexguaraje.back_end.Controlador;
 
 
+import admin_flexguaraje.back_end.Modelo.Cuenta;
 import admin_flexguaraje.back_end.Modelo.Roles;
 import admin_flexguaraje.back_end.Modelo.Usuario;
+import admin_flexguaraje.back_end.Negocio.CuentaNegocio;
 import admin_flexguaraje.back_end.Negocio.UsuarioNegocio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,18 @@ public class UsuarioControlador {
     @Autowired
     private UsuarioNegocio usuarioNegocio;
 
+    @Autowired
+    private CuentaNegocio cuentaNegocio;
+
     @GetMapping("/listar_usuario_general")
     public List<Usuario> listarUsuarios() {
         return usuarioNegocio.listarUsuarios();
+    }
 
+    @GetMapping("/roles_activos")
+    public ResponseEntity<List<Roles>> obtenerRolesActivos() {
+        List<Roles> rolesActivos = usuarioNegocio.obtenerRolesActivos();
+        return ResponseEntity.ok(rolesActivos);
     }
 
     @PostMapping("/buscar_usuario_dni")
@@ -128,12 +138,37 @@ public class UsuarioControlador {
 
         Usuario usuario = usuarioExistente.get();
 
+
         if (body.containsKey("nombre") && !body.get("nombre").matches("[a-zA-ZÁÉÍÓÚáéíóú ]+")) {
             return ResponseEntity.badRequest().body("El nombre solo puede contener letras y espacios.");
         }
-        if (body.containsKey("apellidoPaterno") && !body.get("apellidoPaterno").matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
-            return ResponseEntity.badRequest().body("El apellido paterno solo puede contener letras.");
+
+        boolean actualizarCorreo = false;
+        String nuevoApellidoPaterno = null;
+
+        if (body.containsKey("apellidoPaterno")) {
+            String apellidoPaterno = body.get("apellidoPaterno");
+            if (!apellidoPaterno.matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
+                return ResponseEntity.badRequest().body("El apellido paterno solo puede contener letras.");
+            }
+            nuevoApellidoPaterno = apellidoPaterno.toUpperCase();
+            if (!nuevoApellidoPaterno.equals(usuario.getApellidoPaterno())) {
+                usuario.setApellidoPaterno(nuevoApellidoPaterno);
+                actualizarCorreo = true;
+            }
         }
+
+        if (actualizarCorreo) {
+            try {
+                Cuenta cuenta = cuentaNegocio.buscarCuentaPorDni(dni);
+                String nuevoCorreo = nuevoApellidoPaterno + "_" + usuario.getDni() + "@FLEXGUARAJE_PERU.COM";
+                cuenta.setEmail(nuevoCorreo);
+                cuentaNegocio.guardarcuenta(cuenta); // Actualización directa sin método de negocio
+            } catch (Exception e) {
+                // No hacer nada si la cuenta no existe
+            }
+        }
+
         if (body.containsKey("apellidoMaterno") && !body.get("apellidoMaterno").matches("[a-zA-ZÁÉÍÓÚáéíóú]+")) {
             return ResponseEntity.badRequest().body("El apellido materno solo puede contener letras.");
         }

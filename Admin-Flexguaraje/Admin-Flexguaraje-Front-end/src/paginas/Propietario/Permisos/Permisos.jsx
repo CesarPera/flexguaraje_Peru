@@ -257,7 +257,7 @@ function Permisos() {
                 text: `El permiso será marcado como "${newStatus}". Este cambio puede afectar su funcionalidad.`,
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonText: "Sí, cambiar",
+                confirmButtonText: "Sí, actualizar estado",
                 cancelButtonText: "Cancelar",
             });
 
@@ -368,7 +368,7 @@ function Permisos() {
                                 <div className="form-group">
                                     <label htmlFor="role">Seleccionar Rol:</label>
                                     <select
-                                        className="select-permiso-rol"
+                                        className="text-center"
                                         value={selectedRole}
                                         onChange={(e) => setSelectedRole(e.target.value)}
                                     >

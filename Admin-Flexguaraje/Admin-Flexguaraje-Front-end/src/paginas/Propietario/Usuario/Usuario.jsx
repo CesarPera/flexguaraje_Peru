@@ -6,9 +6,11 @@ import './Usuario.css';
 
 function Usuario() {
     const [usuarios, setUsuarios] = useState([]);
+    const [rolesActivos, setRolesActivos] = useState([]);
     const [dniBuscar, setDniBuscar] = useState('');
     const [modalVisible, setModalVisible] = useState(false); // Estado para mostrar el modal
     const [nuevoUsuario, setNuevoUsuario] = useState({
+        nombreRol: '',
         dni: '',
         nombre: '',
         apellidoPaterno: '',
@@ -19,6 +21,7 @@ function Usuario() {
     // Función para limpiar el formulario
     const limpiarFormulario = () => {
         setNuevoUsuario({
+            nombreRol: '',
             dni: '',
             nombre: '',
             apellidoPaterno: '',
@@ -30,6 +33,7 @@ function Usuario() {
     const [modalVisibleActualizar, setModalVisibleActualizar] = useState(false);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState({
         dni: '',
+        nombreRol: '',
         nombre: '',
         apellidoPaterno: '',
         apellidoMaterno: '',
@@ -37,6 +41,7 @@ function Usuario() {
         telefono: ''
     });
     const [usuarioOriginal, setUsuarioOriginal] = useState({
+        nombreRol: '',
         dni: '',
         nombre: '',
         apellidoPaterno: '',
@@ -51,8 +56,11 @@ function Usuario() {
         setModalVisible(false); // Suponiendo que tienes un estado para el modal
     };
     const abrirModalActualizar = (usuario) => {
-        setUsuarioSeleccionado(usuario); // Establece los datos actuales en el formulario
-        setUsuarioOriginal({ ...usuario }); // Guarda una copia de los datos originales
+        setUsuarioSeleccionado({
+            ...usuario,
+            nombreRol: usuario.roles?.nombreRol || ''
+        });
+        setUsuarioOriginal({ ...usuario });
         setModalVisibleActualizar(true);
     };
 
@@ -75,10 +83,27 @@ function Usuario() {
             });
     }, []);
 
+    useEffect(() => {
+        UsuarioBD.obtenerRolesActivos()
+            .then(response => {
+                setRolesActivos(response.data);
+            })
+            .catch(error => {
+                console.error("Error al obtener roles activos:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al listar Roles',
+                    text: error.message || 'Ocurrió un error inesperado al obtener los Roles.',
+                    showConfirmButton: true,
+                });
+            });
+    }, []);
+
     const manejarCambio = (e) => {
         const { name, value } = e.target;
         setNuevoUsuario({ ...nuevoUsuario, [name]: value });
     };
+
     const manejarCambioActualizar = (e) => {
         const { name, value } = e.target;
         setUsuarioSeleccionado({ ...usuarioSeleccionado, [name]: value });
@@ -157,7 +182,7 @@ function Usuario() {
     const CrearUsuario = () => {
         // Validar si el formulario está vacío
         const formulariovacio = `${nuevoUsuario.dni || ''} ${nuevoUsuario.nombre || ''} ${nuevoUsuario.apellidoPaterno || ''}
-            ${nuevoUsuario.apellidoMaterno || ''} ${nuevoUsuario.email || ''} ${nuevoUsuario.telefono || ''}`;
+            ${nuevoUsuario.apellidoMaterno || ''} ${nuevoUsuario.email || ''} ${nuevoUsuario.telefono || ''} ${nuevoUsuario.nombreRol || ''}`;
         if (!formulariovacio.trim()) {
             Swal.fire({
                 icon: 'error',
@@ -171,6 +196,10 @@ function Usuario() {
 
         const errores = [];
 
+        // Validar selección de rol
+        if (!nuevoUsuario.nombreRol || nuevoUsuario.nombreRol.trim() === "") {
+            errores.push("Debe seleccionar un rol.");
+        }
         // Validar el DNI: solo 8 caracteres numéricos
         if (!nuevoUsuario.dni || nuevoUsuario.dni.trim() === "") {
             errores.push("El DNI no puede estar vacío.");
@@ -247,7 +276,8 @@ function Usuario() {
                         icon: 'error',
                         title: 'DNI Duplicado',
                         text: error.response.data,
-                        showConfirmButton: true
+                        showConfirmButton: false,
+                        timer: 3000
                     });
                 } else {
                     // Manejar otros errores del backend
@@ -261,9 +291,10 @@ function Usuario() {
             });
     };
 
+
     const actualizarUsuario = () => {
         const formulariovacio = `${usuarioSeleccionado.nombre || ''} ${usuarioSeleccionado.apellidoPaterno || ''} 
-            ${usuarioSeleccionado.apellidoMaterno || ''} ${usuarioSeleccionado.email || ''} ${usuarioSeleccionado.telefono || ''}`;
+            ${usuarioSeleccionado.apellidoMaterno || ''} ${usuarioSeleccionado.email || ''} ${usuarioSeleccionado.telefono || ''} ${usuarioSeleccionado.nombreRol || ''}`;
 
         if (!formulariovacio.trim()) {
             Swal.fire({
@@ -277,6 +308,11 @@ function Usuario() {
         }
 
         const errores = [];
+
+        // Validar selección de rol
+        if (!usuarioSeleccionado.nombreRol || usuarioSeleccionado.nombreRol.trim() === "") {
+            errores.push("Debe seleccionar un rol.");
+        }
 
         // Validar el nombre: no vacío y solo letras y espacios
         if (!usuarioSeleccionado.nombre || usuarioSeleccionado.nombre.trim() === "") {
@@ -313,12 +349,24 @@ function Usuario() {
             errores.push("El teléfono debe tener 9 caracteres numéricos.");
         }
 
+        const datosActualizados = {
+            dni: (usuarioSeleccionado.dni || "").trim(),
+            nombre: (usuarioSeleccionado.nombre || "").trim(),
+            apellidoPaterno: (usuarioSeleccionado.apellidoPaterno || "").trim(),
+            apellidoMaterno: (usuarioSeleccionado.apellidoMaterno || "").trim(),
+            email: (usuarioSeleccionado.email || "").trim(),
+            telefono: (usuarioSeleccionado.telefono || "").trim(),
+            nombreRol: (usuarioSeleccionado.nombreRol || "").trim(),
+        };
+
         const noCambios =
-            usuarioSeleccionado.nombre === usuarioOriginal.nombre &&
-            usuarioSeleccionado.apellidoPaterno === usuarioOriginal.apellidoPaterno &&
-            usuarioSeleccionado.apellidoMaterno === usuarioOriginal.apellidoMaterno &&
-            usuarioSeleccionado.email === usuarioOriginal.email &&
-            usuarioSeleccionado.telefono === usuarioOriginal.telefono;
+            datosActualizados.dni === (usuarioOriginal.dni || "").trim() &&
+            datosActualizados.nombre === (usuarioOriginal.nombre || "").trim() &&
+            datosActualizados.apellidoPaterno === (usuarioOriginal.apellidoPaterno || "").trim() &&
+            datosActualizados.apellidoMaterno === (usuarioOriginal.apellidoMaterno || "").trim() &&
+            datosActualizados.email === (usuarioOriginal.email || "").trim() &&
+            datosActualizados.telefono === (usuarioOriginal.telefono || "").trim() &&
+            datosActualizados.nombreRol === (usuarioOriginal.roles?.nombreRol || "").trim();
 
         if (noCambios) {
             Swal.fire({
@@ -343,7 +391,7 @@ function Usuario() {
         }
 
         // Si no hay errores, continuar con la actualización del usuario
-        UsuarioBD.actualizarUsuario(usuarioSeleccionado)
+        UsuarioBD.actualizarUsuario(datosActualizados)
             .then(response => {
                 Swal.fire({
                     icon: 'success',
@@ -369,6 +417,55 @@ function Usuario() {
             });
     };
 
+    const ActualizarEstado = (usuario) => {
+        const nuevoEstado = usuario.estado === "Activo" ? "Desactivado" : "Activo";
+
+        // Mostrar alerta de confirmación
+        Swal.fire({
+            title: `¿Estás seguro de cambiar el estado del usuario a "${nuevoEstado}"?`,
+            text: `El usuario será marcado como "${nuevoEstado}". Este cambio puede afectar su funcionalidad.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, actualizar estado',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma el cambio
+                UsuarioBD.actualizarEstadoUsuario({ dni: usuario.dni })
+                    .then(response => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Estado actualizado',
+                            text: `El usuario ahora está "${nuevoEstado}".`,
+                            showConfirmButton: false,
+                            timer: 2000,
+                        });
+
+                        // Actualizar el estado en el frontend
+                        setUsuarios(prevUsuarios => prevUsuarios.map(u =>
+                            u.dni === usuario.dni ? { ...u, estado: nuevoEstado } : u
+                        ));
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al actualizar estado',
+                            text: error.response?.data || 'Ocurrió un error al cambiar el estado.',
+                        });
+                    });
+            } else {
+                // Si el usuario cancela el cambio
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Cambio cancelado',
+                    text: 'No se realizó ningún cambio en el estado del usuario.',
+                    showConfirmButton: false,
+                    timer: 2000,
+                });
+            }
+        });
+    };
+
     return (
         <div className="usuario-page">
             <h2 className='titulo-usuario'>Gestion de usuario</h2>
@@ -383,6 +480,19 @@ function Usuario() {
                             <div className="modal-content">
                                 <h3>CREAR USUARIO</h3>
                                 <form>
+                                    <div className="form-group">
+                                        <label>Nombre Rol:</label>
+                                        <select
+                                            name="nombreRol"
+                                            value={nuevoUsuario.nombreRol || ''}
+                                            onChange={manejarCambio} className='text-center'>
+                                            <option value="">Seleccione un rol</option>
+                                            {rolesActivos.map((rol, index) => (
+                                                <option key={rol.idRol || index} value={rol.nombreRol}>{rol.nombreRol}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
                                     <div className="form-group">
                                         <label>DNI:</label>
                                         <input type="text" name="dni" value={nuevoUsuario.dni} onChange={manejarCambio} />
@@ -445,23 +555,34 @@ function Usuario() {
             <table className='table table-primary table-hover table-bordered border-primary text-center tabla-usuario'>
                 <thead>
                     <tr>
+                        <th>Rol</th>
                         <th>Dni</th>
                         <th>Nombres Completo</th>
+                        <th>Nombre Usuario</th>
                         <th>Email Personal</th>
                         <th>Telefono</th>
+                        <th>Estado</th>
                         <th>Accion</th>
                     </tr>
                 </thead>
                 <tbody>
                     {Array.isArray(usuarios) && usuarios.length > 0 ? (
-
-
                         usuarios.map(usuario => (
                             <tr key={usuario.dni}>
+                                <td>{usuario.roles?.nombreRol}</td>
                                 <td>{usuario.dni}</td>
                                 <td>{`${usuario.nombre} ${usuario.apellidoPaterno} ${usuario.apellidoMaterno}`}</td>
+                                <td>{usuario.nombreUsuario}</td>
                                 <td>{usuario.email}</td>
                                 <td>{usuario.telefono}</td>
+                                <td className='tabla-estado-usuario'>
+                                    <button
+                                        className={`btn ${usuario.estado === 'Activo' ? 'btn-light' : 'btn-dark'}`}
+                                        onClick={() => ActualizarEstado(usuario)}
+                                    >
+                                        {usuario.estado}
+                                    </button>
+                                </td>
                                 <td>
                                     <button className='btn btn-primary btn-actualizar-usuario' onClick={() => abrirModalActualizar(usuario)}>Actualizar</button>
 
@@ -471,6 +592,22 @@ function Usuario() {
                                             <div className="modal-content">
                                                 <h3>ACTUALIZAR USUARIO</h3>
                                                 <form>
+                                                    <div className="form-group">
+                                                        <label>Nombre Rol:</label>
+                                                        <select
+                                                            name="nombreRol"
+                                                            value={usuarioSeleccionado.nombreRol || ''}
+                                                            onChange={manejarCambioActualizar} className='text-center'>
+                                                            {usuarioSeleccionado.nombreRol === '' && (
+                                                                <option value="">Seleccione un rol</option>
+                                                            )}
+                                                            {rolesActivos.map((rol, index) => (
+                                                                <option key={rol.idRol || index} value={rol.nombreRol}>
+                                                                    {rol.nombreRol}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
                                                     <div className="form-group">
                                                         <label>DNI:</label>
                                                         <input
@@ -539,7 +676,7 @@ function Usuario() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="6">No hay usuarios disponibles</td>
+                            <td colSpan="8">No hay usuarios disponibles</td>
                         </tr>
                     )}
                 </tbody>

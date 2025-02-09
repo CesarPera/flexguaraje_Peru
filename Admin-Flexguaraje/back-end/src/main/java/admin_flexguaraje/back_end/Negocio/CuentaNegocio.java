@@ -34,6 +34,10 @@ public class CuentaNegocio {
                 .orElseThrow(() -> new Exception("No se encontró una cuenta asociada al DNI: " + dni));
     }
 
+    public Cuenta guardarcuenta(Cuenta cuenta){
+        return cuentaRepositorio.save(cuenta);
+    }
+
     public Cuenta crearCuenta(String dni) throws Exception {
         // Buscar usuario por DNI y verificar su estado
         Usuario usuario = usuarioRepositorio.findByDni(dni)
@@ -106,5 +110,7 @@ public class CuentaNegocio {
         // Guardar la cuenta actualizada
         return cuentaRepositorio.save(cuenta);
     }
+
+
 
 }

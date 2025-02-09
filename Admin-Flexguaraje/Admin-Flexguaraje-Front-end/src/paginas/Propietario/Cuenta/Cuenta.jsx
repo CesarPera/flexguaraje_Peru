@@ -2,29 +2,11 @@ import { useState, useEffect } from "react";
 import "./Cuenta.css";
 import CuentaBD from "./BASE DE DATOS/CuentaBD";
 import Swal from 'sweetalert2';
-import { Eye, EyeOff } from 'lucide-react'; // Íconos para mostrar/ocultar contraseña
 
 function GestionCuentas() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [rolesActivos, setRolesActivos] = useState([]); // Nuevo estado para roles activos
     const [cuentas, setCuentas] = useState([]); // Lista de cuentas cargadas del backend
-    const [formData, setFormData] = useState({
-        dni: "",
-        contraseña: "",
-        rol: "Seleccionar"
-    });
-    const [passwordVisibility, setPasswordVisibility] = useState({
-        password: false,
-        oldPassword: false,
-        newPassword: false,
-        repeatPassword: false,
-    });
-    const togglePasswordVisibility = (field) => {
-        setPasswordVisibility((prevState) => ({
-            ...prevState,
-            [field]: !prevState[field],
-        }));
-    };
+    const [dni, setDni] = useState("");
 
     const fetchCuentas = async () => {
         try {
@@ -46,84 +28,41 @@ function GestionCuentas() {
         }
     };
 
-    const fetchRolesActivos = async () => {
-        try {
-            const response = await CuentaBD.obtenerRolesActivos();
-            setRolesActivos(response.data); // Guardar los roles activos
-        } catch (error) {
-            console.error("Error al obtener los roles activos:", error);
-            Swal.fire({
-                icon: "error",
-                title: "Error al cargar roles activos",
-                text: "No se pudieron cargar los roles activos desde el servidor.",
-            });
-        }
-    };
-
     useEffect(() => {
         fetchCuentas();
-        fetchRolesActivos(); // Cargar roles activos al montar el componente
     }, []);
-
-    // Maneja los cambios en el formulario de cuentas
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
 
     // Función para manejar la creación de cuenta (agregar la cuenta)
     const handleCrearCuenta = async () => {
-        const { dni, password, nombreRol } = formData;
-
-        if (!dni && !password && (!nombreRol || nombreRol === "Seleccionar")) {
+        if (!dni.trim()) {
             Swal.fire({
                 icon: "error",
-                title: "Formulario vacío",
-                text: "Por favor, completa todos los campos antes de enviar el formulario.", showConfirmButton: false,
+                title: "Error en el formulario",
+                text: "El campo DNI no puede estar vacío.",
+                showConfirmButton: false,
                 timer: 3000
             });
             return;
         }
 
-        const errores = [];
-
-        if (!nombreRol || nombreRol === "Seleccionar") {
-            errores.push("Tienes que seleccionar un Rol para la cuenta.");
-        }
-        if (!dni) {
-            errores.push("El campo DNI no puede ir vacío.");
-        } else if (!/^\d{8}$/.test(dni)) {
-            errores.push("El DNI debe contener exactamente 8 caracteres numéricos.");
-        }
-
-        const passwordRegex = /^(?=.*[A-ZÁÉÍÓÚáéíóúñÑ]{3,})(?=.*[0-9]{3,})(?=.*[!@#$%^&*()_\-+=]{2,})(?=.*[a-z]).{10,}$/;
-        if (!password) {
-            errores.push("El campo contraseña no puede ir vacío.");
-        } else if (!passwordRegex.test(password)) {
-            errores.push(
-                "La contraseña debe tener al menos 10 caracteres, incluyendo 3 mayúsculas, 3 números, 2 caracteres especiales y minúsculas."
-            );
-        }
-
-        if (errores.length > 0) {
+        if (!dni || !/\d{8}/.test(dni)) {
             Swal.fire({
                 icon: "error",
-                title: "Errores en el formulario",
-                html: errores.join("<br>"),
+                title: "Error en el formulario",
+                text: "El DNI debe contener exactamente 8 dígitos.",
+                showConfirmButton: false,
+                timer: 3000
             });
             return;
         }
 
         try {
-            await CuentaBD.crearCuenta(formData);
+            const response = await CuentaBD.crearCuenta({ dni });
             setIsModalOpen(false);
             Swal.fire({
                 icon: "success",
                 title: "Cuenta creada",
-                text: "La cuenta ha sido creada exitosamente.",
+                text: response.data,
                 showConfirmButton: false,
                 timer: 3000
             });
@@ -138,6 +77,57 @@ function GestionCuentas() {
         }
     };
 
+    const handleBuscarCuenta = async () => {
+        if (!dni.trim()) {
+            Swal.fire({
+                icon: "error",
+                title: "Error en la búsqueda",
+                text: "El campo DNI no puede estar vacío.",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        if (!/^\d{8}$/.test(dni.trim())) {
+            Swal.fire({
+                icon: "error",
+                title: "Error en la búsqueda",
+                text: "El DNI debe contener exactamente 8 caracteres numéricos.",
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: "Buscando cuenta...",
+            text: "Por favor espera mientras buscamos la cuenta.",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+        });
+
+        try {
+            const response = await CuentaBD.buscarCuenta({ dni });
+            Swal.close();
+            setCuentas([response.data]);
+            setDni("");
+
+        } catch (error) {
+            console.error("Error al buscar la cuenta:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Error al buscar cuenta",
+                text: error.response?.data || "No se pudo encontrar la cuenta.",
+            });
+        }
+    };
+
+    const handleNormalidad = () => {
+        setDni("");
+        fetchCuentas();
+    };
+
     const toggleEstado = async (cuenta, index) => {
         const dni = cuenta.usuario.dni; // Usamos el DNI del usuario
 
@@ -147,10 +137,8 @@ function GestionCuentas() {
             text: `La cuenta de ${cuenta.nombreUsuario} será ${cuenta.estado === "Activo" ? "desactivada" : "activada"}.`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Sí, continuar',
+            confirmButtonText: 'Sí, actualizar estado',
             cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
         });
 
         // Si el usuario confirma la acción
@@ -215,7 +203,7 @@ function GestionCuentas() {
             text: "Se actualizará automáticamente la contraseña de esta cuenta.",
             icon: "question",
             showCancelButton: true,
-            confirmButtonText: "Sí, actualizar",
+            confirmButtonText: "Sí, actualizar contraseña",
             cancelButtonText: "Cancelar",
             allowOutsideClick: false, // Evita clics fuera del modal
             allowEscapeKey: false, // Evita cerrar el modal con la tecla Esc
@@ -252,7 +240,6 @@ function GestionCuentas() {
                 timer: 3000
             });
             await fetchCuentas();
-            await fetchRolesActivos();
         } catch (error) {
             console.error("Error al actualizar la contraseña:", error);
             Swal.fire({
@@ -269,70 +256,56 @@ function GestionCuentas() {
                 <h2>Gestión de Cuentas</h2>
             </div>
 
-            <div className="botones-crear">
+            <div className="botones-acciones-cuenta">
                 <button className="crear-cuenta-btn btn btn-success" onClick={() => setIsModalOpen(true)}>
                     Crear Cuenta
                 </button>
-            </div>
 
-            {/* Modal para crear una nueva cuenta */}
-            {isModalOpen && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <h3>CREAR NUEVA CUENTA</h3>
-                        <div>
-                            <label>Rol:</label>
-                            <select name="nombreRol" value={formData.nombreRol} onChange={handleInputChange}>
-                                <option value="" className="text-center">Seleccionar</option>
-                                {rolesActivos.map((rol, index) => (
-                                    <option className="text-center" key={index} value={rol.nombreRol}>
-                                        {rol.nombreRol}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label>DNI:</label>
-                            <input
-                                type="text"
-                                name="dni"
-                                value={formData.dni}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-
-                        <div className="contraseña-visible-cuenta">
-                            <label>Contraseña:</label>
-                            <input
-                                type={passwordVisibility.password ? 'text' : 'password'}
-                                name="password"
-                                value={formData.password}
-                                onChange={handleInputChange}
-                            />
-                            <span
-                                className="password-toggle"
-                                onClick={() => togglePasswordVisibility('password')}
-                            >
-                                {passwordVisibility.password ? <EyeOff size={20} /> : <Eye size={20} />}
-                            </span>
-                        </div>
-
-                        <div className="modal-footer-cuenta">
-                            <button className="btn btn-success" onClick={handleCrearCuenta}>Crear</button>
-                            <button className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                {/* Modal para crear una nueva cuenta */}
+                {isModalOpen && (
+                    <div className="modal">
+                        <div className="modal-content">
+                            <h3>CREAR NUEVA CUENTA</h3>
+                            <div>
+                                <label>DNI:</label>
+                                <input
+                                    type="text"
+                                    name="dni"
+                                    onChange={(e) => setDni(e.target.value)}
+                                />
+                            </div>
+                            <div className="modal-footer-cuenta">
+                                <button className="btn btn-success" onClick={handleCrearCuenta}>Crear</button>
+                                <button className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                            </div>
                         </div>
                     </div>
+                )}
+
+                <div className="acciones-formulario-buscar">
+                    <input
+                        type="text"
+                        placeholder='Ingresar Dni'
+                        value={dni}
+                        onChange={(e) => setDni(e.target.value)}
+                    />
+                    <div className='btn-acciones-buscar'>
+                        <button className='btn btn-info' onClick={handleBuscarCuenta}>Buscar</button>
+                        <button className='btn btn-secondary' onClick={handleNormalidad}>
+                            Normalidad
+                        </button>
+                    </div>
                 </div>
-            )}
+            </div>
+
+
 
             <table className="table table-primary table-hover table-bordered border-primary text-center tabla-cuenta">
                 <thead>
                     <tr>
-                        <th>DNI</th>
                         <th>Rol</th>
-                        <th>Usuario</th>
-                        <th>Correo Electrónico</th>
+                        <th>DNI</th>
+                        <th>Correo de Empresa</th>
                         <th>Contraseña</th>
                         <th>Estado</th>
                         <th>Acciones</th>
@@ -342,9 +315,8 @@ function GestionCuentas() {
                     {Array.isArray(cuentas) && cuentas.length > 0 ? (
                         cuentas.map((cuenta, index) => (
                             <tr key={index}>
+                                <td>{cuenta.usuario?.roles?.nombreRol || 'Sin rol'}</td>
                                 <td>{cuenta.usuario.dni}</td>
-                                <td>{cuenta.roles ? cuenta.roles.nombreRol : 'Sin rol'}</td>
-                                <td>{cuenta.nombreUsuario}</td>
                                 <td>{cuenta.email}</td>
                                 <td>{cuenta.password} </td>
                                 <td className="tabla-cuenta-estado">
@@ -370,7 +342,7 @@ function GestionCuentas() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="7">No hay cuentas disponibles</td>
+                            <td colSpan="6">No hay cuentas disponibles</td>
                         </tr>
                     )}
                 </tbody>
