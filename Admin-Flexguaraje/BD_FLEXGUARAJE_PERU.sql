@@ -11,8 +11,7 @@ create table roles (
 );
 # DATOS PARA LA TABLA ROLES
 INSERT INTO roles (nombre_rol, estado) VALUES 
-('ADMINISTRADOR', 'Activo'),
-('PROPIETARIO', 'Activo');
+('ADMINISTRADOR', 'Activo'), ('PROPIETARIO', 'Activo'), ('MANTENIMIENTO', 'Activo');
 
 # TABLAAAAAAAA PERMISOSSSSSSSSSS
 create table permisos (
@@ -26,8 +25,7 @@ create table permisos (
 );
 # DATOS PARA LA TABLA PERMISOS.
 INSERT INTO permisos (id_roles, nombre_permiso, estado) VALUES 
-(1, 'GESTION', 'Activo'),
-(2, 'SUPERVISION', 'Activo');
+(1, 'GESTION', 'Activo'), (2, 'SUPERVISION', 'Activo'), (3, 'SOLUCIONAR PROBLEMA', 'Activo');
 
 # TABLA usuario ( administrador, propietario y otros)
 create table usuario (
@@ -58,6 +56,27 @@ create table cuenta (
 	CONSTRAINT valores_estado_cuenta CHECK (estado IN ('Activo', 'Desactivado')),
     constraint UQ_usuario_unico UNIQUE (id_usuario),
     constraint UQ_email_cuenta UNIQUE (email)
+);
+
+# TABLA REPORTESSSSSS
+
+create table reportes (
+	id_reportes int primary key auto_increment,
+    id_usuario int not null,
+    codigo_reporte varchar(15) not null,
+    fecha_reporte date not null,
+    descripcion_reporte varchar(255) not null,
+    encargado_resolver varchar(100) not null,
+    prioridad varchar(15) not null,
+    estado varchar(15) not null,
+    subestado varchar(15) not null,
+    fecha_respuesta_reporte date,
+    respuestas_reporte varchar(255),
+	CONSTRAINT FK_reporte_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
+    CONSTRAINT CHK_prioridad_R CHECK (prioridad IN ('Alto','Mediano','Bajo')),
+    CONSTRAINT CHK_estado_R CHECK (estado IN ('Cancelado','Pendiente','Cerrado')),
+    CONSTRAINT CHK_subestado_R CHECK (subestado IN ('Acodigo','No_acogido')),
+	CONSTRAINT UQ_codigo_reporte UNIQUE (codigo_reporte)
 );
 
 #TABLA CLIENTESSSSSSSSSSSS
@@ -99,6 +118,29 @@ INSERT INTO cliente (dni, nombre, apellido_paterno, apellido_materno, telefono, 
 ('77890123', 'KARINA', 'CHAVEZ', 'GARCIA', '988901234', 'karina.chavez@example.com', 'Jr. Los Jazmines 888, Ayacucho', 'Usuario con silla de ruedas'),
 ('88901234', 'HECTOR', 'MORALES', 'DIAZ', '999012345', 'hector.morales@example.com', 'Av. El Progreso 999, Cajamarca', 'Sin Discapacidad'),
 ('99012345', 'PAOLA', 'GARCIA', 'SANCHEZ', '910123456', 'paola.garcia@example.com', 'Jr. Las Margaritas 123, Iquitos', 'Sin Discapacidad');
+
+# TABLA SOLICITUDDDDDDDDDDDDDDD
+create table solicitudes (
+	id_solicitudes int primary key auto_increment,
+    id_cliente int not null,
+    codigo_solicitud varchar(15) not null,
+    fecha_solicitud date not null,
+    tipo_solicitud varchar(15) not null,
+    categoria varchar(15) not null,
+    descripcion varchar(255) not null,
+    prioridad varchar(15) not null,
+    estado varchar(15) not null,
+    subestado varchar(15) not null,
+    fecha_respuesta date,
+    respuestas varchar(255),
+	CONSTRAINT FK_solicitud_cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
+	CONSTRAINT CHK_tipo_solicitud CHECK (tipo_solicitud IN ('Consulta','Problema','Reclamo')),
+	CONSTRAINT CHK_categoria CHECK (categoria IN ('Cliente','Alquiler','Boleta')),
+    CONSTRAINT CHK_prioridad CHECK (prioridad IN ('Alto','Mediano','Bajo')),
+    CONSTRAINT CHK_estado CHECK (estado IN ('Cancelado','Pendiente','Cerrado')),
+    CONSTRAINT CHK_subestado CHECK (subestado IN ('Acodigo','No_acogido')),
+    CONSTRAINT UQ_codigo_solicitud UNIQUE (codigo_solicitud)
+);
 
 #TABLA ESPACIOSSSSS
 CREATE TABLE espacio (
@@ -166,8 +208,6 @@ CREATE TABLE boleta (
 );
 
 
-
-
 # ---------- CONSULTASSSSSSSSSS -----------
 use flexguaraje_peru;
 select * from roles; 
@@ -196,23 +236,30 @@ SELECT
     u.nombre AS nombre_usuario,
     u.apellido_paterno, 
     u.apellido_materno, 
-    c.nombre_usuario AS cuenta_usuario, 
+    u.nombre_usuario AS cuenta_usuario, 
     c.email AS cuenta_email,
     c.pass AS cuenta_contraseña,
     c.estado AS estado_cuenta
 FROM usuario u
 JOIN cuenta c ON u.id_usuario = c.id_usuario;
 
-# VISUALIZAR LOS DATOS COMBINADOS DE ROLES, PERMISOS Y CUENTA
-SELECT 
-    r.nombre_rol, 
-    p.nombre_permiso, 
-    c.nombre_usuario AS cuenta_usuario, 
-    c.email AS cuenta_email,
-	c.estado AS estado_cuenta
-FROM roles r
-JOIN permisos p ON r.id_roles = p.id_roles
-JOIN cuenta c ON r.id_roles = c.id_roles;
+# VISUALIZAR LOS DATOS COMBINADOS DE ROLES, PERMISOS, USUARIO Y CUENTA
+SELECT
+	usuario.dni,
+	roles.nombre_rol,
+    permisos.nombre_permiso,
+	usuario.nombre_usuario,
+    cuenta.email AS cuenta_email,
+    cuenta.estado AS cuenta_estado
+FROM 
+    cuenta
+JOIN 
+    usuario ON cuenta.id_usuario = usuario.id_usuario
+JOIN 
+    roles ON usuario.id_roles = roles.id_roles
+LEFT JOIN 
+    permisos ON permisos.id_roles = roles.id_roles;
+
 
 # VISUALIZAR LOS DATOS COMBINADOS DE ALQUILERES, CLIENTE Y ESPACIO
 SELECT 
@@ -245,18 +292,16 @@ LEFT JOIN
 LEFT JOIN 
     cliente c ON a.id_cliente = c.id_cliente;
 
-# VISUALIZAR DATOS COMBINADAS DE BOLETA, ALQUILERES Y CUENTA
+# VISUALIZAR DATOS COMBINADAS DE BOLETA Y ALQUILERES
 SELECT 
     b.codigo_boleta, 
     b.fecha_emision, 
     b.metodo_pago, 
     b.monto_pagar, 
     a.fecha_inicio_alquiler, 
-    a.fecha_fin_alquiler, 
-    c.nombre_usuario AS cuenta_usuario
+    a.fecha_fin_alquiler
 FROM boleta b
-JOIN alquileres a ON b.id_alquiler = a.id_alquiler
-JOIN cuenta c ON b.id_cuenta = c.id_cuenta;
+JOIN alquileres a ON b.id_alquiler = a.id_alquiler;
 
 
 
