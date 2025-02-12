@@ -73,9 +73,9 @@ create table reportes (
     fecha_respuesta_reporte date,
     respuestas_reporte varchar(255),
 	CONSTRAINT FK_reporte_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-    CONSTRAINT CHK_prioridad_R CHECK (prioridad IN ('Alto','Mediano','Bajo')),
+    CONSTRAINT CHK_prioridad_R CHECK (prioridad IN ('Baja','Media','Alta')),
     CONSTRAINT CHK_estado_R CHECK (estado IN ('Cancelado','Pendiente','Cerrado')),
-    CONSTRAINT CHK_subestado_R CHECK (subestado IN ('Acodigo','No_acogido')),
+    CONSTRAINT CHK_subestado_R CHECK (subestado IN ('Acogido','No_acogido')),
 	CONSTRAINT UQ_codigo_reporte UNIQUE (codigo_reporte)
 );
 
@@ -138,7 +138,7 @@ create table solicitudes (
 	CONSTRAINT CHK_categoria CHECK (categoria IN ('Cliente','Alquiler','Boleta')),
     CONSTRAINT CHK_prioridad CHECK (prioridad IN ('Alto','Mediano','Bajo')),
     CONSTRAINT CHK_estado CHECK (estado IN ('Cancelado','Pendiente','Cerrado')),
-    CONSTRAINT CHK_subestado CHECK (subestado IN ('Acodigo','No_acogido')),
+    CONSTRAINT CHK_subestado CHECK (subestado IN ('Acogido','No_acogido')),
     CONSTRAINT UQ_codigo_solicitud UNIQUE (codigo_solicitud)
 );
 
