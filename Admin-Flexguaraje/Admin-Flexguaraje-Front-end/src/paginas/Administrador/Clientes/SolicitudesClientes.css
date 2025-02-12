@@ -101,3 +101,55 @@
   display: grid;
   gap: 10px;
 }
+
+.btn-codigo {
+  background: none;
+  border: none;
+  border-bottom: 2px solid rgb(0, 0, 0);
+}
+
+.btn-codigo:hover {
+  color: rgb(9, 9, 165);
+  border-bottom: 2px solid rgb(9, 9, 165);
+}
+
+.modal-content-completo {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  text-align: center;
+  width: 90%;
+}
+
+.formulario-campos-completo {
+  display: flex;
+  justify-content: space-around;
+  gap: 30px;
+  width: 100%;
+  margin: 20px 0;
+}
+
+
+.campos-datos {
+  display: grid;
+  gap: 5px;
+  margin: 10px;
+}
+
+.titulo-completo-modal {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin: 0 auto;
+  vertical-align: middle;
+}
+
+.formulario-botones-completo .btn {
+  font-size: 20px;
+  font-weight: bolder;
+  padding: 10px;
+}

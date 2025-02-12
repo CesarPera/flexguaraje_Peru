@@ -9,6 +9,11 @@ function SolicitudesClientes() {
     const navigate = useNavigate(); // Inicializa el hook useNavigate
     const { cliente } = location.state || {};
     const [clienteActualizado, setClienteActualizado] = useState(cliente); // Inicializa con los datos actuales del cliente
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [mostrarFormularioACT, setMostrarFormularioACT] = useState(false);
+    const [mostrarFormularioRESPUESTA, setMostrarFormularioRESPUESTA] = useState(false);
+    const [mostrarFormularioCOMPLETO, setMostrarFormularioCOMPLETO] = useState(false);
+
 
     if (!cliente) {
         return <div className='solicitud-page'>
@@ -311,6 +316,264 @@ function SolicitudesClientes() {
 
                     </div>
                 </div>
+            </div>
+
+            <div className="solicitud-cliente">
+                <div className='button-acciones-permisos'>
+                    <button className='btn btn-success' onClick={() => setMostrarFormulario(true)}>Crear Solicitud</button>
+
+                    {mostrarFormulario && (
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <h3 className="text-center">CREAR NUEVA SOLICITUD</h3>
+                                <div className="formulario-campos">
+                                    <label>Tipo Solicitud:</label>
+                                    <select>
+                                        <option value="">Sin seleccionar</option>
+                                        <option value="">Consulta</option>
+                                        <option value="">Problema</option>
+                                        <option value="">Reclamo</option>
+                                    </select>
+                                    <label>Categoria:</label>
+                                    <select>
+                                        <option value="">Sin seleccionar</option>
+                                        <option value="">Espacio</option>
+                                        <option value="">Cliente</option>
+                                        <option value="">Alquiler</option>
+                                        <option value="">Boleta</option>
+                                    </select>
+                                    <label>Descripción:</label>
+                                    <input
+                                        type="text"
+                                        name="apellido_paterno"
+                                        required
+                                    />
+                                    <label>Prioridad:</label>
+                                    <select>
+                                        <option value="">Sin seleccionar</option>
+                                        <option value="">Baja</option>
+                                        <option value="">Media</option>
+                                        <option value="">Alta</option>
+                                    </select>
+                                    <label>Estado:</label>
+                                    <select>
+                                        <option value="">Sin seleccionar</option>
+                                        <option value="">Cancelado</option>
+                                        <option value="">Pendiente</option>
+                                        <option value="">Cerrado</option>
+                                    </select>
+                                    <label>Sub estado:</label>
+                                    <select>
+                                        <option value="">Sin seleccionar</option>
+                                        <option value="">Acogido</option>
+                                        <option value="">No_acogido</option>
+                                    </select>
+                                </div>
+
+                                <div className="formulario-botones">
+                                    <button className="btn btn-success">Crear</button>
+                                    <button className="btn btn-secondary" onClick={() => setMostrarFormulario(false)}>Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <table className='table table-primary table-hover table-bordered border-primary text-center tabla-espacios'>
+                    <thead>
+                        <tr>
+                            <th>codigo Solicitud</th>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Categoria</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>Sub estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>
+                                <button className='btn-codigo' onClick={() => setMostrarFormularioCOMPLETO(true)}>SLT-12345678901</button>
+
+                                {mostrarFormularioCOMPLETO && (
+                                    <div className="modal-overlay">
+                                        <div className="modal-content-completo">
+                                            <div className='titulo-completo-modal'>
+                                                <h3 className="text-center">INFORMACIÓN COMPLETO DE LA SOLICITUD</h3>
+
+                                            </div>
+
+                                            <div className="formulario-campos-completo">
+                                                <div>
+                                                    <div className='campos-datos'>
+                                                        <label>Codigo Solicitud:</label>
+                                                        <input
+                                                            type="text"
+                                                            name="apellido_paterno"
+                                                            disabled
+                                                        />
+                                                    </div>
+                                                    <div className='campos-datos'>
+                                                        <label>Tipo:</label>
+                                                        <input
+                                                            type="text"
+                                                            disabled
+                                                        />
+                                                    </div>
+                                                    <div className='campos-datos'>
+                                                        <label>Categoria:</label>
+                                                        <input
+                                                            type="text"
+                                                            disabled
+                                                        />
+                                                    </div>
+                                                    <div className='campos-datos'>
+                                                        <label>Prioridad:</label>
+                                                        <input
+                                                            type="text"
+                                                            disabled
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div className='campos-datos'>
+                                                        <label>Fecha Solicitud:</label>
+                                                        <input
+                                                            type="text"
+                                                            name="apellido_paterno"
+                                                            disabled
+                                                        />
+                                                    </div>
+                                                    <div className='campos-datos'>
+                                                        <label>Descripción:</label>
+                                                        <input
+                                                            type="text"
+                                                            name="apellido_paterno"
+                                                            disabled
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div className='campos-datos'>
+                                                        <label>Fecha Respuesta:</label>
+                                                        <input
+                                                            type="text"
+                                                            name="apellido_paterno"
+                                                            disabled
+                                                        />
+                                                    </div>
+                                                    <div className='campos-datos'>
+                                                        <label>Respuesta:</label>
+                                                        <input
+                                                            type="text"
+                                                            disabled
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div >
+                                                    <div className='campos-datos'>
+                                                        <label>Estado:</label>
+                                                        <input
+                                                            type="text"
+                                                            disabled
+                                                        />
+                                                    </div>
+                                                    <div className='campos-datos'>
+                                                        <label>Sub estado:</label>
+                                                        <input
+                                                            type="text"
+                                                            disabled
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="formulario-botones-completo">
+                                                <button className="btn btn-secondary" onClick={() => setMostrarFormularioCOMPLETO(false)}>Volver</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </td>
+                            <td>12/02/2025</td>
+                            <td>Consulta</td>
+                            <td>Alquiler</td>
+                            <td>Baja</td>
+                            <td>Cerrado</td>
+                            <td>Acogido</td>
+                            <td className='tabla-acciones-permisos'>
+                                <button className='btn btn-primary' onClick={() => setMostrarFormularioACT(true)}>Actualizar</button>
+
+                                {mostrarFormularioACT && (
+                                    <div className="modal-overlay">
+                                        <div className="modal-content">
+                                            <h3 className="text-center">ACTUALIZAR SOLICITUD</h3>
+                                            <div className="formulario-campos">
+                                                <label>Descripción:</label>
+                                                <input
+                                                    type="text"
+                                                    name="apellido_paterno"
+                                                    required
+                                                />
+                                                <label>Prioridad:</label>
+                                                <select>
+                                                    <option value="">Sin seleccionar</option>
+                                                    <option value="">Baja</option>
+                                                    <option value="">Media</option>
+                                                    <option value="">Alta</option>
+                                                </select>
+                                                <label>Estado:</label>
+                                                <select>
+                                                    <option value="">Sin seleccionar</option>
+                                                    <option value="">Cancelado</option>
+                                                    <option value="">Pendiente</option>
+                                                    <option value="">Cerrado</option>
+                                                </select>
+                                                <label>Sub estado:</label>
+                                                <select>
+                                                    <option value="">Sin seleccionar</option>
+                                                    <option value="">Acogido</option>
+                                                    <option value="">No_acogido</option>
+                                                </select>
+                                            </div>
+
+                                            <div className="formulario-botones">
+                                                <button className="btn btn-primary">Actualizar</button>
+                                                <button className="btn btn-secondary" onClick={() => setMostrarFormularioACT(false)}>Cancelar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                <button className='btn btn-success' onClick={() => setMostrarFormularioRESPUESTA(true)}>Responder</button>
+
+                                {mostrarFormularioRESPUESTA && (
+                                    <div className="modal-overlay">
+                                        <div className="modal-content">
+                                            <h3 className="text-center">RESPONDER SOLICITUD</h3>
+                                            <div className="formulario-campos">
+                                                <label>Respuesta:</label>
+                                                <input
+                                                    type="text"
+                                                    name="apellido_paterno"
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="formulario-botones">
+                                                <button className="btn btn-success">Responder</button>
+                                                <button className="btn btn-secondary" onClick={() => setMostrarFormularioRESPUESTA(false)}>Cancelar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     );
