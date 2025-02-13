@@ -47,7 +47,7 @@ public class SolicitudControlador {
             }
 
             // Convertir Strings a Enums
-            Solicitudes.tipoSolicitud tipoSolicitud = Solicitudes.tipoSolicitud.valueOf(tipoSolicitudStr);
+            Solicitudes.TipoSolicitud tipoSolicitud = Solicitudes.TipoSolicitud.valueOf(tipoSolicitudStr);
             Solicitudes.Categoria categoria = Solicitudes.Categoria.valueOf(categoriaStr);
             Solicitudes.Prioridad prioridad = Solicitudes.Prioridad.valueOf(prioridadStr);
             Solicitudes.Estado estado = Solicitudes.Estado.valueOf(estadoStr);

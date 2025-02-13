@@ -1,59 +1,59 @@
 package admin_flexguaraje.back_end.Modelo;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "solicitudes",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "codigo_solicitud")})
+@Table(name = "solicitudes", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "codigo_solicitud")
+})
 public class Solicitudes {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_solicitudes")
     private Long idSolicitud;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_cliente", nullable = false,
-            foreignKey = @ForeignKey(name = "FK_solicitud_cliente"))
+    @JoinColumn(name = "id_cliente", nullable = false, foreignKey = @ForeignKey(name = "FK_solicitud_cliente"))
     private Cliente cliente;
 
     @Column(name = "codigo_solicitud", nullable = false, length = 15)
-    private String CodigoSolicitud; // AUTOMATICO
+    private String codigoSolicitud; // AUTOMATICO
 
     @Column(name = "fecha_solicitud", nullable = false)
-    private LocalDate FechaSolicitud; // AUTOMATICO
+    private LocalDate fechaSolicitud; // AUTOMATICO
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_solicitud", nullable = false, length = 15)
-    private tipoSolicitud TipoSolicitud;
+    private TipoSolicitud tipoSolicitud;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "categoria", nullable = false, length = 15)
-    private Categoria Categoria;
+    private Categoria categoria;
 
     @Column(name = "descripcion", nullable = false, length = 255)
-    private String Descripcion;
+    private String descripcion;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "prioridad", nullable = false, length = 15)
-    private Prioridad Prioridad;
+    private Prioridad prioridad;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 15)
-    private Estado Estado;
+    private Estado estado;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "subestado", length = 15)
-    private Subestado Subestado;
+    private Subestado subestado;
 
     @Column(name = "fecha_respuesta")
-    private LocalDate FechaRespuesta; // AUTOMATICO
+    private LocalDate fechaRespuesta; // AUTOMATICO
 
     @Column(name = "respuestas", length = 255)
-    private String Respuesta;
+    private String respuesta;
 
+    // Getters y Setters
     public Long getIdSolicitud() {
         return idSolicitud;
     }
@@ -70,87 +70,88 @@ public class Solicitudes {
         this.cliente = cliente;
     }
 
-    public LocalDate getFechaSolicitud() {
-        return FechaSolicitud;
-    }
-
-    public void setFechaSolicitud(LocalDate fechaSolicitud) {
-        FechaSolicitud = fechaSolicitud;
-    }
-
     public String getCodigoSolicitud() {
-        return CodigoSolicitud;
+        return codigoSolicitud;
     }
 
     public void setCodigoSolicitud(String codigoSolicitud) {
-        CodigoSolicitud = codigoSolicitud;
+        this.codigoSolicitud = codigoSolicitud;
     }
 
-    public tipoSolicitud getTipoSolicitud() {
-        return TipoSolicitud;
+    public LocalDate getFechaSolicitud() {
+        return fechaSolicitud;
     }
 
-    public void setTipoSolicitud(tipoSolicitud tipoSolicitud) {
-        TipoSolicitud = tipoSolicitud;
+    public void setFechaSolicitud(LocalDate fechaSolicitud) {
+        this.fechaSolicitud = fechaSolicitud;
+    }
+
+    public TipoSolicitud getTipoSolicitud() {
+        return tipoSolicitud;
+    }
+
+    public void setTipoSolicitud(TipoSolicitud tipoSolicitud) {
+        this.tipoSolicitud = tipoSolicitud;
     }
 
     public Categoria getCategoria() {
-        return Categoria;
+        return categoria;
     }
 
     public void setCategoria(Categoria categoria) {
-        Categoria = categoria;
+        this.categoria = categoria;
     }
 
     public String getDescripcion() {
-        return Descripcion;
+        return descripcion;
     }
 
     public void setDescripcion(String descripcion) {
-        Descripcion = descripcion;
+        this.descripcion = descripcion;
     }
 
     public Prioridad getPrioridad() {
-        return Prioridad;
+        return prioridad;
     }
 
     public void setPrioridad(Prioridad prioridad) {
-        Prioridad = prioridad;
+        this.prioridad = prioridad;
     }
 
     public Estado getEstado() {
-        return Estado;
+        return estado;
     }
 
     public void setEstado(Estado estado) {
-        Estado = estado;
+        this.estado = estado;
     }
 
     public Subestado getSubestado() {
-        return Subestado;
+        return subestado;
     }
 
     public void setSubestado(Subestado subestado) {
-        Subestado = subestado;
+        this.subestado = subestado;
     }
 
     public LocalDate getFechaRespuesta() {
-        return FechaRespuesta;
+        return fechaRespuesta;
     }
 
     public void setFechaRespuesta(LocalDate fechaRespuesta) {
-        FechaRespuesta = fechaRespuesta;
+        this.fechaRespuesta = fechaRespuesta;
     }
 
     public String getRespuesta() {
-        return Respuesta;
+        return respuesta;
     }
 
     public void setRespuesta(String respuesta) {
-        Respuesta = respuesta;
+        this.respuesta = respuesta;
     }
 
-    public enum tipoSolicitud {
+    // Enums
+    public enum TipoSolicitud {
         Consulta,
         Problema,
         Reclamo
@@ -158,15 +159,14 @@ public class Solicitudes {
 
     public enum Categoria {
         Cliente,
-        Espacio,
         Alquiler,
         Boleta
     }
 
     public enum Prioridad {
         Bajo,
-        Mediano,
-        Alta
+        Media,
+        Alto
     }
 
     public enum Estado {
@@ -180,4 +180,21 @@ public class Solicitudes {
         No_acogido
     }
 
+    @Override
+    public String toString() {
+        return "Solicitud{" +
+                "idSolicitud=" + idSolicitud +
+                ", cliente=" + cliente +
+                ", codigoSolicitud='" + codigoSolicitud + '\'' +
+                ", fechaSolicitud=" + fechaSolicitud +
+                ", tipoSolicitud=" + tipoSolicitud +
+                ", categoria=" + categoria +
+                ", descripcion='" + descripcion + '\'' +
+                ", prioridad=" + prioridad +
+                ", estado=" + estado +
+                ", subestado=" + subestado +
+                ", fechaRespuesta=" + fechaRespuesta +
+                ", respuesta='" + respuesta + '\'' +
+                '}';
+    }
 }

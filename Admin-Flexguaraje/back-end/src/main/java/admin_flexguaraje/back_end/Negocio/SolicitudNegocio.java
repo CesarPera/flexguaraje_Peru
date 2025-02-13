@@ -32,7 +32,7 @@ public class SolicitudNegocio {
 
     // Crear una nueva solicitud
     public Solicitudes crearSolicitud(
-            Solicitudes.tipoSolicitud tipoSolicitud,
+            Solicitudes.TipoSolicitud tipoSolicitud,
             Solicitudes.Categoria categoria,
             Cliente cliente,
             String descripcion,
