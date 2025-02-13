@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 @RestController
 @RequestMapping("/solicitudes")
@@ -94,7 +97,7 @@ public class SolicitudControlador {
                 return ResponseEntity.badRequest().body(Map.of("message", "Solicitud con código " + CodigoSolicitud + " no encontrada."));
             }
             if (solicitudExistente.get().getEstado() != Solicitudes.Estado.Pendiente) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Solo se pueden actualizar solicitudes con estado 'Pendiente'."));
+                return ResponseEntity.badRequest().body(Map.of("message", "Solo se pueden actualizar solicitudes con estado 'Pendiente'." ));
             }
 
             // Obtener datos para la actualización
@@ -124,4 +127,43 @@ public class SolicitudControlador {
             return ResponseEntity.status(500).body(Map.of("message", "Error al actualizar la solicitud", "error", e.getMessage()));
         }
     }
+
+    // Nuevo método para crear respuesta y cerrar solicitud
+    @PostMapping("/crear_respuesta")
+    public ResponseEntity<Object> crearRespuesta(@RequestBody Map<String, Object> body) {
+        try {
+            String codigoSolicitud = body.get("codigoSolicitud").toString();
+            String respuesta = body.get("respuesta").toString();
+
+            // Buscar la solicitud por código y verificar que esté en estado Pendiente
+            Optional<Solicitudes> solicitudExistente = solicitudNegocio.obtenerSolicitudPorCodigo(codigoSolicitud);
+            if (solicitudExistente.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Solicitud con código " + codigoSolicitud + " no encontrada."));
+            }
+            if (solicitudExistente.get().getEstado() != Solicitudes.Estado.Pendiente) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Solo se pueden responder solicitudes con estado 'Pendiente'." ));
+            }
+
+            // Actualizar la solicitud con la respuesta, cambiar su estado a Cerrado y asignar fechaRespuesta
+            Solicitudes solicitud = solicitudExistente.get();
+            solicitud.setRespuesta(respuesta); // Asignamos la respuesta
+            solicitud.setEstado(Solicitudes.Estado.Cerrado); // Cambiamos el estado a Cerrado
+
+            // Convertir java.util.Date a java.time.LocalDate
+            Date fechaRespuesta = new Date();
+            LocalDate fechaRespuestaLocalDate = fechaRespuesta.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+
+            solicitud.setFechaRespuesta(fechaRespuestaLocalDate); // Asignamos la fecha convertida
+
+            // Guardar la solicitud actualizada
+            Solicitudes solicitudActualizada = solicitudNegocio.actualizarSolicitud(solicitud);
+
+            return ResponseEntity.ok(Map.of("message", "Respuesta registrada y solicitud cerrada exitosamente", "idSolicitud", solicitudActualizada.getIdSolicitud()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("message", "Error al registrar la respuesta", "error", e.getMessage()));
+        }
+    }
+
 }

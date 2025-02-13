@@ -53,7 +53,6 @@ public class Solicitudes {
     @Column(name = "respuestas", length = 255)
     private String respuesta;
 
-    // Getters y Setters
     public Long getIdSolicitud() {
         return idSolicitud;
     }
@@ -62,76 +61,12 @@ public class Solicitudes {
         this.idSolicitud = idSolicitud;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public String getRespuesta() {
+        return respuesta;
     }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public String getCodigoSolicitud() {
-        return codigoSolicitud;
-    }
-
-    public void setCodigoSolicitud(String codigoSolicitud) {
-        this.codigoSolicitud = codigoSolicitud;
-    }
-
-    public LocalDate getFechaSolicitud() {
-        return FechaSolicitud;
-    }
-
-    public void setFechaSolicitud(LocalDate fechaSolicitud) {
-        FechaSolicitud = fechaSolicitud;
-    }
-
-    public tipoSolicitud getTipoSolicitud() {
-        return TipoSolicitud;
-    }
-
-    public void setTipoSolicitud(TipoSolicitud tipoSolicitud) {
-        this.tipoSolicitud = tipoSolicitud;
-    }
-
-    public Solicitudes.Categoria getCategoria() {
-        return Categoria;
-    }
-
-    public void setCategoria(Solicitudes.Categoria categoria) {
-        Categoria = categoria;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public Solicitudes.Prioridad getPrioridad() {
-        return Prioridad;
-    }
-
-    public void setPrioridad(Solicitudes.Prioridad prioridad) {
-        Prioridad = prioridad;
-    }
-
-    public Solicitudes.Estado getEstado() {
-        return Estado;
-    }
-
-    public void setEstado(Solicitudes.Estado estado) {
-        Estado = estado;
-    }
-
-    public Solicitudes.Subestado getSubestado() {
-        return Subestado;
-    }
-
-    public void setSubestado(Solicitudes.Subestado subestado) {
-        Subestado = subestado;
+    public void setRespuesta(String respuesta) {
+        this.respuesta = respuesta;
     }
 
     public LocalDate getFechaRespuesta() {
@@ -142,12 +77,76 @@ public class Solicitudes {
         this.fechaRespuesta = fechaRespuesta;
     }
 
-    public String getRespuesta() {
-        return respuesta;
+    public Subestado getSubestado() {
+        return subestado;
     }
 
-    public void setRespuesta(String respuesta) {
-        this.respuesta = respuesta;
+    public void setSubestado(Subestado subestado) {
+        this.subestado = subestado;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
+
+    public Prioridad getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(Prioridad prioridad) {
+        this.prioridad = prioridad;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    public TipoSolicitud getTipoSolicitud() {
+        return tipoSolicitud;
+    }
+
+    public void setTipoSolicitud(TipoSolicitud tipoSolicitud) {
+        this.tipoSolicitud = tipoSolicitud;
+    }
+
+    public LocalDate getFechaSolicitud() {
+        return fechaSolicitud;
+    }
+
+    public void setFechaSolicitud(LocalDate fechaSolicitud) {
+        this.fechaSolicitud = fechaSolicitud;
+    }
+
+    public String getCodigoSolicitud() {
+        return codigoSolicitud;
+    }
+
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        this.codigoSolicitud = codigoSolicitud;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     // Enums
@@ -180,21 +179,5 @@ public class Solicitudes {
         No_acogido
     }
 
-    @Override
-    public String toString() {
-        return "Solicitud{" +
-                "idSolicitud=" + idSolicitud +
-                ", cliente=" + cliente +
-                ", codigoSolicitud='" + codigoSolicitud + '\'' +
-                ", fechaSolicitud=" + fechaSolicitud +
-                ", tipoSolicitud=" + tipoSolicitud +
-                ", categoria=" + categoria +
-                ", descripcion='" + descripcion + '\'' +
-                ", prioridad=" + prioridad +
-                ", estado=" + estado +
-                ", subestado=" + subestado +
-                ", fechaRespuesta=" + fechaRespuesta +
-                ", respuesta='" + respuesta + '\'' +
-                '}';
-    }
+
 }
