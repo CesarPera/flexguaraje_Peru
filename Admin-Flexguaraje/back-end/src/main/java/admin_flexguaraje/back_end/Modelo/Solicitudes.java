@@ -45,7 +45,7 @@ public class Solicitudes {
     private Estado Estado;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "subestado", nullable = false, length = 15)
+    @Column(name = "subestado", length = 15)
     private Subestado Subestado;
 
     @Column(name = "fecha_respuesta")

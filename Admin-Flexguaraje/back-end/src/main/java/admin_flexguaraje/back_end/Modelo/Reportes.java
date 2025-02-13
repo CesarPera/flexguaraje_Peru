@@ -42,7 +42,7 @@ public class Reportes {
     private EstadoR Estado;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "subestado", nullable = false, length = 15)
+    @Column(name = "subestado", length = 15)
     private SubestadoR Subestado;
 
     @Column(name = "fecha_respuesta_reporte")
