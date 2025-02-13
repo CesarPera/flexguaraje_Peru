@@ -32,7 +32,7 @@ public class SolicitudNegocio {
 
     // Crear una nueva solicitud
     public Solicitudes crearSolicitud(
-            Solicitudes.TipoSolicitud tipoSolicitud,
+            Solicitudes.tipoSolicitud tipoSolicitud,
             Solicitudes.Categoria categoria,
             Cliente cliente,
             String descripcion,
@@ -94,12 +94,12 @@ public class SolicitudNegocio {
     }
 
     // Obtener una solicitud por su código
-    public Optional<Solicitudes> obtenerSolicitudPorCodigo(String codigoSolicitud) {
+    public Optional<Solicitudes> obtenerSolicitudPorCodigo(String CodigoSolicitud) {
         try {
-            return solicitudesRepositorio.findByCodigoSolicitud(codigoSolicitud);
+            return solicitudesRepositorio.findByCodigoSolicitud(CodigoSolicitud);
         } catch (Exception e) {
-            logger.error("Error al obtener solicitud con código {}: {}", codigoSolicitud, e.getMessage());
-            throw new RuntimeException("No se pudo obtener la solicitud con el código: " + codigoSolicitud);
+            logger.error("Error al obtener solicitud con código {}: {}", CodigoSolicitud, e.getMessage());
+            throw new RuntimeException("No se pudo obtener la solicitud con el código: " + CodigoSolicitud);
         }
     }
 

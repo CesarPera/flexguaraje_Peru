@@ -70,20 +70,20 @@ public class Solicitudes {
         this.cliente = cliente;
     }
 
-    public String getCodigoSolicitud() {
-        return CodigoSolicitud;
-    }
-
-    public void setCodigoSolicitud(String codigoSolicitud) {
-        CodigoSolicitud = codigoSolicitud;
-    }
-
     public LocalDate getFechaSolicitud() {
         return FechaSolicitud;
     }
 
     public void setFechaSolicitud(LocalDate fechaSolicitud) {
         FechaSolicitud = fechaSolicitud;
+    }
+
+    public String getCodigoSolicitud() {
+        return CodigoSolicitud;
+    }
+
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        CodigoSolicitud = codigoSolicitud;
     }
 
     public tipoSolicitud getTipoSolicitud() {
@@ -94,11 +94,11 @@ public class Solicitudes {
         TipoSolicitud = tipoSolicitud;
     }
 
-    public Solicitudes.Categoria getCategoria() {
+    public Categoria getCategoria() {
         return Categoria;
     }
 
-    public void setCategoria(Solicitudes.Categoria categoria) {
+    public void setCategoria(Categoria categoria) {
         Categoria = categoria;
     }
 
@@ -110,27 +110,27 @@ public class Solicitudes {
         Descripcion = descripcion;
     }
 
-    public Solicitudes.Prioridad getPrioridad() {
+    public Prioridad getPrioridad() {
         return Prioridad;
     }
 
-    public void setPrioridad(Solicitudes.Prioridad prioridad) {
+    public void setPrioridad(Prioridad prioridad) {
         Prioridad = prioridad;
     }
 
-    public Solicitudes.Estado getEstado() {
+    public Estado getEstado() {
         return Estado;
     }
 
-    public void setEstado(Solicitudes.Estado estado) {
+    public void setEstado(Estado estado) {
         Estado = estado;
     }
 
-    public Solicitudes.Subestado getSubestado() {
+    public Subestado getSubestado() {
         return Subestado;
     }
 
-    public void setSubestado(Solicitudes.Subestado subestado) {
+    public void setSubestado(Subestado subestado) {
         Subestado = subestado;
     }
 
@@ -164,8 +164,8 @@ public class Solicitudes {
     }
 
     public enum Prioridad {
-        Baja,
-        Media,
+        Bajo,
+        Mediano,
         Alta
     }
 

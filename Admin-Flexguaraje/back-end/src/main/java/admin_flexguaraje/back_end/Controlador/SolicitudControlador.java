@@ -47,7 +47,7 @@ public class SolicitudControlador {
             }
 
             // Convertir Strings a Enums
-            Solicitudes.TipoSolicitud tipoSolicitud = Solicitudes.TipoSolicitud.valueOf(tipoSolicitudStr);
+            Solicitudes.tipoSolicitud tipoSolicitud = Solicitudes.tipoSolicitud.valueOf(tipoSolicitudStr);
             Solicitudes.Categoria categoria = Solicitudes.Categoria.valueOf(categoriaStr);
             Solicitudes.Prioridad prioridad = Solicitudes.Prioridad.valueOf(prioridadStr);
             Solicitudes.Estado estado = Solicitudes.Estado.valueOf(estadoStr);
@@ -86,12 +86,12 @@ public class SolicitudControlador {
     public ResponseEntity<Object> actualizarSolicitud(@RequestBody Map<String, Object> body) {
         try {
             // Obtener el codigo_solicitud desde el body
-            String codigoSolicitud = body.get("codigoSolicitud").toString();
+            String CodigoSolicitud = body.get("codigoSolicitud").toString();
 
             // Buscar solicitud por codigo_solicitud y verificar que esté en estado Pendiente
-            Optional<Solicitudes> solicitudExistente = solicitudNegocio.obtenerSolicitudPorCodigo(codigoSolicitud);
+            Optional<Solicitudes> solicitudExistente = solicitudNegocio.obtenerSolicitudPorCodigo(CodigoSolicitud);
             if (solicitudExistente.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Solicitud con código " + codigoSolicitud + " no encontrada."));
+                return ResponseEntity.badRequest().body(Map.of("message", "Solicitud con código " + CodigoSolicitud + " no encontrada."));
             }
             if (solicitudExistente.get().getEstado() != Solicitudes.Estado.Pendiente) {
                 return ResponseEntity.badRequest().body(Map.of("message", "Solo se pueden actualizar solicitudes con estado 'Pendiente'."));
