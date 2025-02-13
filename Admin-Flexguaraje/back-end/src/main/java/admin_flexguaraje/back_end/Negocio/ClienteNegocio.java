@@ -62,4 +62,11 @@ public class ClienteNegocio {
         return clienteRepositorio.save(clienteExistente);
     }
 
+    public Cliente buscarClientePorDni(String dni) {
+        Cliente cliente = clienteRepositorio.findByDni(dni);
+        if (cliente == null) {
+            throw new IllegalArgumentException("No se encontró un cliente con el DNI: " + dni);
+        }
+        return cliente;
+    }
 }
