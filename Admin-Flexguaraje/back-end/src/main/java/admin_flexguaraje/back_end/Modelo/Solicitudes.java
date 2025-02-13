@@ -158,6 +158,7 @@ public class Solicitudes {
 
     public enum Categoria {
         Cliente,
+        Espacio,
         Alquiler,
         Boleta
     }
