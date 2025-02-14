@@ -20,7 +20,7 @@ public class Solicitudes {
     private Cliente cliente;
 
     @Column(name = "codigo_solicitud", nullable = false, length = 15)
-    private String CodigoSolicitud; // AUTOMATICO
+    private String codigoSolicitud; // AUTOMATICO
 
     @Column(name = "fecha_solicitud", nullable = false)
     private LocalDate FechaSolicitud; // AUTOMATICO
@@ -70,20 +70,20 @@ public class Solicitudes {
         this.cliente = cliente;
     }
 
+    public String getCodigoSolicitud() {
+        return codigoSolicitud;
+    }
+
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        this.codigoSolicitud = codigoSolicitud;
+    }
+
     public LocalDate getFechaSolicitud() {
         return FechaSolicitud;
     }
 
     public void setFechaSolicitud(LocalDate fechaSolicitud) {
         FechaSolicitud = fechaSolicitud;
-    }
-
-    public String getCodigoSolicitud() {
-        return CodigoSolicitud;
-    }
-
-    public void setCodigoSolicitud(String codigoSolicitud) {
-        CodigoSolicitud = codigoSolicitud;
     }
 
     public tipoSolicitud getTipoSolicitud() {
@@ -94,11 +94,11 @@ public class Solicitudes {
         TipoSolicitud = tipoSolicitud;
     }
 
-    public Categoria getCategoria() {
+    public Solicitudes.Categoria getCategoria() {
         return Categoria;
     }
 
-    public void setCategoria(Categoria categoria) {
+    public void setCategoria(Solicitudes.Categoria categoria) {
         Categoria = categoria;
     }
 
@@ -110,27 +110,27 @@ public class Solicitudes {
         Descripcion = descripcion;
     }
 
-    public Prioridad getPrioridad() {
+    public Solicitudes.Prioridad getPrioridad() {
         return Prioridad;
     }
 
-    public void setPrioridad(Prioridad prioridad) {
+    public void setPrioridad(Solicitudes.Prioridad prioridad) {
         Prioridad = prioridad;
     }
 
-    public Estado getEstado() {
+    public Solicitudes.Estado getEstado() {
         return Estado;
     }
 
-    public void setEstado(Estado estado) {
+    public void setEstado(Solicitudes.Estado estado) {
         Estado = estado;
     }
 
-    public Subestado getSubestado() {
+    public Solicitudes.Subestado getSubestado() {
         return Subestado;
     }
 
-    public void setSubestado(Subestado subestado) {
+    public void setSubestado(Solicitudes.Subestado subestado) {
         Subestado = subestado;
     }
 

@@ -8,10 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface SolicitudesRepositorio extends JpaRepository<Solicitudes, Long> {
-
-    // Método para encontrar una solicitud por su código único
     Optional<Solicitudes> findByCodigoSolicitud(String CodigoSolicitud);
-
-    // No es necesario agregar un método de actualización explícito,
-    // porque JpaRepository ya proporciona el método save() que maneja las actualizaciones
 }
