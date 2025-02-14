@@ -141,7 +141,7 @@ public class Reportes {
 
     public enum PrioridadR {
         Alto,
-        Mediano,
+        Media,
         Bajo
     }
 
