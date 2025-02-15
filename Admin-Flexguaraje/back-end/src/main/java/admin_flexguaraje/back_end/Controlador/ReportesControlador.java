@@ -37,7 +37,7 @@ public class ReportesControlador {
         );
 
         return ResponseEntity.ok(nuevoReporte);
-    } 
+    }
 
     @PostMapping("/buscar_reporte")
     public ResponseEntity<Reportes> obtenerReporte(@RequestBody Map<String, String> requestBody) {

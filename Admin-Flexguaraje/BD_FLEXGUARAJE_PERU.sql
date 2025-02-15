@@ -136,7 +136,7 @@ create table solicitudes (
 	CONSTRAINT FK_solicitud_cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
 	CONSTRAINT CHK_tipo_solicitud CHECK (tipo_solicitud IN ('Consulta','Problema','Reclamo')),
 	CONSTRAINT CHK_categoria CHECK (categoria IN ('Cliente','Espacio','Alquiler','Boleta')),
-    CONSTRAINT CHK_prioridad CHECK (prioridad IN ('Alto','Mediano','Bajo')),
+    CONSTRAINT CHK_prioridad CHECK (prioridad IN ('Alto','Media','Bajo')),
     CONSTRAINT CHK_estado CHECK (estado IN ('Cancelado','Pendiente','Cerrado')),
     CONSTRAINT CHK_subestado CHECK (subestado IN ('Acogido','No_acogido')),
     CONSTRAINT UQ_codigo_solicitud UNIQUE (codigo_solicitud)

@@ -1,58 +1,57 @@
 package admin_flexguaraje.back_end.Modelo;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "solicitudes",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "codigo_solicitud")})
+@Table(name = "solicitudes", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "codigo_solicitud")
+})
 public class Solicitudes {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_solicitudes")
     private Long idSolicitud;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_cliente", nullable = false,
-            foreignKey = @ForeignKey(name = "FK_solicitud_cliente"))
+    @JoinColumn(name = "id_cliente", nullable = false, foreignKey = @ForeignKey(name = "FK_solicitud_cliente"))
     private Cliente cliente;
 
     @Column(name = "codigo_solicitud", nullable = false, length = 15)
-    private String CodigoSolicitud; // AUTOMATICO
+    private String codigoSolicitud; // AUTOMATICO
 
     @Column(name = "fecha_solicitud", nullable = false)
-    private LocalDate FechaSolicitud; // AUTOMATICO
+    private LocalDate fechaSolicitud; // AUTOMATICO
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_solicitud", nullable = false, length = 15)
-    private tipoSolicitud TipoSolicitud;
+    private TipoSolicitud tipoSolicitud;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "categoria", nullable = false, length = 15)
-    private Categoria Categoria;
+    private Categoria categoria;
 
     @Column(name = "descripcion", nullable = false, length = 255)
-    private String Descripcion;
+    private String descripcion;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "prioridad", nullable = false, length = 15)
-    private Prioridad Prioridad;
+    private Prioridad prioridad;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 15)
-    private Estado Estado;
+    private Estado estado;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "subestado", length = 15)
-    private Subestado Subestado;
+    private Subestado subestado;
 
     @Column(name = "fecha_respuesta")
-    private LocalDate FechaRespuesta; // AUTOMATICO
+    private LocalDate fechaRespuesta; // AUTOMATICO
 
     @Column(name = "respuestas", length = 255)
-    private String Respuesta;
+    private String respuesta;
 
     public Long getIdSolicitud() {
         return idSolicitud;
@@ -60,6 +59,86 @@ public class Solicitudes {
 
     public void setIdSolicitud(Long idSolicitud) {
         this.idSolicitud = idSolicitud;
+    }
+
+    public String getRespuesta() {
+        return respuesta;
+    }
+
+    public void setRespuesta(String respuesta) {
+        this.respuesta = respuesta;
+    }
+
+    public LocalDate getFechaRespuesta() {
+        return fechaRespuesta;
+    }
+
+    public void setFechaRespuesta(LocalDate fechaRespuesta) {
+        this.fechaRespuesta = fechaRespuesta;
+    }
+
+    public Subestado getSubestado() {
+        return subestado;
+    }
+
+    public void setSubestado(Subestado subestado) {
+        this.subestado = subestado;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
+
+    public Prioridad getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(Prioridad prioridad) {
+        this.prioridad = prioridad;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    public TipoSolicitud getTipoSolicitud() {
+        return tipoSolicitud;
+    }
+
+    public void setTipoSolicitud(TipoSolicitud tipoSolicitud) {
+        this.tipoSolicitud = tipoSolicitud;
+    }
+
+    public LocalDate getFechaSolicitud() {
+        return fechaSolicitud;
+    }
+
+    public void setFechaSolicitud(LocalDate fechaSolicitud) {
+        this.fechaSolicitud = fechaSolicitud;
+    }
+
+    public String getCodigoSolicitud() {
+        return codigoSolicitud;
+    }
+
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        this.codigoSolicitud = codigoSolicitud;
     }
 
     public Cliente getCliente() {
@@ -70,87 +149,8 @@ public class Solicitudes {
         this.cliente = cliente;
     }
 
-    public String getCodigoSolicitud() {
-        return CodigoSolicitud;
-    }
-
-    public void setCodigoSolicitud(String codigoSolicitud) {
-        CodigoSolicitud = codigoSolicitud;
-    }
-
-    public LocalDate getFechaSolicitud() {
-        return FechaSolicitud;
-    }
-
-    public void setFechaSolicitud(LocalDate fechaSolicitud) {
-        FechaSolicitud = fechaSolicitud;
-    }
-
-    public tipoSolicitud getTipoSolicitud() {
-        return TipoSolicitud;
-    }
-
-    public void setTipoSolicitud(tipoSolicitud tipoSolicitud) {
-        TipoSolicitud = tipoSolicitud;
-    }
-
-    public Solicitudes.Categoria getCategoria() {
-        return Categoria;
-    }
-
-    public void setCategoria(Solicitudes.Categoria categoria) {
-        Categoria = categoria;
-    }
-
-    public String getDescripcion() {
-        return Descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        Descripcion = descripcion;
-    }
-
-    public Solicitudes.Prioridad getPrioridad() {
-        return Prioridad;
-    }
-
-    public void setPrioridad(Solicitudes.Prioridad prioridad) {
-        Prioridad = prioridad;
-    }
-
-    public Solicitudes.Estado getEstado() {
-        return Estado;
-    }
-
-    public void setEstado(Solicitudes.Estado estado) {
-        Estado = estado;
-    }
-
-    public Solicitudes.Subestado getSubestado() {
-        return Subestado;
-    }
-
-    public void setSubestado(Solicitudes.Subestado subestado) {
-        Subestado = subestado;
-    }
-
-    public LocalDate getFechaRespuesta() {
-        return FechaRespuesta;
-    }
-
-    public void setFechaRespuesta(LocalDate fechaRespuesta) {
-        FechaRespuesta = fechaRespuesta;
-    }
-
-    public String getRespuesta() {
-        return Respuesta;
-    }
-
-    public void setRespuesta(String respuesta) {
-        Respuesta = respuesta;
-    }
-
-    public enum tipoSolicitud {
+    // Enums
+    public enum TipoSolicitud {
         Consulta,
         Problema,
         Reclamo
@@ -158,15 +158,14 @@ public class Solicitudes {
 
     public enum Categoria {
         Cliente,
-        Espacio,
         Alquiler,
         Boleta
     }
 
     public enum Prioridad {
-        Baja,
+        Bajo,
         Media,
-        Alta
+        Alto
     }
 
     public enum Estado {
@@ -179,5 +178,6 @@ public class Solicitudes {
         Acogido,
         No_acogido
     }
+
 
 }
