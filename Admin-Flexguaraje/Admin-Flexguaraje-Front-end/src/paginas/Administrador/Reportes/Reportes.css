@@ -1,7 +1,228 @@
-/* Estilos generales para la página */
+/* General styles for the page */
 .reportes-page {
     padding: 20px;
     margin-left: 70px;
     margin-top: 100px;
     flex-grow: 1;
+}
+
+.titulo {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.acciones-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-crear {
+    background-color: #6a5acd;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-responder {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-responder:hover {
+    background-color: #218838;
+}
+
+.btn-crear:hover {
+    background-color: #5a4abc;
+}
+
+/* Search and filter container */
+.buscar-container input {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    width: 200px;
+}
+
+.btn-buscar {
+    padding: 8px 15px;
+    background-color: #6a5acd;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-buscar:hover {
+    background-color: #5a4abc;
+}
+
+.filtro-container {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.filtro-container label {
+    margin-right: 10px;
+}
+
+.filtro-container select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Table styling */
+.table-container {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table-container th,
+.table-container td {
+    padding: 12px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+.table-container th {
+    background-color: #f4f4f4;
+}
+
+.estado-pendiente {
+    color: orange;
+    font-weight: bold;
+}
+
+.estado-cancelado {
+    color: red;
+    font-weight: bold;
+}
+
+.estado-cerrado {
+    color: green;
+    font-weight: bold;
+}
+
+
+
+.btn-codigo:hover {
+    text-decoration: underline;
+}
+
+.btn-actualizar {
+    background-color: #6a5acd;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-actualizar:hover {
+    background-color: #5a4abc;
+}
+
+/* Modal styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.modal-content p {
+    font-size: 1rem;
+    margin: 10px 0;
+    color: #555;
+}
+
+.modal-content button {
+    background-color: #6a5acd;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-content button:hover {
+    background-color: #5a4abc;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .reportes-page {
+        margin-left: 20px;
+        margin-top: 20px;
+    }
+
+    .acciones-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-crear {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .buscar-container input {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .btn-buscar {
+        width: 100%;
+    }
+
+    .filtro-container {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .table-container th, .table-container td {
+        padding: 8px;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
 }
