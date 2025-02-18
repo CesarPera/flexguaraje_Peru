@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.Random;
 
 @Service
 public class SolicitudNegocio {
@@ -25,14 +25,23 @@ public class SolicitudNegocio {
     @Autowired
     private ClienteRepositorio clienteRepositorio;
 
-    // Generar código de solicitud automático
     private String generarCodigoSolicitud() {
-        return "SOL-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        Random random = new Random();
+        long numeroAleatorio = 10000000000L + (long) (random.nextDouble() * 89999999999L);
+        return "SLT-" + numeroAleatorio;
     }
 
-    // Crear una nueva solicitud
+    private Solicitudes.TipoSolicitud obtenerTipoSolicitud(String tipo) {
+        for (Solicitudes.TipoSolicitud ts : Solicitudes.TipoSolicitud.values()) {
+            if (ts.name().equalsIgnoreCase(tipo)) {
+                return ts;
+            }
+        }
+        throw new IllegalArgumentException("Tipo de solicitud inválido: " + tipo);
+    }
+
     public Solicitudes crearSolicitud(
-            Solicitudes.TipoSolicitud tipoSolicitud,
+            String tipoSolicitud,
             Solicitudes.Categoria categoria,
             Cliente cliente,
             String descripcion,
@@ -41,20 +50,23 @@ public class SolicitudNegocio {
             Solicitudes.Subestado subestado) {
 
         try {
-            // Validación de parámetros
             if (tipoSolicitud == null || categoria == null || cliente == null ||
-                    descripcion == null || prioridad == null || estado == null || subestado == null) {
+                    descripcion == null || prioridad == null || estado == null) {
                 throw new IllegalArgumentException("Todos los campos son obligatorios.");
+            }
+
+
+            if (tipoSolicitud.equalsIgnoreCase("Problema") || tipoSolicitud.equalsIgnoreCase("Reclamo")) {
+                subestado = null;
             }
 
             logger.info("Creando solicitud con: tipoSolicitud={}, categoria={}, prioridad={}, estado={}, subestado={} ",
                     tipoSolicitud, categoria, prioridad, estado, subestado);
 
-            // Creación de la solicitud
             Solicitudes solicitud = new Solicitudes();
-            solicitud.setCodigoSolicitud(generarCodigoSolicitud()); // Código automático
-            solicitud.setFechaSolicitud(LocalDate.now()); // Fecha automática asignada
-            solicitud.setTipoSolicitud(tipoSolicitud);
+            solicitud.setCodigoSolicitud(generarCodigoSolicitud());
+            solicitud.setFechaSolicitud(LocalDate.now());
+            solicitud.setTipoSolicitud(obtenerTipoSolicitud(tipoSolicitud));
             solicitud.setCategoria(categoria);
             solicitud.setPrioridad(prioridad);
             solicitud.setEstado(estado);
@@ -62,7 +74,6 @@ public class SolicitudNegocio {
             solicitud.setCliente(cliente);
             solicitud.setDescripcion(descripcion);
 
-            // Guardar en BD
             Solicitudes solicitudGuardada = solicitudesRepositorio.save(solicitud);
             logger.info("Solicitud creada con ID: {}", solicitudGuardada.getIdSolicitud());
             return solicitudGuardada;
@@ -72,7 +83,6 @@ public class SolicitudNegocio {
         }
     }
 
-    // Obtener un cliente por su DNI
     public Cliente obtenerClientePorDni(String dni) {
         Cliente cliente = clienteRepositorio.findByDni(dni);
         if (cliente == null) {
@@ -81,7 +91,6 @@ public class SolicitudNegocio {
         return cliente;
     }
 
-    // Listar todas las solicitudes
     public List<Solicitudes> listarSolicitudes() {
         try {
             List<Solicitudes> solicitudes = solicitudesRepositorio.findAll();
@@ -93,35 +102,29 @@ public class SolicitudNegocio {
         }
     }
 
-    // Obtener una solicitud por su código
-    public Optional<Solicitudes> obtenerSolicitudPorCodigo(String CodigoSolicitud) {
+    public Optional<Solicitudes> obtenerSolicitudPorCodigo(String codigoSolicitud) {
         try {
-            return solicitudesRepositorio.findByCodigoSolicitud(CodigoSolicitud);
+            return solicitudesRepositorio.findByCodigoSolicitud(codigoSolicitud);
         } catch (Exception e) {
-            logger.error("Error al obtener solicitud con código {}: {}", CodigoSolicitud, e.getMessage());
-            throw new RuntimeException("No se pudo obtener la solicitud con el código: " + CodigoSolicitud);
+            logger.error("Error al obtener solicitud con código {}: {}", codigoSolicitud, e.getMessage());
+            throw new RuntimeException("No se pudo obtener la solicitud con el código: " + codigoSolicitud);
         }
     }
 
-    // Actualizar una solicitud existente
     public Solicitudes actualizarSolicitud(Solicitudes solicitud) {
         try {
-            // Validar que la solicitud exista en la base de datos
             if (solicitud == null || solicitud.getIdSolicitud() == null) {
                 throw new IllegalArgumentException("La solicitud no puede ser nula o sin ID.");
             }
 
-            // Verificar si la solicitud existe
             Solicitudes solicitudExistente = solicitudesRepositorio.findById(solicitud.getIdSolicitud())
                     .orElseThrow(() -> new RuntimeException("Solicitud con ID " + solicitud.getIdSolicitud() + " no encontrada."));
 
-            // Actualizar datos
             solicitudExistente.setDescripcion(solicitud.getDescripcion() != null ? solicitud.getDescripcion() : solicitudExistente.getDescripcion());
             solicitudExistente.setPrioridad(solicitud.getPrioridad() != null ? solicitud.getPrioridad() : solicitudExistente.getPrioridad());
             solicitudExistente.setEstado(solicitud.getEstado() != null ? solicitud.getEstado() : solicitudExistente.getEstado());
             solicitudExistente.setSubestado(solicitud.getSubestado() != null ? solicitud.getSubestado() : solicitudExistente.getSubestado());
 
-            // Guardar la solicitud actualizada
             Solicitudes solicitudActualizada = solicitudesRepositorio.save(solicitudExistente);
             logger.info("Solicitud con ID {} actualizada correctamente.", solicitudActualizada.getIdSolicitud());
             return solicitudActualizada;
@@ -129,5 +132,14 @@ public class SolicitudNegocio {
             logger.error("Error al actualizar la solicitud: " + e.getMessage(), e);
             throw new RuntimeException("No se pudo actualizar la solicitud. Error: " + e.getMessage());
         }
+    }
+
+    // Nuevo método para buscar solicitudes por DNI del cliente
+    public List<Solicitudes> buscarPorDni(String dni) {
+        Cliente cliente = clienteRepositorio.findByDni(dni);
+        if (cliente == null) {
+            throw new RuntimeException("Cliente con DNI " + dni + " no encontrado.");
+        }
+        return solicitudesRepositorio.findByCliente(cliente);
     }
 }
