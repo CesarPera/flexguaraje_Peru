@@ -12,6 +12,7 @@ import java.util.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/solicitudes")
 public class SolicitudControlador {
@@ -283,7 +284,7 @@ public class SolicitudControlador {
         }
     }
 
-    @PostMapping("/buscar_solicitudes")
+    @PostMapping("/buscar_codigo")
     public ResponseEntity<?> buscarPorCodigoSolicitud(@RequestBody Map<String, String> request) {
         String codigoSolicitud = request.get("codigoSolicitud");
 
@@ -311,5 +312,20 @@ public class SolicitudControlador {
                     .body(Map.of("mensaje", "No se encontró ninguna solicitud con el código proporcionado."));
         }
     }
+
+    @PostMapping("/buscar_dni")
+    public ResponseEntity<List<Solicitudes>> buscarPorDni(@RequestBody Map<String, String> request) {
+        String dni = request.get("dni");
+        List<Solicitudes> solicitudes = solicitudNegocio.buscarPorDni(dni);
+
+        if (!solicitudes.isEmpty()) {
+            return ResponseEntity.ok(solicitudes);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+
+
 
 }

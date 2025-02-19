@@ -318,6 +318,18 @@ function SolicitudesClientes() {
                 </div>
             </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
             <div className="solicitud-cliente">
                 <div className='button-acciones-permisos'>
                     <button className='btn btn-success' onClick={() => setMostrarFormulario(true)}>Crear Solicitud</button>
