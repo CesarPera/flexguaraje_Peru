@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 public class ReportesNegocio {
@@ -19,12 +18,9 @@ public class ReportesNegocio {
     @Autowired
     private ReportesRepositorio reportesRepositorio;
 
-    public List<Reportes> listarTodos() {
-        return reportesRepositorio.findAll();
-    }
-
     @Autowired
-    private UsuarioRepositorio usuarioRepositorio;  // Inyectar el repositorio de Usuario
+    private UsuarioRepositorio usuarioRepositorio;
+
     private final Random random = new Random();
 
     public ReportesNegocio(ReportesRepositorio reportesRepository, UsuarioRepositorio usuarioRepository) {
@@ -32,36 +28,98 @@ public class ReportesNegocio {
         this.usuarioRepositorio = usuarioRepository;
     }
 
-    public Reportes crearReporte(String encargadoResolver, String descripcion, Reportes.PrioridadR prioridad) {
-        // Buscar el usuario por DNI
-        Usuario usuario = usuarioRepositorio.findByDni(encargadoResolver)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con DNI: " + encargadoResolver));
+    public List<Reportes> listarTodos() {
+        return reportesRepositorio.findAll();
+    }
 
-        // Generar código de reporte automático en formato RPT-12345678901
+    private Usuario validarUsuarioParaReporte(String dniEncargado) {
+        if (!dniEncargado.matches("\\d{8}")) {
+            throw new IllegalArgumentException("Solo se aceptan 8 caracteres numéricos");
+        }
+
+        Optional<Usuario> usuarioOptional = usuarioRepositorio.findByDni(dniEncargado);
+        if (usuarioOptional.isEmpty()) {
+            throw new IllegalArgumentException("DNI no encontrado");
+        }
+
+        Usuario usuario = usuarioOptional.get();
+
+        if (!usuario.getRoles().getNombreRol().equalsIgnoreCase("Mantenimiento")) {
+            throw new IllegalArgumentException("El usuario con DNI " + dniEncargado + " no tiene rol de Mantenimiento");
+        }
+
+        if (usuario.getEstado() != Usuario.estadoUsuario.Activo) {
+            throw new IllegalArgumentException("El usuario con DNI " + dniEncargado + " no está con estado activo");
+        }
+
+        return usuario;
+    }
+
+    public Reportes crearReporte(String dniEncargado, String descripcion, Reportes.PrioridadR prioridad) {
+        Usuario usuario = validarUsuarioParaReporte(dniEncargado);
+
         String codigoReporte = generarCodigoReporte();
 
-        // Crear un nuevo reporte
         Reportes reporte = new Reportes();
         reporte.setUsuario(usuario);
-        reporte.setEncargadoResolver(usuario.getDni()); // Asignar el DNI del usuario
-        reporte.setCodigoReporte(codigoReporte); // Código automático
-        reporte.setFechaReporte(LocalDate.now()); // Fecha automática
+        reporte.setEncargadoResolver(usuario.getDni());
+        reporte.setCodigoReporte(codigoReporte);
+        reporte.setFechaReporte(LocalDate.now());
         reporte.setDescripcionReporte(descripcion);
         reporte.setPrioridad(prioridad);
-        reporte.setEstado(Reportes.EstadoR.Pendiente); // Estado predeterminado
-        reporte.setSubestado(null); // Subestado no obligatorio
+        reporte.setEstado(Reportes.EstadoR.Pendiente);
+        reporte.setSubestado(null);
 
-        // Guardar el reporte en la base de datos
         return reportesRepositorio.save(reporte);
     }
 
     private String generarCodigoReporte() {
-        long numeroAleatorio = 10000000000L + (long) (random.nextDouble() * 90000000000L); // Número entre 10^10 y 10^11
+        long numeroAleatorio = 10000000000L + (long) (random.nextDouble() * 90000000000L);
         return "RPT-" + numeroAleatorio;
     }
+
     public Reportes buscarPorCodigo(String codigoReporte) {
         return reportesRepositorio.findByCodigoReporte(codigoReporte)
                 .orElseThrow(() -> new RuntimeException("Reporte no encontrado con código: " + codigoReporte));
     }
-}
 
+    public Reportes actualizarReporte(String codigoReporte, String descripcion, String encargadoResolver,
+                                      Reportes.PrioridadR prioridad, Reportes.EstadoR estado) {
+        Optional<Reportes> reporteOpt = reportesRepositorio.findByCodigoReporte(codigoReporte);
+        if (reporteOpt.isEmpty()) {
+            throw new IllegalArgumentException("Reporte no encontrado con el código: " + codigoReporte);
+        }
+
+        Reportes reporte = reporteOpt.get();
+
+        // Validar que el estado solo pueda cambiar a Pendiente o Cancelado
+        if (estado != Reportes.EstadoR.Pendiente && estado != Reportes.EstadoR.Cancelado) {
+            throw new IllegalArgumentException("El estado solo se puede actualizar a 'Pendiente' o 'Cancelado'.");
+        }
+
+        Usuario usuario = validarUsuarioParaReporte(encargadoResolver);
+
+        reporte.setDescripcionReporte(descripcion);
+        reporte.setEncargadoResolver(encargadoResolver);
+        reporte.setPrioridad(prioridad);
+        reporte.setEstado(estado);
+
+        return reportesRepositorio.save(reporte);
+    }
+
+    public Reportes responderReporte(String codigoReporte, String respuesta, Reportes.SubestadoR subestado) {
+        Reportes reporte = reportesRepositorio.findByCodigoReporte(codigoReporte)
+                .orElseThrow(() -> new RuntimeException("Reporte no encontrado"));
+
+        if (reporte.getEstado() != Reportes.EstadoR.Pendiente) {
+            throw new RuntimeException("Solo se pueden responder reportes en estado Pendiente");
+        }
+
+        reporte.setFechaRespuestaReporte(LocalDate.now());
+        reporte.setRespuestaReporte(respuesta);
+        reporte.setSubestado(subestado);
+        reporte.setEstado(Reportes.EstadoR.Cerrado);
+
+        return reportesRepositorio.save(reporte);
+    }
+}

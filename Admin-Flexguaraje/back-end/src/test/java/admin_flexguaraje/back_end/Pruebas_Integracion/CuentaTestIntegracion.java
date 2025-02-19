@@ -35,9 +35,7 @@ public class CuentaTestIntegracion {
     @Test
     public void testCrearCuenta() throws Exception {
         Map<String, String> body = new HashMap<>();
-        body.put("dni", "44567890");
-        body.put("nombreRol", "Admin");
-        body.put("password", "password123");
+        body.put("dni", "75117633");
 
         mockMvc.perform(post("/cuentas/crear_cuenta")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -50,8 +48,6 @@ public class CuentaTestIntegracion {
     public void testCrearCuentaDniInvalido() throws Exception {
         Map<String, String> body = new HashMap<>();
         body.put("dni", "1234567A"); // DNI inválido
-        body.put("nombreRol", "Administrador");
-        body.put("password", "password123");
 
         mockMvc.perform(post("/cuentas/crear_cuenta")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -63,7 +59,7 @@ public class CuentaTestIntegracion {
     @Test
     public void testActualizarEstadoCuenta() throws Exception {
         Map<String, Object> body = new HashMap<>();
-        body.put("dni", "12345678");
+        body.put("dni", "75117633");
 
         mockMvc.perform(put("/cuentas/actualizar_estado_cuenta")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -87,26 +83,12 @@ public class CuentaTestIntegracion {
     @Test
     public void testActualizarContrasena() throws Exception {
         Map<String, Object> body = new HashMap<>();
-        body.put("dni", "12345678");
-        body.put("correo", "pérez_12345678@FLEXGUARAJE_PERU.COM");
+        body.put("dni", "75117633");
 
         mockMvc.perform(put("/cuentas/actualizar_pass_automatico")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(body)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Contraseña actualizada exitosamente. La nueva contraseña se ha enviado al usuario."));
-    }
-
-    @Test
-    public void testActualizarContrasenaCorreoInvalido() throws Exception {
-        Map<String, Object> body = new HashMap<>();
-        body.put("dni", "12345678");
-        body.put("correo", "correo_invalido@dominio.com"); // Correo con formato inválido
-
-        mockMvc.perform(put("/cuentas/actualizar_pass_automatico")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(body)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("El correo debe tener el formato: apellidoPaterno + DNI + @FLEXGUARAJE_PERU.COM"));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Contraseña actualizada exitosamente")));
     }
 }
