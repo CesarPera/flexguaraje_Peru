@@ -29,25 +29,80 @@ public class ReportesControlador {
     }
 
     @PostMapping("/crear_reportes")
-    public ResponseEntity<Reportes> crearReporte(@RequestBody ReporteRequest request) {
-        Reportes nuevoReporte = reportesNegocio.crearReporte(
-                request.encargadoResolver,
-                request.descripcion,
-                request.prioridad
-        );
+    public ResponseEntity<?> crearReporte(@RequestBody ReporteRequest request) {
+        try {
+            Reportes nuevoReporte = reportesNegocio.crearReporte(
+                    request.encargadoResolver,
+                    request.descripcion,
+                    request.prioridad
+            );
 
-        return ResponseEntity.ok(nuevoReporte);
+            return ResponseEntity.ok(nuevoReporte);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/buscar_reporte")
-    public ResponseEntity<Reportes> obtenerReporte(@RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<?> obtenerReporte(@RequestBody Map<String, String> requestBody) {
         String codigoReporte = requestBody.get("codigoReporte");
 
         if (codigoReporte == null || codigoReporte.isEmpty()) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body("El código de reporte no puede estar vacío.");
         }
 
-        Reportes reporte = reportesNegocio.buscarPorCodigo(codigoReporte);
-        return ResponseEntity.ok(reporte);
+        if (codigoReporte.length() != 15) {
+            return ResponseEntity.badRequest().body("El código de reporte debe de tener exactamente 15 caracteres.");
+        }
+
+        if (!codigoReporte.matches("^RPT-\\d{11}$")) {
+            return ResponseEntity.badRequest().body("El código de reporte debe de seguir el formato correspondiente. EJEMPLO: RPT-12345678901");
+        }
+
+        try {
+            Reportes reporte = reportesNegocio.buscarPorCodigo(codigoReporte);
+            return ResponseEntity.ok(reporte);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/actualizar_reporte")
+    public ResponseEntity<?> actualizarReporte(@RequestBody Map<String, String> requestBody) {
+        try {
+            String codigoReporte = requestBody.get("codigoReporte");
+            String descripcionReporte = requestBody.get("descripcionReporte");
+            String encargadoResolver = requestBody.get("encargadoResolver");
+            Reportes.PrioridadR prioridad = Reportes.PrioridadR.valueOf(requestBody.get("prioridad"));
+            Reportes.EstadoR estado = Reportes.EstadoR.valueOf(requestBody.get("estado"));
+
+            // Llamada a la lógica de negocio sin el subestado
+            Reportes reporteActualizado = reportesNegocio.actualizarReporte(
+                    codigoReporte,
+                    descripcionReporte,
+                    encargadoResolver,
+                    prioridad,
+                    estado
+            );
+
+            return ResponseEntity.ok(reporteActualizado);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/responder_reporte")
+    public ResponseEntity<?> responderReporte(@RequestBody Map<String, String> requestBody) {
+        try {
+            String codigoReporte = requestBody.get("codigoReporte");
+            String respuesta = requestBody.get("respuesta");
+            Reportes.SubestadoR subestado = Reportes.SubestadoR.valueOf(requestBody.get("subestado"));
+
+            Reportes reporteActualizado = reportesNegocio.responderReporte(codigoReporte, respuesta, subestado);
+
+            return ResponseEntity.ok(reporteActualizado);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
