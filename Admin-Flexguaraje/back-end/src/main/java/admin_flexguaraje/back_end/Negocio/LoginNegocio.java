@@ -32,8 +32,13 @@ public class LoginNegocio {
 
     // Método para cambiar la contraseña
     public void cambiarPassword(String email, String passwordActual, String nuevaPassword, String repetirNuevaPassword) {
-        // Verificar que las nuevas contraseñas coinciden
+        // Validar que la nueva contraseña cumpla con los requisitos de seguridad
+        String regex = "^(?=(?:.*[A-Z]){3})(?=(?:.*\\d){3})(?=(?:.*[!@#$%^&*(),.?\":{}|<>]){2})(?=.*[a-z]).{10,}$";
+        if (!nuevaPassword.matches(regex)) {
+            throw new IllegalArgumentException("La nueva contraseña debe tener mínimo 10 caracteres, incluir 3 mayúsculas, 3 números, 2 caracteres especiales y el resto en minúsculas.");
+        }
 
+        // Verificar que las nuevas contraseñas coinciden
         if (!nuevaPassword.equals(repetirNuevaPassword)) {
             throw new IllegalArgumentException("Las nuevas contraseñas no coinciden");
         }
@@ -45,6 +50,7 @@ public class LoginNegocio {
         if (!passwordActual.equals(cuenta.getPassword())) {
             throw new IllegalArgumentException("Correo y/o contraseña incorrecta");
         }
+
         // Verificar que la cuenta esté activa
         if (cuenta.getEstado() != Cuenta.estadoCuenta.Activo) {
             throw new IllegalArgumentException("La cuenta se encuentra desactivada");

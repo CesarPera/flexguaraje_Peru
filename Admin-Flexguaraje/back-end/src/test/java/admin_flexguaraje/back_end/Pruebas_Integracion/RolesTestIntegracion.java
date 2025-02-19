@@ -35,7 +35,7 @@ public class RolesTestIntegracion {
     @Test
     public void testCrearRol() throws Exception {
         Map<String, String> body = new HashMap<>();
-        body.put("nombreRol", "FACTURA");
+        body.put("nombreRol", "ADMIN");
 
         mockMvc.perform(post("/roles/crear_rol")
                         .contentType(MediaType.APPLICATION_JSON)

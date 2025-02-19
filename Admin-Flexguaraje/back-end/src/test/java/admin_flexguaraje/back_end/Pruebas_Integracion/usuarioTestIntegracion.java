@@ -1,6 +1,7 @@
 package admin_flexguaraje.back_end.Pruebas_Integracion;
 
 import admin_flexguaraje.back_end.Controlador.UsuarioControlador;
+import admin_flexguaraje.back_end.Modelo.Roles;
 import admin_flexguaraje.back_end.Modelo.Usuario;
 import admin_flexguaraje.back_end.Negocio.UsuarioNegocio;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,23 +41,21 @@ public class usuarioTestIntegracion {
 
     @Test
     public void testListarUsuarios() throws Exception {
-        // Preparar el mock
         Usuario usuario = new Usuario();
         usuario.setDni("12345678");
-        usuario.setNombre("juan"); // Nombre en minúsculas
-        usuario.setApellidoPaterno("Perez");
-        usuario.setApellidoMaterno("gomez");
+        usuario.setNombre("JUAN"); // Ahora en mayúsculas
+        usuario.setApellidoPaterno("PEREZ");
+        usuario.setApellidoMaterno("GOMEZ");
         usuario.setEmail("juan.perez@mail.com");
         usuario.setTelefono("987654321");
 
         when(usuarioNegocio.listarUsuarios()).thenReturn(Collections.singletonList(usuario));
 
-        // Realizar la solicitud y verificar la respuesta
         mockMvc.perform(get("/usuario/listar_usuario_general"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].dni").value("12345678"))
-                .andExpect(jsonPath("$[0].nombre").value("juan"))  // Ahora debe coincidir con el formato en minúsculas
-                .andExpect(jsonPath("$[0].apellidoPaterno").value("Perez"));
+                .andExpect(jsonPath("$[0].nombre").value("JUAN"))
+                .andExpect(jsonPath("$[0].apellidoPaterno").value("PEREZ"));
     }
 
     @Test
@@ -83,22 +82,20 @@ public class usuarioTestIntegracion {
     }
 
     @Test
-    public void testCrearUsuario() throws Exception {
-        // Preparar los datos de entrada
+    public void testCrearUsuarioConRol() throws Exception {
         String dni = "12345678";
         String nombre = "Juan";
         String apellidoPaterno = "Perez";
         String apellidoMaterno = "Gomez";
         String email = "juan.perez@mail.com";
         String telefono = "987654321";
+        String nombreRol = "ADMINISTRADOR";
 
-        // Simular que no existe un usuario con ese DNI
         when(usuarioNegocio.buscarUsuarioPorDni(dni)).thenReturn(Optional.empty());
 
-        // Realizar la solicitud y verificar la respuesta
         mockMvc.perform(post("/usuario/crear_usuario")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"dni\":\"" + dni + "\", \"nombre\":\"" + nombre + "\", \"apellidoPaterno\":\"" + apellidoPaterno + "\", \"apellidoMaterno\":\"" + apellidoMaterno + "\", \"email\":\"" + email + "\", \"telefono\":\"" + telefono + "\"}"))
+                .content("{\"dni\":\"" + dni + "\", \"nombre\":\"" + nombre + "\", \"apellidoPaterno\":\"" + apellidoPaterno + "\", \"apellidoMaterno\":\"" + apellidoMaterno + "\", \"email\":\"" + email + "\", \"telefono\":\"" + telefono + "\", \"nombreRol\":\"" + nombreRol + "\"}"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Usuario creado con éxito."));
     }
@@ -115,13 +112,20 @@ public class usuarioTestIntegracion {
         usuarioExistente.setEmail("juan.perez@mail.com");
         usuarioExistente.setTelefono("987654321");
 
+        // Configurar el rol actual del usuario
+        Roles rolActual = new Roles();
+        rolActual.setNombreRol("Administrador");
+        usuarioExistente.setRoles(rolActual);
+
         when(usuarioNegocio.buscarUsuarioPorDni(dni)).thenReturn(Optional.of(usuarioExistente));
 
-        // Realizar la solicitud de actualización
+        // Realizar la solicitud de actualización con nombreRol
         mockMvc.perform(put("/usuario/actualizar_usuario")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"dni\":\"" + dni + "\", \"nombre\":\"Carlos\", \"apellidoPaterno\":\"Lopez\"}"))
+                        .content("{\"dni\":\"" + dni + "\", \"nombre\":\"Carlos\", \"apellidoPaterno\":\"Lopez\", \"nombreRol\":\"ADMINISTRADOR\"}"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Usuario actualizado con éxito."));
     }
+
+
 }

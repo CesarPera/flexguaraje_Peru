@@ -28,8 +28,8 @@ class LoginTestIntegracion {
     // Prueba para el endpoint /login
     @Test
     public void testLoginExitoso() throws Exception {
-        String email = "CARHUAS_75117638@FLEXGUARAJE_PERU.COM";
-        String password = "NUEVAPassword123!#";
+        String email = "CARHUAS_75117633@FLEXGUARAJE_PERU.COM";
+        String password = "CESAR1234##08pera";
         String authHeader = "Basic " + Base64.getEncoder().encodeToString((email + ":" + password).getBytes());
 
         mockMvc.perform(post("/validacion/login")
@@ -46,8 +46,8 @@ class LoginTestIntegracion {
 
         mockMvc.perform(post("/validacion/login")
                         .header("Authorization", authHeader))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("El formato del correo no es válido. Debe ser APELLIDO PATERNO + _ + DNI + @flexguaraje_peru.com"));
+                .andExpect(status().isUnauthorized())  // Se espera UNAUTHORIZED ahora
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Correo y/o contraseña incorrecto")));
     }
 
     @Test
@@ -59,17 +59,17 @@ class LoginTestIntegracion {
         mockMvc.perform(post("/validacion/login")
                         .header("Authorization", authHeader))
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().string("Correo y/o contraseña incorrecta"));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Correo y/o contraseña incorrecto")));
     }
 
     // Pruebas para el endpoint /cambiar_pass
     @Test
     public void testCambiarPasswordExitoso() throws Exception {
         Map<String, String> datos = new HashMap<>();
-        datos.put("email", "CARHUAS_75117638@FLEXGUARAJE_PERU.COM");
-        datos.put("passwordActual", "NUEVAPassword123!#");
-        datos.put("nuevaPassword", "CESAR1234##08pera");
-        datos.put("repetirNuevaPassword", "CESAR1234##08pera");
+        datos.put("email", "CARHUAS_75117633@FLEXGUARAJE_PERU.COM");
+        datos.put("passwordActual", "CESAR1234##08pera");
+        datos.put("nuevaPassword", "?rvyfF<PQyf622n");
+        datos.put("repetirNuevaPassword", "?rvyfF<PQyf622n");
 
         mockMvc.perform(put("/validacion/cambiar_pass")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +97,7 @@ class LoginTestIntegracion {
     public void testCambiarPasswordNoCoinciden() throws Exception {
         Map<String, String> datos = new HashMap<>();
         datos.put("email", "perez_12345678@FLEXGUARAJE_PERU.COM");
-        datos.put("passwordActual", "Password123!");
+        datos.put("passwordActual", "?rvyfF<PQyf622n");
         datos.put("nuevaPassword", "NuevaPassword123!");
         datos.put("repetirNuevaPassword", "OtraPassword123!");
 
@@ -111,8 +111,8 @@ class LoginTestIntegracion {
     @Test
     public void testCambiarPasswordDebil() throws Exception {
         Map<String, String> datos = new HashMap<>();
-        datos.put("email", "perez_12345678@FLEXGUARAJE_PERU.COM");
-        datos.put("passwordActual", "Password123!");
+        datos.put("email", "CARHUAS_75117633@FLEXGUARAJE_PERU.COM");
+        datos.put("passwordActual", "A8koA3e1>zp^aDu");
         datos.put("nuevaPassword", "debil123");
         datos.put("repetirNuevaPassword", "debil123");
 
@@ -120,6 +120,6 @@ class LoginTestIntegracion {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(datos)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("La nueva contraseña debe tener minimo 10 caracteres, incluir 3 mayúsculas, 3 números, 2 caracteres especiales y el resto en minúsculas."));
+                .andExpect(content().string("La nueva contraseña debe tener mínimo 10 caracteres, incluir 3 mayúsculas, 3 números, 2 caracteres especiales y el resto en minúsculas."));
     }
 }

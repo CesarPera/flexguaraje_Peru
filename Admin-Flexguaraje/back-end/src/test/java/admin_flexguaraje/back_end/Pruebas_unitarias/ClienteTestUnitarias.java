@@ -53,7 +53,8 @@ public class ClienteTestUnitarias {
         clienteActualizado.setNotaAdicional("NOTA ADICIONAL");
 
         // Configurar comportamiento simulado del servicio
-        when(clienteNegocio.actualizarCliente(eq("12345678"), any(Cliente.class))).thenReturn(clienteActualizado);
+        when(clienteNegocio.actualizarCliente(eq("12345678"), any(Cliente.class)))
+                .thenReturn(clienteActualizado);
 
         // Ejecutar el método
         ResponseEntity<?> response = clienteControlador.actualizarCliente(requestBody);
@@ -63,7 +64,8 @@ public class ClienteTestUnitarias {
         assertEquals(clienteActualizado, response.getBody());
 
         // Verificar interacción con el servicio
-        verify(clienteNegocio, times(1)).actualizarCliente(eq("12345678"), any(Cliente.class));
+        verify(clienteNegocio, times(1)).actualizarCliente(eq(
+                "12345678"), any(Cliente.class));
     }
 
     @Test
@@ -113,6 +115,7 @@ public class ClienteTestUnitarias {
         assertEquals("Cliente no encontrado", response.getBody());
 
         // Verificar interacción con el servicio
-        verify(clienteNegocio, times(1)).actualizarCliente(eq("12345678"), any(Cliente.class));
+        verify(clienteNegocio, times(1))
+                .actualizarCliente(eq("12345678"), any(Cliente.class));
     }
 }
