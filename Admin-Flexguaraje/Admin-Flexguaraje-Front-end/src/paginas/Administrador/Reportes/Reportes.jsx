@@ -7,7 +7,6 @@ function Reportes() {
     const [reporteSeleccionado, setReporteSeleccionado] = useState(null);
     const [codigoBuscar, setCodigoBuscar] = useState('');
     const [nuevoReporte, setNuevoReporte] = useState({
-        usuario: '',
         descripcion_reporte: '',
         encargado_resolver: '',
         prioridad: '',
@@ -98,7 +97,6 @@ function Reportes() {
         setReporteSeleccionado(reporte);
         setModalRespuestaAbierto(true); // Abrir el modal de respuesta
     };
-//ayudando ando 
     
     const manejarRespuesta = (e) => {
         e.preventDefault();
@@ -147,7 +145,6 @@ function Reportes() {
 
         setReportes([...reportes, nuevoReporteConCodigo]);
         setNuevoReporte({
-            usuario: '',
             descripcion_reporte: '',
             encargado_resolver: '',
             prioridad: '',
@@ -168,7 +165,6 @@ function Reportes() {
     // Función para cancelar la creación de un reporte
     const manejarCancelacionReporte = () => {
         setNuevoReporte({
-            usuario: '',
             descripcion_reporte: '',
             encargado_resolver: '',
             prioridad: '',
@@ -185,7 +181,7 @@ function Reportes() {
 
     return (
         <div className="reportes-page">
-            <h1 className="titulo">Gestión de Reportes</h1>
+            <h1 className="titulo-reporte">Gestión de Reportes</h1>
 
             <div className="acciones-container">
                 <button 
@@ -202,7 +198,7 @@ function Reportes() {
                         value={codigoBuscar}
                         onChange={(e) => setCodigoBuscar(e.target.value)} 
                     />
-                    <button className="btn-buscar">Buscar</button>
+                    <button className="btn-btn info">Buscar</button>
                 </div>
 
                 <div className="filtro-container">
@@ -216,11 +212,10 @@ function Reportes() {
                 </div>
             </div>
 
-            <table className="table-container">
+            <table className="table table-primary table-hover table-bordered border-primary text-center tabla-usuario">
                 <thead>
                     <tr>
-                        <th>Código Reporte</th>                       
-                        <th>Usuario</th>    
+                        <th>Código Reporte</th>                         
                         <th>Encargado Resolver</th>
                         <th>Prioridad</th>
                         <th>Estado</th>
@@ -232,8 +227,7 @@ function Reportes() {
                 <tbody>
                     {filtrarReportes().map((reporte) => (
                         <tr key={reporte.codigo_reporte}>
-                            <td onClick={() => manejarDetallesReporte(reporte)}>{reporte.codigo_reporte}</td>      
-                            <td>{reporte.usuario}</td>  
+                            <td onClick={() => manejarDetallesReporte(reporte)}>{reporte.codigo_reporte}</td>        
                             <td>{reporte.encargado_resolver}</td>
                             <td>{reporte.prioridad}</td>
                             <td className={`estado-${reporte.estado.toLowerCase()}`}>{reporte.estado}</td>
@@ -254,13 +248,6 @@ function Reportes() {
                     <div className="modal-content">
                         <h2>Crear Reporte</h2>
                         <form onSubmit={manejarCreacionReporte}>
-                            <label>Usuario:</label>
-                            <input 
-                                type="text" 
-                                value={nuevoReporte.usuario} 
-                                onChange={(e) => setNuevoReporte({ ...nuevoReporte, usuario: e.target.value })} 
-                                required
-                            />
                             <label>Descripción:</label>
                             <textarea 
                                 value={nuevoReporte.descripcion_reporte} 
@@ -283,26 +270,7 @@ function Reportes() {
                                 <option value="Alta">Alta</option>
                                 <option value="Media">Media</option>
                                 <option value="Baja">Baja</option>
-                            </select>
-                            <label>Estado:</label>
-                            <select 
-                                value={nuevoReporte.estado} 
-                                onChange={(e) => setNuevoReporte({ ...nuevoReporte, estado: e.target.value })} 
-                                required
-                            >
-                                <option value="Pendiente">Pendiente</option>
-                                <option value="Cancelado">Cancelado</option>
-                                <option value="Cerrado">Cerrado</option>
-                            </select>
-                            <label>Subestado:</label>
-                            <select 
-                                value={nuevoReporte.subestado} 
-                                onChange={(e) => setNuevoReporte({ ...nuevoReporte, subestado: e.target.value })} 
-                                required
-                            >
-                                <option value="Acogido">Acogido</option>
-                                <option value="No_acogido">No Acogido</option>
-                            </select>
+                            </select>                           
                             <div className="modal-buttons">
                                 <button className="btn btn-primary" type="submit">Crear</button>
                                 <button className="btn btn-secondary" type="button" onClick={manejarCancelacionReporte}>Cancelar</button>
@@ -331,10 +299,10 @@ function Reportes() {
                         />
                     </div>
                     <div className="campos-datos">
-                        <label>Usuario:</label>
+                        <label>Encargado Resolver:</label>
                         <input
                             type="text"
-                            value={reporteSeleccionado.usuario}
+                            value={nuevoReporte.encargado_resolver}
                             disabled
                         />
                     </div>
@@ -423,6 +391,16 @@ function Reportes() {
                                 onChange={(e) => setRespuesta(e.target.value)} 
                                 required
                             />
+                            <label>Subestado:</label>
+                            <select 
+                                value={nuevoReporte}
+                                onChange={(e) => setsubestado(e.target.value)} 
+                                required
+                            >
+                                <option value="Alta">Acogido</option>
+                                <option value="Media">No_acogido</option>
+                                </select>
+
                             <div className="modal-buttons">
                                 <button className="btn btn-primary" type="submit">Responder</button>
                                 <button className="btn btn-secondary" type="button" onClick={cerrarModalRespuesta}>Cancelar</button>

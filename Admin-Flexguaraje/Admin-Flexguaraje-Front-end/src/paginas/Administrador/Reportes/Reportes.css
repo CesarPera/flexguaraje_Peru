@@ -6,23 +6,26 @@
     flex-grow: 1;
 }
 
-.titulo {
-    text-align: center;
+.titulo-reporte {
     font-size: 2rem;
+    font-family: sans-serif;
     font-weight: bold;
-    margin-bottom: 20px;
+    border-bottom: 5px solid black;
+    text-align: center;
+    width: 320px;
+    margin: 30px auto 30px auto;
     color: #333;
+    vertical-align: middle;
 }
 
 .acciones-container {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+    width: 100%;
 }
 
 .btn-crear {
-    background-color: #6a5acd;
+    
     color: white;
     padding: 10px 20px;
     border: none;
@@ -59,7 +62,7 @@
 
 .btn-buscar {
     padding: 8px 15px;
-    background-color: #6a5acd;
+    
     color: white;
     border: none;
     border-radius: 5px;
@@ -95,13 +98,8 @@
 
 .table-container th,
 .table-container td {
-    padding: 12px;
-    border: 1px solid #ccc;
-    text-align: left;
-}
-
-.table-container th {
-    background-color: #f4f4f4;
+    /* Centra verticalmente */
+    vertical-align: middle;
 }
 
 .estado-pendiente {
@@ -119,14 +117,11 @@
     font-weight: bold;
 }
 
-
-
 .btn-codigo:hover {
     text-decoration: underline;
 }
 
 .btn-actualizar {
-    background-color: #6a5acd;
     color: white;
     padding: 8px 16px;
     border: none;
@@ -173,7 +168,6 @@
 }
 
 .modal-content button {
-    background-color: #6a5acd;
     color: white;
     padding: 8px 16px;
     border: none;
@@ -181,48 +175,3 @@
     cursor: pointer;
 }
 
-.modal-content button:hover {
-    background-color: #5a4abc;
-}
-
-/* Responsive Design */
-@media screen and (max-width: 768px) {
-    .reportes-page {
-        margin-left: 20px;
-        margin-top: 20px;
-    }
-
-    .acciones-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .btn-crear {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    .buscar-container input {
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-
-    .btn-buscar {
-        width: 100%;
-    }
-
-    .filtro-container {
-        margin-left: 0;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .table-container th, .table-container td {
-        padding: 8px;
-    }
-
-    .modal-content {
-        width: 90%;
-    }
-}
