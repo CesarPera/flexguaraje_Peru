@@ -12,6 +12,7 @@ import java.util.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/solicitudes")
 public class SolicitudControlador {
@@ -19,7 +20,55 @@ public class SolicitudControlador {
     @Autowired
     private SolicitudNegocio solicitudNegocio;
 
-    @PostMapping("/crear")
+    @GetMapping("/listar_solicitud")
+    public ResponseEntity<List<Solicitudes>> listarSolicitudes() {
+        try {
+            List<Solicitudes> solicitudes = solicitudNegocio.listarSolicitudes();
+            return ResponseEntity.ok(solicitudes);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @PostMapping("/buscar_dni_solicitud")
+    public ResponseEntity<List<Solicitudes>> buscarPorDni(@RequestBody Map<String, String> request) {
+        String dni = request.get("dni");
+        List<Solicitudes> solicitudes = solicitudNegocio.buscarPorDni(dni);
+
+        if (!solicitudes.isEmpty()) {
+            return ResponseEntity.ok(solicitudes);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @PostMapping("/buscar_codigo_solicitud")
+    public ResponseEntity<?> buscarPorCodigoSolicitud(@RequestBody Map<String, String> request) {
+        String codigoSolicitud = request.get("codigoSolicitud");
+
+        // Validar si el código tiene exactamente 15 caracteres
+        if (codigoSolicitud == null || codigoSolicitud.length() != 15) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("mensaje", "El código de solicitud debe tener exactamente 15 caracteres."));
+        }
+
+        if (!codigoSolicitud.matches("^SLT-\\d{11}$")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("mensaje", "El código de solicitud debe seguir el formato correspondiente. EJEMPLO: SLT-12345678901"));
+        }
+
+        // Buscar en la capa de negocio
+        Optional<Solicitudes> solicitudOptional = solicitudNegocio.obtenerSolicitudPorCodigo(codigoSolicitud);
+
+        if (solicitudOptional.isPresent()) {
+            return ResponseEntity.ok(List.of(solicitudOptional.get())); // Devuelve la solicitud en una lista
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("mensaje", "No se encontró ninguna solicitud con el código proporcionado."));
+        }
+    }
+
+    @PostMapping("/crear_solicitud")
     public ResponseEntity<Object> crearSolicitud(@RequestBody Map<String, Object> body) {
         try {
             List<String> errores = new ArrayList<>();
@@ -145,22 +194,7 @@ public class SolicitudControlador {
         }
     }
 
-
-
-
-
-    @GetMapping("/listar")
-    public ResponseEntity<List<Solicitudes>> listarSolicitudes() {
-        try {
-            List<Solicitudes> solicitudes = solicitudNegocio.listarSolicitudes();
-            return ResponseEntity.ok(solicitudes);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
-    }
-
-
-    @PutMapping("/actualizar")
+    @PutMapping("/actualizar_solicitud")
     public ResponseEntity<Object> actualizarSolicitud(@RequestBody Map<String, Object> body) {
         try {
             // Obtener el codigo_solicitud desde el body
@@ -238,8 +272,7 @@ public class SolicitudControlador {
         }
     }
 
-
-    @PostMapping("/crear_respuesta")
+    @PostMapping("/responder_solicitud")
     public ResponseEntity<Object> crearRespuesta(@RequestBody Map<String, Object> body) {
         try {
             String codigoSolicitud = body.get("codigoSolicitud").toString();
@@ -280,35 +313,6 @@ public class SolicitudControlador {
             return ResponseEntity.ok(Map.of("message", "Datos registrados correctamente", "idSolicitud", solicitudActualizada.getIdSolicitud()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("message", "Error al registrar la respuesta", "error", e.getMessage()));
-        }
-    }
-
-    @PostMapping("/buscar_solicitudes")
-    public ResponseEntity<?> buscarPorCodigoSolicitud(@RequestBody Map<String, String> request) {
-        String codigoSolicitud = request.get("codigoSolicitud");
-
-        // Validar si el código tiene exactamente 15 caracteres
-        if (codigoSolicitud == null || codigoSolicitud.length() != 15) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("mensaje", "El código de solicitud debe tener exactamente 15 caracteres."));
-        }
-
-        // Validar si el código sigue el formato SLT-XXXXXXXXXXXX (SLT + 12 números)
-// Validar si el código sigue el formato SLT-XXXXXXXXXXX (SLT + 11 números)
-        if (!codigoSolicitud.matches("^SLT-\\d{11}$")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("mensaje", "El código de solicitud debe seguir el formato correspondiente. EJEMPLO: SLT-12345678901"));
-        }
-
-
-        // Buscar en la capa de negocio
-        Optional<Solicitudes> solicitudOptional = solicitudNegocio.obtenerSolicitudPorCodigo(codigoSolicitud);
-
-        if (solicitudOptional.isPresent()) {
-            return ResponseEntity.ok(List.of(solicitudOptional.get())); // Devuelve la solicitud en una lista
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensaje", "No se encontró ninguna solicitud con el código proporcionado."));
         }
     }
 

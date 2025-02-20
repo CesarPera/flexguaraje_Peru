@@ -8,6 +8,7 @@ function SolicitudesClientes() {
     const location = useLocation();
     const navigate = useNavigate(); // Inicializa el hook useNavigate
     const { cliente } = location.state || {};
+    const [solicitudes, setSolicitudes] = useState([]);
     const [clienteActualizado, setClienteActualizado] = useState(cliente); // Inicializa con los datos actuales del cliente
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [mostrarFormularioACT, setMostrarFormularioACT] = useState(false);
@@ -28,6 +29,12 @@ function SolicitudesClientes() {
     const [isUpdated, setIsUpdated] = useState(false);
 
     useEffect(() => {
+        if (cliente?.dni) {
+            obtenerSolicitudes(cliente.dni);
+        }
+    }, [cliente?.dni]);
+
+    useEffect(() => {
         // Solo si ya tenemos un cliente, hacemos la consulta
         if (clienteActualizado?.dni) {
             const obtenerDatosCliente = async () => {
@@ -41,6 +48,19 @@ function SolicitudesClientes() {
             obtenerDatosCliente();
         }
     }, [clienteActualizado?.dni]); // Este hook se ejecuta cuando el clienteActualizado cambia
+
+    const obtenerSolicitudes = async (dni) => {
+        try {
+            const response = await SolicitudesBD.buscarSolicitudesPorDni(dni);
+            setSolicitudes(response.data);
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al obtener solicitudes',
+                text: 'No se pudieron cargar las solicitudes del cliente.',
+            });
+        }
+    };
 
     /* Estado para los datos del formulario */
     const [formData, setFormData] = useState({
@@ -70,9 +90,9 @@ function SolicitudesClientes() {
         });
     };
 
+
+
     const actualizarinfocliente = async () => {
-
-
         const formulariovacio = `${formData.nombre || ''} ${formData.apellido_paterno || ''} 
         ${formData.apellido_materno || ''} ${formData.telefono || ''} ${formData.email || ''} 
         ${formData.direccion || ''} ${formData.nota || ''}`;
@@ -394,184 +414,192 @@ function SolicitudesClientes() {
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td>
-                                <button className='btn-codigo' onClick={() => setMostrarFormularioCOMPLETO(true)}>SLT-12345678901</button>
+                        {solicitudes.length > 0 ? (
+                            solicitudes.map((solicitud) => (
+                                <tr key={solicitud.codigoSolicitud}>
+                                    <td>
+                                        <button className='btn-codigo' onClick={() => setMostrarFormularioCOMPLETO(true)}>{solicitud.codigoSolicitud}</button>
 
-                                {mostrarFormularioCOMPLETO && (
-                                    <div className="modal-overlay">
-                                        <div className="modal-content-completo">
-                                            <div className='titulo-completo-modal'>
-                                                <h3 className="text-center">INFORMACIÓN COMPLETO DE LA SOLICITUD</h3>
+                                        {mostrarFormularioCOMPLETO && (
+                                            <div className="modal-overlay">
+                                                <div className="modal-content-completo">
+                                                    <div className='titulo-completo-modal'>
+                                                        <h3 className="text-center">INFORMACIÓN COMPLETO DE LA SOLICITUD</h3>
 
-                                            </div>
+                                                    </div>
 
-                                            <div className="formulario-campos-completo">
-                                                <div>
-                                                    <div className='campos-datos'>
-                                                        <label>Codigo Solicitud:</label>
-                                                        <input
-                                                            type="text"
-                                                            name="apellido_paterno"
-                                                            disabled
-                                                        />
+                                                    <div className="formulario-campos-completo">
+                                                        <div>
+                                                            <div className='campos-datos'>
+                                                                <label>Codigo Solicitud:</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="apellido_paterno"
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                            <div className='campos-datos'>
+                                                                <label>Tipo:</label>
+                                                                <input
+                                                                    type="text"
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                            <div className='campos-datos'>
+                                                                <label>Categoria:</label>
+                                                                <input
+                                                                    type="text"
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                            <div className='campos-datos'>
+                                                                <label>Prioridad:</label>
+                                                                <input
+                                                                    type="text"
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div className='campos-datos'>
+                                                                <label>Fecha Solicitud:</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="apellido_paterno"
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                            <div className='campos-datos'>
+                                                                <label>Descripción:</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="apellido_paterno"
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div className='campos-datos'>
+                                                                <label>Fecha Respuesta:</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="apellido_paterno"
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                            <div className='campos-datos'>
+                                                                <label>Respuesta:</label>
+                                                                <input
+                                                                    type="text"
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div >
+                                                            <div className='campos-datos'>
+                                                                <label>Estado:</label>
+                                                                <input
+                                                                    type="text"
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                            <div className='campos-datos'>
+                                                                <label>Sub estado:</label>
+                                                                <input
+                                                                    type="text"
+                                                                    disabled
+                                                                />
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div className='campos-datos'>
-                                                        <label>Tipo:</label>
-                                                        <input
-                                                            type="text"
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                    <div className='campos-datos'>
-                                                        <label>Categoria:</label>
-                                                        <input
-                                                            type="text"
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                    <div className='campos-datos'>
-                                                        <label>Prioridad:</label>
-                                                        <input
-                                                            type="text"
-                                                            disabled
-                                                        />
+
+                                                    <div className="formulario-botones-completo">
+                                                        <button className="btn btn-secondary" onClick={() => setMostrarFormularioCOMPLETO(false)}>Volver</button>
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <div className='campos-datos'>
-                                                        <label>Fecha Solicitud:</label>
-                                                        <input
-                                                            type="text"
-                                                            name="apellido_paterno"
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                    <div className='campos-datos'>
+                                            </div>
+                                        )}
+                                    </td>
+                                    <td>{solicitud.fecha}</td>
+                                    <td>{solicitud.tipoSolicitud}</td>
+                                    <td>{solicitud.Categoria} </td>
+                                    <td>{solicitud.prioridad}</td>
+                                    <td>{solicitud.estado}</td>
+                                    <td>{solicitud.subestado} </td>
+                                    <td className='tabla-acciones-permisos'>
+                                        <button className='btn btn-primary' onClick={() => setMostrarFormularioACT(true)}>Actualizar</button>
+
+                                        {mostrarFormularioACT && (
+                                            <div className="modal-overlay">
+                                                <div className="modal-content">
+                                                    <h3 className="text-center">ACTUALIZAR SOLICITUD</h3>
+                                                    <div className="formulario-campos">
                                                         <label>Descripción:</label>
                                                         <input
                                                             type="text"
                                                             name="apellido_paterno"
-                                                            disabled
+                                                            required
                                                         />
+                                                        <label>Prioridad:</label>
+                                                        <select>
+                                                            <option value="">Sin seleccionar</option>
+                                                            <option value="">Baja</option>
+                                                            <option value="">Media</option>
+                                                            <option value="">Alta</option>
+                                                        </select>
+                                                        <label>Estado:</label>
+                                                        <select>
+                                                            <option value="">Sin seleccionar</option>
+                                                            <option value="">Cancelado</option>
+                                                            <option value="">Pendiente</option>
+                                                            <option value="">Cerrado</option>
+                                                        </select>
+                                                        <label>Sub estado:</label>
+                                                        <select>
+                                                            <option value="">Sin seleccionar</option>
+                                                            <option value="">Acogido</option>
+                                                            <option value="">No_acogido</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div className="formulario-botones">
+                                                        <button className="btn btn-primary">Actualizar</button>
+                                                        <button className="btn btn-secondary" onClick={() => setMostrarFormularioACT(false)}>Cancelar</button>
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <div className='campos-datos'>
-                                                        <label>Fecha Respuesta:</label>
-                                                        <input
-                                                            type="text"
-                                                            name="apellido_paterno"
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                    <div className='campos-datos'>
+                                            </div>
+                                        )}
+                                        <button className='btn btn-success' onClick={() => setMostrarFormularioRESPUESTA(true)}>Responder</button>
+
+                                        {mostrarFormularioRESPUESTA && (
+                                            <div className="modal-overlay">
+                                                <div className="modal-content">
+                                                    <h3 className="text-center">RESPONDER SOLICITUD</h3>
+                                                    <div className="formulario-campos">
                                                         <label>Respuesta:</label>
                                                         <input
                                                             type="text"
-                                                            disabled
+                                                            name="apellido_paterno"
+                                                            required
                                                         />
                                                     </div>
-                                                </div>
 
-                                                <div >
-                                                    <div className='campos-datos'>
-                                                        <label>Estado:</label>
-                                                        <input
-                                                            type="text"
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                    <div className='campos-datos'>
-                                                        <label>Sub estado:</label>
-                                                        <input
-                                                            type="text"
-                                                            disabled
-                                                        />
+                                                    <div className="formulario-botones">
+                                                        <button className="btn btn-success">Responder</button>
+                                                        <button className="btn btn-secondary" onClick={() => setMostrarFormularioRESPUESTA(false)}>Cancelar</button>
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <div className="formulario-botones-completo">
-                                                <button className="btn btn-secondary" onClick={() => setMostrarFormularioCOMPLETO(false)}>Volver</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </td>
-                            <td>12/02/2025</td>
-                            <td>Consulta</td>
-                            <td>Alquiler</td>
-                            <td>Baja</td>
-                            <td>Cerrado</td>
-                            <td>Acogido</td>
-                            <td className='tabla-acciones-permisos'>
-                                <button className='btn btn-primary' onClick={() => setMostrarFormularioACT(true)}>Actualizar</button>
-
-                                {mostrarFormularioACT && (
-                                    <div className="modal-overlay">
-                                        <div className="modal-content">
-                                            <h3 className="text-center">ACTUALIZAR SOLICITUD</h3>
-                                            <div className="formulario-campos">
-                                                <label>Descripción:</label>
-                                                <input
-                                                    type="text"
-                                                    name="apellido_paterno"
-                                                    required
-                                                />
-                                                <label>Prioridad:</label>
-                                                <select>
-                                                    <option value="">Sin seleccionar</option>
-                                                    <option value="">Baja</option>
-                                                    <option value="">Media</option>
-                                                    <option value="">Alta</option>
-                                                </select>
-                                                <label>Estado:</label>
-                                                <select>
-                                                    <option value="">Sin seleccionar</option>
-                                                    <option value="">Cancelado</option>
-                                                    <option value="">Pendiente</option>
-                                                    <option value="">Cerrado</option>
-                                                </select>
-                                                <label>Sub estado:</label>
-                                                <select>
-                                                    <option value="">Sin seleccionar</option>
-                                                    <option value="">Acogido</option>
-                                                    <option value="">No_acogido</option>
-                                                </select>
-                                            </div>
-
-                                            <div className="formulario-botones">
-                                                <button className="btn btn-primary">Actualizar</button>
-                                                <button className="btn btn-secondary" onClick={() => setMostrarFormularioACT(false)}>Cancelar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                                <button className='btn btn-success' onClick={() => setMostrarFormularioRESPUESTA(true)}>Responder</button>
-
-                                {mostrarFormularioRESPUESTA && (
-                                    <div className="modal-overlay">
-                                        <div className="modal-content">
-                                            <h3 className="text-center">RESPONDER SOLICITUD</h3>
-                                            <div className="formulario-campos">
-                                                <label>Respuesta:</label>
-                                                <input
-                                                    type="text"
-                                                    name="apellido_paterno"
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div className="formulario-botones">
-                                                <button className="btn btn-success">Responder</button>
-                                                <button className="btn btn-secondary" onClick={() => setMostrarFormularioRESPUESTA(false)}>Cancelar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </td>
-                        </tr>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="6">No se encontraron solicitudes.</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
