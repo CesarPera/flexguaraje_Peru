@@ -163,9 +163,9 @@ public class Solicitudes {
     }
 
     public enum Prioridad {
-        Bajo,
+        Baja,
         Media,
-        Alto
+        Alta
     }
 
     public enum Estado {

@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class LoginTestIntegracion {
+class LoginTest_Inter {
 
     @Autowired
     private MockMvc mockMvc;

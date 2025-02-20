@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc // Configura solo el controlador
-public class TestCliente {
+public class TestCliente_Inter {
 
     @InjectMocks
     private ClienteControlador clienteControlador; // Controlador que vamos a probar

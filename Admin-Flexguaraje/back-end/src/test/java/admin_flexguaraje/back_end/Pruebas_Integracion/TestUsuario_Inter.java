@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class usuarioTestIntegracion {
+public class TestUsuario_Inter {
 
     @Mock
     private UsuarioNegocio usuarioNegocio;

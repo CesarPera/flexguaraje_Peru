@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
 
 @WebMvcTest(ClienteControlador.class)
-public class TestCliente {
+public class TestCliente_Sis {
     @Autowired
     private MockMvc mockMvc;
 
