@@ -13,21 +13,20 @@
     border-bottom: 5px solid black;
     text-align: center;
     width: 320px;
-    margin: 30px auto 30px auto;
+    margin: 30px auto;
     color: #333;
-    vertical-align: middle;
 }
 
+/* Actions Container */
 .acciones-container {
     display: flex;
     justify-content: space-between;
     width: 100%;
 }
 
-.btn-crear {
-    
+.btn-crear, .btn-responder, .btn-buscar, .btn-actualizar {
     color: white;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -35,42 +34,22 @@
 
 .btn-responder {
     background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 8px 16px;
     margin-left: 10px;
-    cursor: pointer;
-    border-radius: 5px;
 }
 
 .btn-responder:hover {
     background-color: #218838;
 }
 
-.btn-crear:hover {
-    background-color: #5a4abc;
-}
-
-/* Search and filter container */
-.buscar-container input {
+.buscar-container input, .filtro-container select {
     padding: 8px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    margin-right: 10px;
+}
+
+.buscar-container input {
     width: 200px;
-}
-
-.btn-buscar {
-    padding: 8px 15px;
-    
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.btn-buscar:hover {
-    background-color: #5a4abc;
+    margin-right: 10px;
 }
 
 .filtro-container {
@@ -83,12 +62,6 @@
     margin-right: 10px;
 }
 
-.filtro-container select {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
 /* Table styling */
 .table-container {
     width: 100%;
@@ -96,41 +69,17 @@
     margin-top: 20px;
 }
 
-.table-container th,
-.table-container td {
-    /* Centra verticalmente */
+.table-container th, .table-container td {
     vertical-align: middle;
 }
 
-.estado-pendiente {
-    color: orange;
-    font-weight: bold;
-}
-
-.estado-cancelado {
-    color: red;
-    font-weight: bold;
-}
-
-.estado-cerrado {
-    color: green;
+/* Status styles */
+.estado-pendiente, .estado-cancelado, .estado-cerrado {
     font-weight: bold;
 }
 
 .btn-codigo:hover {
     text-decoration: underline;
-}
-
-.btn-actualizar {
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.btn-actualizar:hover {
-    background-color: #5a4abc;
 }
 
 /* Modal styling */
@@ -175,3 +124,35 @@
     cursor: pointer;
 }
 
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .reportes-page {
+        margin-left: 20px;
+        margin-top: 20px;
+    }
+
+    .acciones-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-crear {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .buscar-container input, .btn-buscar {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .filtro-container {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
+}
