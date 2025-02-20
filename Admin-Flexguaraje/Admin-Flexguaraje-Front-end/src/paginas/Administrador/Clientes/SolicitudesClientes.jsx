@@ -2,31 +2,65 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './SolicitudesClientes.css';
 import ClientesBD from './BASE DE DATOS/ClientesBD';
+import SolicitudesBD from './BASE DE DATOS/SolicitudesBD';
 import Swal from 'sweetalert2';
-// hasta aqui nomas
+
 function SolicitudesClientes() {
     const location = useLocation();
-    const navigate = useNavigate(); // Inicializa el hook useNavigate
+    const navigate = useNavigate();
     const { cliente } = location.state || {};
     const [solicitudes, setSolicitudes] = useState([]);
-    const [clienteActualizado, setClienteActualizado] = useState(cliente); // Inicializa con los datos actuales del cliente
+    const [clienteActualizado, setClienteActualizado] = useState(cliente);
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [mostrarFormularioACT, setMostrarFormularioACT] = useState(false);
     const [mostrarFormularioRESPUESTA, setMostrarFormularioRESPUESTA] = useState(false);
     const [mostrarFormularioCOMPLETO, setMostrarFormularioCOMPLETO] = useState(false);
 
+    // Estados para modales de solicitudes
+    const [formCrear, setFormCrear] = useState({
+        dniCliente: cliente?.dni || '',
+        tipoSolicitud: '',
+        categoria: '',
+        descripcion: '',
+        prioridad: '',
+        estado: '',
+        subestado: ''
+    });
+    const [formActualizar, setFormActualizar] = useState({
+        codigoSolicitud: '',
+        descripcion: '',
+        prioridad: '',
+        estado: ''
+    });
+    const [formRespuesta, setFormRespuesta] = useState({
+        idSolicitud: '',
+        respuesta: '',
+        subestado: ''
+    });
 
-    if (!cliente) {
-        return <div className='solicitud-page'>
-            <h2>No se encontraron datos del cliente.</h2>
-        </div>;
-    }
-
-    /* Estado para el formulario modal */
+    /* Estado para el formulario modal de actualizar cliente */
+    const [formData, setFormData] = useState({
+        dni: cliente.dni,
+        nombre: cliente.nombre,
+        apellido_paterno: cliente.apellidoPaterno,
+        apellido_materno: cliente.apellidoMaterno,
+        telefono: cliente.telefono,
+        email: cliente.email,
+        direccion: cliente.direccion,
+        nota: cliente.notaAdicional
+    });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
     const [isUpdated, setIsUpdated] = useState(false);
+
+    if (!cliente) {
+        return (
+            <div className='solicitud-page'>
+                <h2>No se encontraron datos del cliente.</h2>
+            </div>
+        );
+    }
 
     useEffect(() => {
         if (cliente?.dni) {
@@ -35,7 +69,6 @@ function SolicitudesClientes() {
     }, [cliente?.dni]);
 
     useEffect(() => {
-        // Solo si ya tenemos un cliente, hacemos la consulta
         if (clienteActualizado?.dni) {
             const obtenerDatosCliente = async () => {
                 try {
@@ -47,13 +80,14 @@ function SolicitudesClientes() {
             };
             obtenerDatosCliente();
         }
-    }, [clienteActualizado?.dni]); // Este hook se ejecuta cuando el clienteActualizado cambia
+    }, [clienteActualizado?.dni]);
 
     const obtenerSolicitudes = async (dni) => {
         try {
             const response = await SolicitudesBD.buscarSolicitudesPorDni(dni);
             setSolicitudes(response.data);
         } catch (error) {
+            console.error("Error al obtener solicitudes:", error.response?.data || error.message);
             Swal.fire({
                 icon: 'error',
                 title: 'Error al obtener solicitudes',
@@ -62,19 +96,7 @@ function SolicitudesClientes() {
         }
     };
 
-    /* Estado para los datos del formulario */
-    const [formData, setFormData] = useState({
-        dni: cliente.dni,
-        nombre: cliente.nombre,
-        apellido_paterno: cliente.apellidoPaterno,
-        apellido_materno: cliente.apellidoMaterno,
-        telefono: cliente.telefono,
-        email: cliente.email,
-        direccion: cliente.direccion,
-        nota: cliente.notaAdicional
-    });
-
-    /* Manejar cambios en los campos del formulario */
+    /* Handlers para actualizar cliente */
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => {
@@ -82,15 +104,12 @@ function SolicitudesClientes() {
                 ...prevState,
                 [name]: value,
             };
-            // Comprobar si el valor del campo ha cambiado con respecto al cliente original
             if (updatedData[name] !== cliente[name]) {
-                setIsUpdated(true); // Si hay un cambio, marcar que se actualizó
+                setIsUpdated(true);
             }
             return updatedData;
         });
     };
-
-
 
     const actualizarinfocliente = async () => {
         const formulariovacio = `${formData.nombre || ''} ${formData.apellido_paterno || ''} 
@@ -148,7 +167,6 @@ function SolicitudesClientes() {
         if (!formData.email.trim()) {
             errores.push('El Correo Electrónico no puede ir vacío.');
         } else if (!/^[a-zA-ZÁÉÍÓÚáéíóúñÑ0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email.trim())) {
-            // Cambié la expresión regular para aceptar cualquier dominio válido (no solo .com y .pe)
             errores.push('El Correo Electrónico debe ser válido (ejemplo@dominio.com).');
         }
 
@@ -169,11 +187,11 @@ function SolicitudesClientes() {
                 html: errores.map(error => `<p>${error}</p>`).join(''),
                 showConfirmButton: true,
             });
-            return; // Detener la ejecución si hay errores
+            return;
         }
 
         const updatedData = {
-            dni: formData.dni, // Aquí te aseguras de que el DNI se incluya correctamente
+            dni: formData.dni,
             nombre: formData.nombre,
             apellido_paterno: formData.apellido_paterno,
             apellido_materno: formData.apellido_materno,
@@ -185,7 +203,7 @@ function SolicitudesClientes() {
 
         try {
             await ClientesBD.actualizarCliente(updatedData);
-            const response = await ClientesBD.buscarCliente('dni', formData.dni); // Usar 'dni' como tipo de búsqueda
+            const response = await ClientesBD.buscarCliente('dni', formData.dni);
             setClienteActualizado(response.data);
             Swal.fire({
                 icon: 'success',
@@ -193,7 +211,7 @@ function SolicitudesClientes() {
                 showConfirmButton: false,
                 timer: 3000,
             });
-            closeModal(); // Cierra el modal después de actualizar
+            closeModal();
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -203,12 +221,10 @@ function SolicitudesClientes() {
         }
     };
 
-    // Manejar el botón de volver
     const handleVolver = () => {
-        navigate('/clientes'); // Redirige a la ruta "/cliente"
+        navigate('/clientes');
     };
 
-    // Manejar el cancelado y restaurar el formulario
     const handleCancelar = () => {
         setFormData({
             dni: cliente.dni,
@@ -220,8 +236,94 @@ function SolicitudesClientes() {
             direccion: cliente.direccion,
             nota: cliente.notaAdicional
         });
-        closeModal(); // Cierra el modal al cancelar
+        closeModal();
     };
+
+    /* Handlers para el formulario de crear solicitud */
+    const handleCrearChange = (e) => {
+        const { name, value } = e.target;
+        setFormCrear(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleCrearSolicitud = async () => {
+        try {
+            await SolicitudesBD.crearSolicitud(formCrear);
+            Swal.fire('Éxito', 'Solicitud creada correctamente', 'success');
+            obtenerSolicitudes(cliente.dni);
+            setMostrarFormulario(false);
+            setFormCrear({
+                dniCliente: cliente.dni,
+                tipoSolicitud: '',
+                categoria: '',
+                descripcion: '',
+                prioridad: '',
+                estado: '',
+                subestado: ''
+            });
+        } catch (error) {
+            console.error("Error en crearSolicitud:", error.response?.data || error.message);
+            // Intenta mostrar el mensaje devuelto por el backend, si existe
+            Swal.fire(
+                'Error', 
+                error.response?.data?.message || error.response?.data?.mensaje || 'No se pudo crear la solicitud', 
+                'error'
+            );
+        }
+    };
+
+    /* Handlers para el formulario de actualizar solicitud */
+    const handleActualizarChange = (e) => {
+        const { name, value } = e.target;
+        setFormActualizar(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleActualizarSolicitud = async () => {
+        try {
+            await SolicitudesBD.actualizarSolicitud(formActualizar);
+            Swal.fire('Éxito', 'Solicitud actualizada correctamente', 'success');
+            obtenerSolicitudes(cliente.dni);
+            setMostrarFormularioACT(false);
+        } catch (error) {
+            Swal.fire('Error', 'No se pudo actualizar la solicitud', 'error');
+        }
+    };
+
+    /* Handlers para el formulario de responder solicitud */
+    const handleRespuestaChange = (e) => {
+        const { name, value } = e.target;
+        setFormRespuesta(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleResponderSolicitud = async () => {
+        // Opcional: validar que los campos no estén vacíos y que subestado sea válido
+        if (!formRespuesta.codigoSolicitud || !formRespuesta.respuesta || !formRespuesta.subestado) {
+            Swal.fire('Error', 'Por favor, completa todos los campos (Respuesta y Sub estado).', 'error');
+            return;
+        }
+        if (formRespuesta.subestado !== 'Acogido' && formRespuesta.subestado !== 'No_acogido') {
+            Swal.fire('Error', 'El subestado debe ser "Acogido" o "No_acogido".', 'error');
+            return;
+        }
+        
+        try {
+            await SolicitudesBD.responderSolicitud(formRespuesta.codigoSolicitud, {
+                respuesta: formRespuesta.respuesta,
+                subestado: formRespuesta.subestado
+            });
+            Swal.fire('Éxito', 'Respuesta registrada correctamente', 'success');
+            obtenerSolicitudes(cliente.dni);
+            setMostrarFormularioRESPUESTA(false);
+            setFormRespuesta({ codigoSolicitud: '', respuesta: '', subestado: '' });
+        } catch (error) {
+            console.error("Error al responder:", error.response?.data || error.message);
+            Swal.fire(
+                'Error',
+                error.response?.data?.message || error.response?.data?.mensaje || 'No se pudo registrar la respuesta',
+                'error'
+            );
+        }
+    };
+    
 
     return (
         <div className="solicitud-page">
@@ -231,14 +333,14 @@ function SolicitudesClientes() {
                     <div className='info-cliente row'>
                         <div className='info-dni'>
                             <h3>DNI</h3>
-                            <p>{clienteActualizado.dni}</p> {/* Mostramos el DNI automáticamente */}
+                            <p>{clienteActualizado.dni}</p>
                         </div>
                         <div className='info-nombre-completo'>
                             <h3>Nombre Completo</h3>
                             <p>{`${clienteActualizado.nombre} ${clienteActualizado.apellidoPaterno} ${clienteActualizado.apellidoMaterno}`}</p>
                         </div>
                         <div className='info-telefono'>
-                            <h3>Telefono</h3>
+                            <h3>Teléfono</h3>
                             <p>{clienteActualizado.telefono}</p>
                         </div>
                         <div className='info-email'>
@@ -261,79 +363,34 @@ function SolicitudesClientes() {
                         {isModalOpen && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
-                                    <h2 className="text-center">ACTUALIZAR INFORMACION DEL CLIENTE</h2>
+                                    <h2 className="text-center">ACTUALIZAR INFORMACIÓN DEL CLIENTE</h2>
                                     <div className="formulario-campos">
                                         <label>DNI:</label>
                                         <input type="text" name="dni" value={formData.dni} disabled />
                                         <label>Nombre:</label>
-                                        <input
-                                            type="text"
-                                            name="nombre"
-                                            value={formData.nombre}
-                                            onChange={handleChange}
-                                        />
+                                        <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} />
                                         <label>Apellido Paterno:</label>
-                                        <input
-                                            type="text"
-                                            name="apellido_paterno"
-                                            value={formData.apellido_paterno}
-                                            onChange={handleChange}
-                                        />
+                                        <input type="text" name="apellido_paterno" value={formData.apellido_paterno} onChange={handleChange} />
                                         <label>Apellido Materno:</label>
-                                        <input
-                                            type="text"
-                                            name="apellido_materno"
-                                            value={formData.apellido_materno}
-                                            onChange={handleChange}
-                                        />
+                                        <input type="text" name="apellido_materno" value={formData.apellido_materno} onChange={handleChange} />
                                         <label>Teléfono:</label>
-                                        <input
-                                            type="text"
-                                            name="telefono"
-                                            value={formData.telefono}
-                                            onChange={handleChange}
-                                        />
+                                        <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} />
                                         <label>Email:</label>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                        />
+                                        <input type="email" name="email" value={formData.email} onChange={handleChange} />
                                         <label>Dirección:</label>
-                                        <input
-                                            type="text"
-                                            name="direccion"
-                                            value={formData.direccion}
-                                            onChange={handleChange}
-                                        />
+                                        <input type="text" name="direccion" value={formData.direccion} onChange={handleChange} />
                                         <label>Notas:</label>
-                                        <input
-                                            type="text"
-                                            name="nota"
-                                            value={formData.nota}
-                                            onChange={handleChange}
-                                        />
+                                        <input type="text" name="nota" value={formData.nota} onChange={handleChange} />
                                     </div>
 
                                     <div className="formulario-botones">
-                                        <button type="button" className="btn btn-primary" onClick={actualizarinfocliente}>
-                                            Actualizar
-                                        </button>
-                                        <button type="button" className="btn btn-secondary" onClick={handleCancelar}>
-                                            Cancelar
-                                        </button>
+                                        <button type="button" className="btn btn-primary" onClick={actualizarinfocliente}>Actualizar</button>
+                                        <button type="button" className="btn btn-secondary" onClick={handleCancelar}>Cancelar</button>
                                     </div>
                                 </div>
                             </div>
                         )}
-                        <button
-                            type="button"
-                            className="btn btn-secondary btn-act-cliente"
-                            onClick={handleVolver}>
-                            Volver
-                        </button>
-
+                        <button type="button" className="btn btn-secondary btn-act-cliente" onClick={handleVolver}>Volver</button>
                     </div>
                 </div>
             </div>
@@ -348,50 +405,46 @@ function SolicitudesClientes() {
                                 <h3 className="text-center">CREAR NUEVA SOLICITUD</h3>
                                 <div className="formulario-campos">
                                     <label>Tipo Solicitud:</label>
-                                    <select>
+                                    <select name="tipoSolicitud" value={formCrear.tipoSolicitud} onChange={handleCrearChange}>
                                         <option value="">Sin seleccionar</option>
-                                        <option value="">Consulta</option>
-                                        <option value="">Problema</option>
-                                        <option value="">Reclamo</option>
+                                        <option value="Consulta">Consulta</option>
+                                        <option value="Problema">Problema</option>
+                                        <option value="Reclamo">Reclamo</option>
                                     </select>
                                     <label>Categoria:</label>
-                                    <select>
+                                    <select name="categoria" value={formCrear.categoria} onChange={handleCrearChange}>
                                         <option value="">Sin seleccionar</option>
-                                        <option value="">Espacio</option>
-                                        <option value="">Cliente</option>
-                                        <option value="">Alquiler</option>
-                                        <option value="">Boleta</option>
+                                        <option value="Espacio">Espacio</option>
+                                        <option value="Cliente">Cliente</option>
+                                        <option value="Alquiler">Alquiler</option>
+                                        <option value="Boleta">Boleta</option>
                                     </select>
                                     <label>Descripción:</label>
-                                    <input
-                                        type="text"
-                                        name="apellido_paterno"
-                                        required
-                                    />
+                                    <input type="text" name="descripcion" value={formCrear.descripcion} onChange={handleCrearChange} required />
                                     <label>Prioridad:</label>
-                                    <select>
+                                    <select name="prioridad" value={formCrear.prioridad} onChange={handleCrearChange}>
                                         <option value="">Sin seleccionar</option>
-                                        <option value="">Baja</option>
-                                        <option value="">Media</option>
-                                        <option value="">Alta</option>
+                                        <option value="Baja">Baja</option>
+                                        <option value="Media">Media</option>
+                                        <option value="Alta">Alta</option>
                                     </select>
                                     <label>Estado:</label>
-                                    <select>
+                                    <select name="estado" value={formCrear.estado} onChange={handleCrearChange}>
                                         <option value="">Sin seleccionar</option>
-                                        <option value="">Cancelado</option>
-                                        <option value="">Pendiente</option>
-                                        <option value="">Cerrado</option>
+                                        <option value="Cancelado">Cancelado</option>
+                                        <option value="Pendiente">Pendiente</option>
+                                        <option value="Cerrado">Cerrado</option>
                                     </select>
                                     <label>Sub estado:</label>
-                                    <select>
+                                    <select name="subestado" value={formCrear.subestado} onChange={handleCrearChange}>
                                         <option value="">Sin seleccionar</option>
-                                        <option value="">Acogido</option>
-                                        <option value="">No_acogido</option>
+                                        <option value="Acogido">Acogido</option>
+                                        <option value="No_acogido">No_acogido</option>
                                     </select>
                                 </div>
 
                                 <div className="formulario-botones">
-                                    <button className="btn btn-success">Crear</button>
+                                    <button className="btn btn-success" onClick={handleCrearSolicitud}>Crear</button>
                                     <button className="btn btn-secondary" onClick={() => setMostrarFormulario(false)}>Cancelar</button>
                                 </div>
                             </div>
@@ -412,108 +465,70 @@ function SolicitudesClientes() {
                             <th>Acciones</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         {solicitudes.length > 0 ? (
                             solicitudes.map((solicitud) => (
                                 <tr key={solicitud.codigoSolicitud}>
                                     <td>
-                                        <button className='btn-codigo' onClick={() => setMostrarFormularioCOMPLETO(true)}>{solicitud.codigoSolicitud}</button>
-
+                                        <button className='btn-codigo' onClick={() => setMostrarFormularioCOMPLETO(true)}>
+                                            {solicitud.codigoSolicitud}
+                                        </button>
                                         {mostrarFormularioCOMPLETO && (
                                             <div className="modal-overlay">
                                                 <div className="modal-content-completo">
                                                     <div className='titulo-completo-modal'>
-                                                        <h3 className="text-center">INFORMACIÓN COMPLETO DE LA SOLICITUD</h3>
-
+                                                        <h3 className="text-center">INFORMACIÓN COMPLETA DE LA SOLICITUD</h3>
                                                     </div>
-
                                                     <div className="formulario-campos-completo">
                                                         <div>
                                                             <div className='campos-datos'>
                                                                 <label>Codigo Solicitud:</label>
-                                                                <input
-                                                                    type="text"
-                                                                    name="apellido_paterno"
-                                                                    disabled
-                                                                />
+                                                                <input type="text" value={solicitud.codigoSolicitud} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Tipo:</label>
-                                                                <input
-                                                                    type="text"
-                                                                    disabled
-                                                                />
+                                                                <input type="text" value={solicitud.tipoSolicitud} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Categoria:</label>
-                                                                <input
-                                                                    type="text"
-                                                                    disabled
-                                                                />
+                                                                <input type="text" value={solicitud.categoria} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Prioridad:</label>
-                                                                <input
-                                                                    type="text"
-                                                                    disabled
-                                                                />
+                                                                <input type="text" value={solicitud.prioridad} disabled />
                                                             </div>
                                                         </div>
                                                         <div>
                                                             <div className='campos-datos'>
                                                                 <label>Fecha Solicitud:</label>
-                                                                <input
-                                                                    type="text"
-                                                                    name="apellido_paterno"
-                                                                    disabled
-                                                                />
+                                                                <input type="text" value={solicitud.fechaSolicitud} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Descripción:</label>
-                                                                <input
-                                                                    type="text"
-                                                                    name="apellido_paterno"
-                                                                    disabled
-                                                                />
+                                                                <input type="text" value={solicitud.descripcion} disabled />
                                                             </div>
                                                         </div>
                                                         <div>
                                                             <div className='campos-datos'>
                                                                 <label>Fecha Respuesta:</label>
-                                                                <input
-                                                                    type="text"
-                                                                    name="apellido_paterno"
-                                                                    disabled
-                                                                />
+                                                                <input type="text" value={solicitud.fechaRespuesta || ''} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Respuesta:</label>
-                                                                <input
-                                                                    type="text"
-                                                                    disabled
-                                                                />
+                                                                <input type="text" value={solicitud.respuesta || ''} disabled />
                                                             </div>
                                                         </div>
-
-                                                        <div >
+                                                        <div>
                                                             <div className='campos-datos'>
                                                                 <label>Estado:</label>
-                                                                <input
-                                                                    type="text"
-                                                                    disabled
-                                                                />
+                                                                <input type="text" value={solicitud.estado} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Sub estado:</label>
-                                                                <input
-                                                                    type="text"
-                                                                    disabled
-                                                                />
+                                                                <input type="text" value={solicitud.subestado || ''} disabled />
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                     <div className="formulario-botones-completo">
                                                         <button className="btn btn-secondary" onClick={() => setMostrarFormularioCOMPLETO(false)}>Volver</button>
                                                     </div>
@@ -521,14 +536,22 @@ function SolicitudesClientes() {
                                             </div>
                                         )}
                                     </td>
-                                    <td>{solicitud.fecha}</td>
+                                    <td>{solicitud.fechaSolicitud}</td>
                                     <td>{solicitud.tipoSolicitud}</td>
-                                    <td>{solicitud.Categoria} </td>
+                                    <td>{solicitud.categoria}</td>
                                     <td>{solicitud.prioridad}</td>
                                     <td>{solicitud.estado}</td>
-                                    <td>{solicitud.subestado} </td>
+                                    <td>{solicitud.subestado || "👻👻👻"}</td>
                                     <td className='tabla-acciones-permisos'>
-                                        <button className='btn btn-primary' onClick={() => setMostrarFormularioACT(true)}>Actualizar</button>
+                                        <button className='btn btn-primary' onClick={() => {
+                                            setFormActualizar({
+                                                codigoSolicitud: solicitud.codigoSolicitud,
+                                                descripcion: solicitud.descripcion,
+                                                prioridad: solicitud.prioridad,
+                                                estado: solicitud.estado
+                                            });
+                                            setMostrarFormularioACT(true);
+                                        }}>Actualizar</button>
 
                                         {mostrarFormularioACT && (
                                             <div className="modal-overlay">
@@ -538,39 +561,41 @@ function SolicitudesClientes() {
                                                         <label>Descripción:</label>
                                                         <input
                                                             type="text"
-                                                            name="apellido_paterno"
+                                                            name="descripcion"
+                                                            value={formActualizar.descripcion}
+                                                            onChange={handleActualizarChange}
                                                             required
                                                         />
                                                         <label>Prioridad:</label>
-                                                        <select>
+                                                        <select name="prioridad" value={formActualizar.prioridad} onChange={handleActualizarChange}>
                                                             <option value="">Sin seleccionar</option>
-                                                            <option value="">Baja</option>
-                                                            <option value="">Media</option>
-                                                            <option value="">Alta</option>
+                                                            <option value="Baja">Baja</option>
+                                                            <option value="Media">Media</option>
+                                                            <option value="Alta">Alta</option>
                                                         </select>
                                                         <label>Estado:</label>
-                                                        <select>
+                                                        <select name="estado" value={formActualizar.estado} onChange={handleActualizarChange}>
                                                             <option value="">Sin seleccionar</option>
-                                                            <option value="">Cancelado</option>
-                                                            <option value="">Pendiente</option>
-                                                            <option value="">Cerrado</option>
-                                                        </select>
-                                                        <label>Sub estado:</label>
-                                                        <select>
-                                                            <option value="">Sin seleccionar</option>
-                                                            <option value="">Acogido</option>
-                                                            <option value="">No_acogido</option>
+                                                            <option value="Cancelado">Cancelado</option>
+                                                            <option value="Pendiente">Pendiente</option>
+                                                            <option value="Cerrado">Cerrado</option>
                                                         </select>
                                                     </div>
-
                                                     <div className="formulario-botones">
-                                                        <button className="btn btn-primary">Actualizar</button>
+                                                        <button className="btn btn-primary" onClick={handleActualizarSolicitud}>Actualizar</button>
                                                         <button className="btn btn-secondary" onClick={() => setMostrarFormularioACT(false)}>Cancelar</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         )}
-                                        <button className='btn btn-success' onClick={() => setMostrarFormularioRESPUESTA(true)}>Responder</button>
+                                        <button className='btn btn-success' onClick={() => {
+                                            setFormRespuesta({
+                                                codigoSolicitud: solicitud.codigoSolicitud,
+                                                respuesta: '',
+                                                subestado: ''
+                                            });
+                                            setMostrarFormularioRESPUESTA(true);
+                                        }}>Responder</button>
 
                                         {mostrarFormularioRESPUESTA && (
                                             <div className="modal-overlay">
@@ -580,13 +605,20 @@ function SolicitudesClientes() {
                                                         <label>Respuesta:</label>
                                                         <input
                                                             type="text"
-                                                            name="apellido_paterno"
+                                                            name="respuesta"
+                                                            value={formRespuesta.respuesta}
+                                                            onChange={handleRespuestaChange}
                                                             required
                                                         />
+                                                        <label>Sub estado:</label>
+                                                        <select name="subestado" value={formRespuesta.subestado} onChange={handleRespuestaChange}>
+                                                            <option value="">Sin seleccionar</option>
+                                                            <option value="Acogido">Acogido</option>
+                                                            <option value="No_acogido">No_acogido</option>
+                                                        </select>
                                                     </div>
-
                                                     <div className="formulario-botones">
-                                                        <button className="btn btn-success">Responder</button>
+                                                        <button className="btn btn-success" onClick={handleResponderSolicitud}>Responder</button>
                                                         <button className="btn btn-secondary" onClick={() => setMostrarFormularioRESPUESTA(false)}>Cancelar</button>
                                                     </div>
                                                 </div>
