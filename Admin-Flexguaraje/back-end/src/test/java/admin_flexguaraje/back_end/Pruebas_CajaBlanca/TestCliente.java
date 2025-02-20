@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 @SpringBootTest
-public class Cliente_TestCajaBlanca {
+public class TestCliente {
     @InjectMocks
     private ClienteControlador clienteControlador;
 
