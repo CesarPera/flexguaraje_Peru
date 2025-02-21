@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReportesBD from './BASE DE DATOS/ReportsBD'; // Ajusta la ruta según la ubicación real
+import Swal from 'sweetalert2';
 import './Reportes.css';
 
 function Reportes() {
@@ -39,6 +40,7 @@ function Reportes() {
       })
       .catch(error => {
         console.error("Error al obtener los reportes:", error);
+        Swal.fire('Error', 'No se pudieron obtener los reportes.', 'error');
       });
   }, []);
 
@@ -57,7 +59,7 @@ function Reportes() {
     setReportesFiltrados(reportesFiltrados);
   };
 
-  // Función para actualizar reporte (ya implementada)
+  // Función para actualizar reporte
   const manejarActualizacion = (e) => {
     e.preventDefault();
     
@@ -76,11 +78,11 @@ function Reportes() {
         );
         setReportes(reportesActualizados);
         setModalActualizarAbierto(false);
-        alert('¡Reporte actualizado exitosamente!');
+        Swal.fire('¡Actualizado!', 'El reporte se actualizó exitosamente.', 'success');
       })
       .catch(error => {
         console.error("Error al actualizar el reporte:", error);
-        alert("Error al actualizar el reporte.");
+        Swal.fire('Error', error.response?.data || "Error al actualizar el reporte.", 'error');
       });
   };
 
@@ -101,7 +103,6 @@ function Reportes() {
   const manejarRespuesta = (e) => {
     e.preventDefault();
     
-    // Construir el objeto con los datos necesarios para responder el reporte
     const reporteRespuesta = {
       codigoReporte: reporteSeleccionado.codigoReporte,
       respuesta: respuesta,
@@ -110,39 +111,41 @@ function Reportes() {
 
     ReportesBD.responderReporte(reporteRespuesta)
       .then(response => {
-        // Actualizar el reporte en el estado con los datos devueltos por el backend
         const reportesActualizados = reportes.map((reporte) =>
           reporte.idReportes === reporteSeleccionado.idReportes ? response.data : reporte
         );
         setReportes(reportesActualizados);
         setReporteSeleccionado(response.data);
-        alert('¡Respuesta enviada exitosamente!');
+        Swal.fire('¡Respondido!', 'La respuesta se envió exitosamente.', 'success');
         cerrarModalRespuesta();
       })
       .catch(error => {
         console.error("Error al responder el reporte:", error);
-        alert("Error al responder el reporte.");
+        Swal.fire('Error', error.response?.data || "Error al responder el reporte.", 'error');
       });
   };
 
-  const generarCodigoReporte = () => {
-    return `REP${Math.floor(Math.random() * 1000) + 100}`;
-  };
-
+  // Función para crear reporte usando la Solución 1
   const manejarCreacionReporte = (e) => {
     e.preventDefault();
+  
+    // Validación de campos vacíos
+    if (
+      nuevoReporte.descripcionReporte.trim() === '' ||
+      nuevoReporte.encargadoResolver.trim() === ''
+    ) {
+      Swal.fire('Error', 'El formulario no puede estar vacío, por favor rellenar datos.', 'error');
+      return;
+    }
+  
     ReportesBD.crearReporte(
       nuevoReporte.encargadoResolver,
       nuevoReporte.descripcionReporte,
       nuevoReporte.prioridad
     )
       .then(response => {
-        const reporteCreado = {
-          ...response.data,
-          codigoReporte: generarCodigoReporte(),
-          fechaReporte: new Date().toLocaleDateString()
-        };
-        setReportes([...reportes, reporteCreado]);
+        const reporteCreado = response.data;
+        setReportes(prevReportes => [...prevReportes, reporteCreado]);
         setNuevoReporte({
           descripcionReporte: '',
           encargadoResolver: '',
@@ -154,10 +157,11 @@ function Reportes() {
           respuestaReporte: ''
         });
         setModalAbierto(false);
-        alert('¡Reporte creado exitosamente!');
+        Swal.fire('¡Reporte creado!', 'El reporte se creó exitosamente.', 'success');
       })
       .catch(error => {
         console.error("Error al crear reporte:", error);
+        Swal.fire('Error', error.response?.data || "Error al crear el reporte.", 'error');
       });
   };
 
