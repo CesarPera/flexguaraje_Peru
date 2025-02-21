@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/reportes")
-@CrossOrigin(origins = "http://localhost:5173") // Permite acceder desde cualquier origen
+@CrossOrigin(origins = "http://localhost:5173")
 public class ReportesControlador {
 
     @Autowired
@@ -22,19 +22,37 @@ public class ReportesControlador {
         return reportesNegocio.listarTodos();
     }
 
+    // Clase para la solicitud de creación de reporte
     public static class ReporteRequest {
         public String encargadoResolver;
         public String descripcion;
-        public Reportes.PrioridadR prioridad;
+        public String prioridad; // Se recibe como String
+    }
+
+    // Método auxiliar para convertir el String recibido a PrioridadR
+    private Reportes.PrioridadR parsePrioridad(String prioridadStr) {
+        for (Reportes.PrioridadR prioridad : Reportes.PrioridadR.values()) {
+            if (prioridad.name().equalsIgnoreCase(prioridadStr)) {
+                return prioridad;
+            }
+        }
+        throw new IllegalArgumentException("Prioridad no válida. Use Alta, Media o Baja.");
     }
 
     @PostMapping("/crear_reportes")
     public ResponseEntity<?> crearReporte(@RequestBody ReporteRequest request) {
         try {
+            Reportes.PrioridadR prioridad;
+            try {
+                prioridad = parsePrioridad(request.prioridad);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+
             Reportes nuevoReporte = reportesNegocio.crearReporte(
                     request.encargadoResolver,
                     request.descripcion,
-                    request.prioridad
+                    prioridad
             );
 
             return ResponseEntity.ok(nuevoReporte);
@@ -52,11 +70,11 @@ public class ReportesControlador {
         }
 
         if (codigoReporte.length() != 15) {
-            return ResponseEntity.badRequest().body("El código de reporte debe de tener exactamente 15 caracteres.");
+            return ResponseEntity.badRequest().body("El código de reporte debe tener exactamente 15 caracteres.");
         }
 
         if (!codigoReporte.matches("^RPT-\\d{11}$")) {
-            return ResponseEntity.badRequest().body("El código de reporte debe de seguir el formato correspondiente. EJEMPLO: RPT-12345678901");
+            return ResponseEntity.badRequest().body("El código de reporte debe seguir el formato correspondiente. EJEMPLO: RPT-12345678901");
         }
 
         try {
@@ -73,10 +91,9 @@ public class ReportesControlador {
             String codigoReporte = requestBody.get("codigoReporte");
             String descripcionReporte = requestBody.get("descripcionReporte");
             String encargadoResolver = requestBody.get("encargadoResolver");
-            Reportes.PrioridadR prioridad = Reportes.PrioridadR.valueOf(requestBody.get("prioridad"));
+            Reportes.PrioridadR prioridad = parsePrioridad(requestBody.get("prioridad"));
             Reportes.EstadoR estado = Reportes.EstadoR.valueOf(requestBody.get("estado"));
 
-            // Llamada a la lógica de negocio sin el subestado
             Reportes reporteActualizado = reportesNegocio.actualizarReporte(
                     codigoReporte,
                     descripcionReporte,

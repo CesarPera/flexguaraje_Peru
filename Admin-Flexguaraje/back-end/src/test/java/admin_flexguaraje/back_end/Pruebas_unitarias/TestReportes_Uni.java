@@ -43,7 +43,7 @@ public class TestReportes_Uni {
         ReportesControlador.ReporteRequest request = new ReportesControlador.ReporteRequest();
         request.encargadoResolver = "12345678";
         request.descripcion = "Reporte de prueba";
-        request.prioridad = Reportes.PrioridadR.Alta;
+        request.prioridad = "Alta";
 
         Reportes nuevoReporte = new Reportes();
         when(reportesNegocio.crearReporte(anyString(), anyString(), any())).thenReturn(nuevoReporte);

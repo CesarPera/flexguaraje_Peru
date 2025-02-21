@@ -23,9 +23,9 @@ public class ReportesNegocio {
 
     private final Random random = new Random();
 
-    public ReportesNegocio(ReportesRepositorio reportesRepository, UsuarioRepositorio usuarioRepository) {
-        this.reportesRepositorio = reportesRepository;
-        this.usuarioRepositorio = usuarioRepository;
+    public ReportesNegocio(ReportesRepositorio reportesRepositorio, UsuarioRepositorio usuarioRepositorio) {
+        this.reportesRepositorio = reportesRepositorio;
+        this.usuarioRepositorio = usuarioRepositorio;
     }
 
     public List<Reportes> listarTodos() {
@@ -34,22 +34,22 @@ public class ReportesNegocio {
 
     private Usuario validarUsuarioParaReporte(String dniEncargado) {
         if (!dniEncargado.matches("\\d{8}")) {
-            throw new IllegalArgumentException("Solo se aceptan 8 caracteres numéricos");
+            throw new IllegalArgumentException("Solo se aceptan 8 caracteres numéricos.");
         }
 
         Optional<Usuario> usuarioOptional = usuarioRepositorio.findByDni(dniEncargado);
         if (usuarioOptional.isEmpty()) {
-            throw new IllegalArgumentException("DNI no encontrado");
+            throw new IllegalArgumentException("DNI no encontrado.");
         }
 
         Usuario usuario = usuarioOptional.get();
 
         if (!usuario.getRoles().getNombreRol().equalsIgnoreCase("Mantenimiento")) {
-            throw new IllegalArgumentException("El usuario con DNI " + dniEncargado + " no tiene rol de Mantenimiento");
+            throw new IllegalArgumentException("El usuario con DNI " + dniEncargado + " no tiene rol de Mantenimiento.");
         }
 
         if (usuario.getEstado() != Usuario.estadoUsuario.Activo) {
-            throw new IllegalArgumentException("El usuario con DNI " + dniEncargado + " no está con estado activo");
+            throw new IllegalArgumentException("El usuario con DNI " + dniEncargado + " no está activo.");
         }
 
         return usuario;
