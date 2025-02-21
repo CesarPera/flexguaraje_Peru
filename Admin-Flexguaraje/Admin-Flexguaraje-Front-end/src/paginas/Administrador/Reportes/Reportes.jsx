@@ -5,6 +5,7 @@ import './Reportes.css';
 function Reportes() {
   const [reportes, setReportes] = useState([]);
   const [filtroEstado, setFiltroEstado] = useState('Todos');
+  const [filtroPrioridad, setFiltroPrioridad] = useState('Todos');
   const [reporteSeleccionado, setReporteSeleccionado] = useState(null);
   const [codigoBuscar, setCodigoBuscar] = useState('');
   const [modalActualizarAbierto, setModalActualizarAbierto] = useState(false);
@@ -22,6 +23,7 @@ function Reportes() {
     respuestaReporte: ''
   });
   const [mostrarFormularioCOMPLETO, setMostrarFormularioCOMPLETO] = useState(false);
+  const [reportesFiltrados, setReportesFiltrados] = useState([]);
 
   // Función de ayuda para mostrar valor o fantasmitas (en caso de campo vacío)
   const mostrarValor = (valor) => {
@@ -33,6 +35,7 @@ function Reportes() {
       .then(response => {
         console.log("Reportes obtenidos:", response.data);
         setReportes(response.data);
+        setReportesFiltrados(response.data); // Inicialmente, todos los reportes están filtrados
       })
       .catch(error => {
         console.error("Error al obtener los reportes:", error);
@@ -43,9 +46,15 @@ function Reportes() {
     return reportes.filter((reporte) => {
       const codigo = reporte.codigoReporte || "";
       const estadoCoincide = filtroEstado === 'Todos' || reporte.estado === filtroEstado;
+      const prioridadCoincide = filtroPrioridad === 'Todos' || reporte.prioridad === filtroPrioridad;
       const codigoCoincide = codigo.toLowerCase().includes(codigoBuscar.toLowerCase());
-      return estadoCoincide && codigoCoincide;
+      return estadoCoincide && prioridadCoincide && codigoCoincide;
     });
+  };
+
+  const manejarBusqueda = () => {
+    const reportesFiltrados = filtrarReportes();
+    setReportesFiltrados(reportesFiltrados);
   };
 
   // Función para actualizar reporte (ya implementada)
@@ -186,16 +195,7 @@ function Reportes() {
             value={codigoBuscar}
             onChange={(e) => setCodigoBuscar(e.target.value)}
           />
-          <button className="btn btn-info">Buscar</button>
-        </div>
-        <div className="filtro-container">
-          <label>Filtrar por estado:</label>
-          <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
-            <option value="Todos">Todos</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="Cancelado">Cancelado</option>
-            <option value="Cerrado">Cerrado</option>
-          </select>
+          <button className="btn btn-info" onClick={manejarBusqueda}>Buscar</button>
         </div>
       </div>
       <table className="table table-primary table-hover table-bordered border-primary text-center tabla-usuario">
@@ -204,8 +204,24 @@ function Reportes() {
             <th>Código Reporte</th>
             <th>Fecha Reporte</th>
             <th>Encargado a Resolver</th>
-            <th>Prioridad</th>
-            <th>Estado</th>
+            <th>
+              Prioridad
+              <select value={filtroPrioridad} onChange={(e) => setFiltroPrioridad(e.target.value)}>
+                <option value="Todos">Todos</option>
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Baja">Baja</option>
+              </select>
+            </th>
+            <th>
+              Estado
+              <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
+                <option value="Todos">Todos</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Cancelado">Cancelado</option>
+                <option value="Cerrado">Cerrado</option>
+              </select>
+            </th>
             <th>Subestado</th>
             <th>Fecha Respuesta</th>
             <th>Acciones</th>
