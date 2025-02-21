@@ -15,6 +15,8 @@ function SolicitudesClientes() {
     const [mostrarFormularioACT, setMostrarFormularioACT] = useState(false);
     const [mostrarFormularioRESPUESTA, setMostrarFormularioRESPUESTA] = useState(false);
     const [mostrarFormularioCOMPLETO, setMostrarFormularioCOMPLETO] = useState(false);
+    const [filtroPrioridad, setFiltroPrioridad] = useState('Todos');
+
 
     // Estados para modales de solicitudes
     const [formCrear, setFormCrear] = useState({
@@ -264,8 +266,8 @@ function SolicitudesClientes() {
             console.error("Error en crearSolicitud:", error.response?.data || error.message);
             // Intenta mostrar el mensaje devuelto por el backend, si existe
             Swal.fire(
-                'Error', 
-                error.response?.data?.message || error.response?.data?.mensaje || 'No se pudo crear la solicitud', 
+                'Error',
+                error.response?.data?.message || error.response?.data?.mensaje || 'No se pudo crear la solicitud',
                 'error'
             );
         }
@@ -304,7 +306,7 @@ function SolicitudesClientes() {
             Swal.fire('Error', 'El subestado debe ser "Acogido" o "No_acogido".', 'error');
             return;
         }
-        
+
         try {
             await SolicitudesBD.responderSolicitud(formRespuesta.codigoSolicitud, {
                 respuesta: formRespuesta.respuesta,
@@ -323,7 +325,7 @@ function SolicitudesClientes() {
             );
         }
     };
-    
+
 
     return (
         <div className="solicitud-page">
@@ -396,60 +398,76 @@ function SolicitudesClientes() {
             </div>
 
             <div className="solicitud-cliente">
-                <div className='button-acciones-permisos'>
-                    <button className='btn btn-success' onClick={() => setMostrarFormulario(true)}>Crear Solicitud</button>
+                <div className='acciones-usuario'>
+                    <div className='acciones-btn-usuario'>
+                        <button className='btn btn-success' onClick={() => setMostrarFormulario(true)}>Crear Solicitud</button>
 
-                    {mostrarFormulario && (
-                        <div className="modal-overlay">
-                            <div className="modal-content">
-                                <h3 className="text-center">CREAR NUEVA SOLICITUD</h3>
-                                <div className="formulario-campos">
-                                    <label>Tipo Solicitud:</label>
-                                    <select name="tipoSolicitud" value={formCrear.tipoSolicitud} onChange={handleCrearChange}>
-                                        <option value="">Sin seleccionar</option>
-                                        <option value="Consulta">Consulta</option>
-                                        <option value="Problema">Problema</option>
-                                        <option value="Reclamo">Reclamo</option>
-                                    </select>
-                                    <label>Categoria:</label>
-                                    <select name="categoria" value={formCrear.categoria} onChange={handleCrearChange}>
-                                        <option value="">Sin seleccionar</option>
-                                        <option value="Espacio">Espacio</option>
-                                        <option value="Cliente">Cliente</option>
-                                        <option value="Alquiler">Alquiler</option>
-                                        <option value="Boleta">Boleta</option>
-                                    </select>
-                                    <label>Descripción:</label>
-                                    <input type="text" name="descripcion" value={formCrear.descripcion} onChange={handleCrearChange} required />
-                                    <label>Prioridad:</label>
-                                    <select name="prioridad" value={formCrear.prioridad} onChange={handleCrearChange}>
-                                        <option value="">Sin seleccionar</option>
-                                        <option value="Baja">Baja</option>
-                                        <option value="Media">Media</option>
-                                        <option value="Alta">Alta</option>
-                                    </select>
-                                    <label>Estado:</label>
-                                    <select name="estado" value={formCrear.estado} onChange={handleCrearChange}>
-                                        <option value="">Sin seleccionar</option>
-                                        <option value="Cancelado">Cancelado</option>
-                                        <option value="Pendiente">Pendiente</option>
-                                        <option value="Cerrado">Cerrado</option>
-                                    </select>
-                                    <label>Sub estado:</label>
-                                    <select name="subestado" value={formCrear.subestado} onChange={handleCrearChange}>
-                                        <option value="">Sin seleccionar</option>
-                                        <option value="Acogido">Acogido</option>
-                                        <option value="No_acogido">No_acogido</option>
-                                    </select>
-                                </div>
+                        {mostrarFormulario && (
+                            <div className="modal-overlay">
+                                <div className="modal-content">
+                                    <h3 className="text-center">CREAR NUEVA SOLICITUD</h3>
+                                    <div className="formulario-campos">
+                                        <label>Tipo Solicitud:</label>
+                                        <select name="tipoSolicitud" value={formCrear.tipoSolicitud} onChange={handleCrearChange}>
+                                            <option value="">Sin seleccionar</option>
+                                            <option value="Consulta">Consulta</option>
+                                            <option value="Problema">Problema</option>
+                                            <option value="Reclamo">Reclamo</option>
+                                        </select>
+                                        <label>Categoria:</label>
+                                        <select name="categoria" value={formCrear.categoria} onChange={handleCrearChange}>
+                                            <option value="">Sin seleccionar</option>
+                                            <option value="Espacio">Espacio</option>
+                                            <option value="Cliente">Cliente</option>
+                                            <option value="Alquiler">Alquiler</option>
+                                            <option value="Boleta">Boleta</option>
+                                        </select>
+                                        <label>Descripción:</label>
+                                        <input type="text" name="descripcion" value={formCrear.descripcion} onChange={handleCrearChange} required />
+                                        <label>Prioridad:</label>
+                                        <select name="prioridad" value={formCrear.prioridad} onChange={handleCrearChange}>
+                                            <option value="">Sin seleccionar</option>
+                                            <option value="Baja">Baja</option>
+                                            <option value="Media">Media</option>
+                                            <option value="Alta">Alta</option>
+                                        </select>
+                                        <label>Estado:</label>
+                                        <select name="estado" value={formCrear.estado} onChange={handleCrearChange}>
+                                            <option value="">Sin seleccionar</option>
+                                            <option value="Cancelado">Cancelado</option>
+                                            <option value="Pendiente">Pendiente</option>
+                                            <option value="Cerrado">Cerrado</option>
+                                        </select>
+                                        <label>Sub estado:</label>
+                                        <select name="subestado" value={formCrear.subestado} onChange={handleCrearChange}>
+                                            <option value="">Sin seleccionar</option>
+                                            <option value="Acogido">Acogido</option>
+                                            <option value="No_acogido">No_acogido</option>
+                                        </select>
+                                    </div>
 
-                                <div className="formulario-botones">
-                                    <button className="btn btn-success" onClick={handleCrearSolicitud}>Crear</button>
-                                    <button className="btn btn-secondary" onClick={() => setMostrarFormulario(false)}>Cancelar</button>
+                                    <div className="formulario-botones">
+                                        <button className="btn btn-success" onClick={handleCrearSolicitud}>Crear</button>
+                                        <button className="btn btn-secondary" onClick={() => setMostrarFormulario(false)}>Cancelar</button>
+                                    </div>
                                 </div>
                             </div>
+                        )}
+                    </div>
+
+                    <div className="formulario-buscar-infocliente">
+                        <input
+                            type="text"
+                            placeholder='Ingresar Codigo Solicitud'
+
+                        />
+                        <div className='btn-acciones-buscar'>
+                            <button className='btn btn-info'>Buscar</button>
+                            <button className='btn btn-secondary'>
+                                Normalidad
+                            </button>
                         </div>
-                    )}
+                    </div>
                 </div>
 
                 <table className='table table-primary table-hover table-bordered border-primary text-center tabla-espacios'>
@@ -457,11 +475,46 @@ function SolicitudesClientes() {
                         <tr>
                             <th>codigo Solicitud</th>
                             <th>Fecha</th>
-                            <th>Tipo</th>
-                            <th>Categoria</th>
-                            <th>Prioridad</th>
-                            <th>Estado</th>
-                            <th>Sub estado</th>
+                            <th >Tipo
+                                <select className='filtro-table'>
+                                    <option>Todos</option>
+                                    <option>Consulta</option>
+                                    <option>Problema</option>
+                                    <option>Reclamo</option>
+                                </select>
+                            </th>
+                            <th >Categoria
+                                <select className='filtro-table'>
+                                    <option>Todos</option>
+                                    <option>Espacio</option>
+                                    <option>Cliente</option>
+                                    <option>Alquiler</option>
+                                    <option>Boleta</option>
+                                </select>
+                            </th>
+                            <th >Prioridad
+                                <select className='filtro-table'>
+                                    <option>Todos</option>
+                                    <option>Baja</option>
+                                    <option>Media</option>
+                                    <option>Alta</option>
+                                </select>
+                            </th>
+                            <th >Estado
+                                <select className='filtro-table'>
+                                    <option>Todos</option>
+                                    <option>Cancelado</option>
+                                    <option>Pendiente</option>
+                                    <option>Cerrado</option>
+                                </select>
+                            </th>
+                            <th >Sub estado
+                                <select className='filtro-table'>
+                                    <option>Todos</option>
+                                    <option>Acogido</option>
+                                    <option>No acogido</option>
+                                </select>
+                            </th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -505,17 +558,17 @@ function SolicitudesClientes() {
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Descripción:</label>
-                                                                <input type="text" value={solicitud.descripcion} disabled />
+                                                                <textarea type="text" value={solicitud.descripcion} disabled />
                                                             </div>
                                                         </div>
                                                         <div>
                                                             <div className='campos-datos'>
                                                                 <label>Fecha Respuesta:</label>
-                                                                <input type="text" value={solicitud.fechaRespuesta || ''} disabled />
+                                                                <input type="text" value={solicitud.fechaRespuesta || '👻👻👻'} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Respuesta:</label>
-                                                                <input type="text" value={solicitud.respuesta || ''} disabled />
+                                                                <input type="text" value={solicitud.respuesta || '👻👻👻'} disabled />
                                                             </div>
                                                         </div>
                                                         <div>
@@ -525,7 +578,7 @@ function SolicitudesClientes() {
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Sub estado:</label>
-                                                                <input type="text" value={solicitud.subestado || ''} disabled />
+                                                                <input type="text" value={solicitud.subestado || '👻👻👻'} disabled />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -629,7 +682,7 @@ function SolicitudesClientes() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="6">No se encontraron solicitudes.</td>
+                                <td colSpan="8">No se encontraron solicitudes.</td>
                             </tr>
                         )}
                     </tbody>

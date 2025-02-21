@@ -30,6 +30,10 @@
   align-items: center;
 }
 
+.solicitud-cliente {
+  margin-top: 30px;
+}
+
 /* informacion de cliente */
 .info-cliente {
   display: flex;
@@ -48,7 +52,7 @@
   font-size: 1.2rem;
   font-weight: bold;
   border-bottom: 5px solid #10dcf7;
-  padding: 10px;
+  padding: 5px;
   text-align: center;
 
 }
@@ -56,25 +60,17 @@
 .info-cliente p {
   font-size: 1rem;
   text-align: center;
-  padding: 10px;
+  padding: 5px 15px;
 }
 
-.info-dni {
-  width: 120px;
-  padding: 0px;
-}
-
-.info-telefono {
-  padding: 0px;
-  width: 150px;
-}
-
+.info-dni,
+.info-telefono,
 .info-email,
 .info-notas,
 .info-direccion,
 .info-nombre-completo {
   padding: 0px;
-  width: 400px;
+  width: auto;
 }
 
 /* actualizar cliente */
@@ -122,7 +118,7 @@
   overflow-y: auto;
   position: relative;
   text-align: center;
-  width: 90%;
+  width: auto;
 }
 
 .formulario-campos-completo {
@@ -152,4 +148,23 @@
   font-size: 20px;
   font-weight: bolder;
   padding: 10px;
+}
+
+.filtro-table {
+  display: grid;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.formulario-buscar-infocliente {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.formulario-buscar-infocliente input {
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 200px;
 }
