@@ -61,95 +61,7 @@ function Reportes() {
   // Función para actualizar reporte
   const manejarActualizacion = (e) => {
     e.preventDefault();
-  
-    // Validación general: concatenar valores de los campos y verificar si están todos vacíos
-    const formularioVacio = `${nuevoReporte.descripcionReporte || ''} ${nuevoReporte.encargadoResolver || ''} ${nuevoReporte.prioridad || ''} ${nuevoReporte.estado || ''}`;
-    if (!formularioVacio.trim()) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Formulario Vacío',
-        text: 'El formulario no puede estar vacío, por favor rellenar datos.',
-        showConfirmButton: false,
-        timer: 3000
-      });
-      return;
-    }
-  
-    // Array para acumular errores de validación específica
-    const errores = [];
-  
-    // Validación 1: Si se ingresa dato en la descripción, se valida que "Encargado a Resolver", "Prioridad" y "Estado" no estén vacíos
-    if (nuevoReporte.descripcionReporte && nuevoReporte.descripcionReporte.trim() !== '') {
-      if (!nuevoReporte.encargadoResolver || nuevoReporte.encargadoResolver.trim() === '') {
-        errores.push("Encargado a Resolver no puede estar vacío.");
-      }
-      if (!nuevoReporte.prioridad || nuevoReporte.prioridad.trim() === '') {
-        errores.push("Debe de seleccionar una prioridad.");
-      }
-      if (!nuevoReporte.estado || nuevoReporte.estado.trim() === '') {
-        errores.push("El estado no puede estar vacío.");
-      }
-    }
-  
-    // Validación 2: Si se ingresa dato en "Encargado a Resolver" pero la descripción, la prioridad o el estado están vacíos
-    if (nuevoReporte.encargadoResolver && nuevoReporte.encargadoResolver.trim() !== '') {
-      const mensajePartes = [];
-      if (!nuevoReporte.descripcionReporte || nuevoReporte.descripcionReporte.trim() === '') {
-        mensajePartes.push("La descripción no puede estar vacía.");
-      }
-      if (!nuevoReporte.prioridad || nuevoReporte.prioridad.trim() === '') {
-        mensajePartes.push("Debe seleccionar una prioridad.");
-      }
-      if (!nuevoReporte.estado || nuevoReporte.estado.trim() === '') {
-        mensajePartes.push("El estado no puede estar vacío.");
-      }
-      if (mensajePartes.length > 0) {
-        errores.push(mensajePartes.join(" <br/> "));
-      }
-    }
-  
-    // Validación 3: Si se ingresa dato en "Prioridad" pero los demás campos (Descripción, Encargado a Resolver y Estado) están vacíos
-    if (nuevoReporte.prioridad && nuevoReporte.prioridad.trim() !== '') {
-      const mensajePartes = [];
-      if (!nuevoReporte.descripcionReporte || nuevoReporte.descripcionReporte.trim() === '') {
-        mensajePartes.push("La descripción no puede estar vacía.");
-      }
-      if (!nuevoReporte.encargadoResolver || nuevoReporte.encargadoResolver.trim() === '') {
-        mensajePartes.push("Encargado a Resolver no puede estar vacío.");
-      }
-      if (!nuevoReporte.estado || nuevoReporte.estado.trim() === '') {
-        mensajePartes.push("El estado no puede estar vacío.");
-      }
-      if (mensajePartes.length > 0) {
-        errores.push(mensajePartes.join(" <br/> "));
-      }
-    }
-  
-    // Validación 4: Si se ingresa dato en "Estado" pero los demás campos (Descripción y Encargado a Resolver) están vacíos
-    if (nuevoReporte.estado && nuevoReporte.estado.trim() !== '') {
-      const mensajePartes = [];
-      if (!nuevoReporte.descripcionReporte || nuevoReporte.descripcionReporte.trim() === '') {
-        mensajePartes.push("La descripción no puede estar vacía.");
-      }
-      if (!nuevoReporte.encargadoResolver || nuevoReporte.encargadoResolver.trim() === '') {
-        mensajePartes.push("Encargado a Resolver no puede estar vacío.");
-      }
-      if (mensajePartes.length > 0) {
-        errores.push(mensajePartes.join(" <br/> "));
-      }
-    }
-  
-    // Si hay errores, se muestran y se detiene el envío
-    if (errores.length > 0) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        html: errores.join('<br/>')
-      });
-      return;
-    }
-  
-    // Si la validación es correcta, continuar con la actualización del reporte
+    
     const reporteAActualizar = {
       codigoReporte: reporteSeleccionado.codigoReporte,
       descripcionReporte: nuevoReporte.descripcionReporte,
@@ -157,7 +69,7 @@ function Reportes() {
       prioridad: nuevoReporte.prioridad,
       estado: nuevoReporte.estado
     };
-  
+
     ReportesBD.actualizarReporte(reporteAActualizar)
       .then(response => {
         const reportesActualizados = reportes.map((reporte) =>
@@ -172,7 +84,6 @@ function Reportes() {
         Swal.fire('Error', error.response?.data || "Error al actualizar el reporte.", 'error');
       });
   };
-  
 
   const cerrarModalActualizar = () => setModalActualizarAbierto(false);
   const cerrarModal = () => setModalAbierto(false);
@@ -190,54 +101,13 @@ function Reportes() {
   // Función para enviar la respuesta al backend
   const manejarRespuesta = (e) => {
     e.preventDefault();
-  
-    // Concatenamos los valores de los campos para evaluar si están vacíos
-    const formularioVacio = `${respuesta || ''} ${nuevoReporte.subestado || ''}`;
-    if (!formularioVacio.trim()) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Formulario Vacío',
-        text: 'El formulario no puede estar vacío, por favor rellenar datos.',
-        showConfirmButton: false,
-        timer: 3000
-      });
-      return;
-    }
-  
-    // Array para acumular errores de validación específica
-    const errores = [];
-  
-    // Validación: Si se ingresa respuesta, se valida que el subestado no esté vacío
-    if (respuesta && respuesta.trim() !== '') {
-      if (!nuevoReporte.subestado || nuevoReporte.subestado.trim() === '') {
-        errores.push("Debe seleccionar un subestado.");
-      }
-    }
-  
-    // Validación: Si se selecciona un subestado pero la respuesta está vacía
-    if (nuevoReporte.subestado && nuevoReporte.subestado.trim() !== '') {
-      if (!respuesta || respuesta.trim() === '') {
-        errores.push("La respuesta no puede estar vacía.");
-      }
-    }
-  
-    // Si hay errores, se muestran y se detiene el envío
-    if (errores.length > 0) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        html: errores.join('<br/>')
-      });
-      return;
-    }
-  
-    // Si la validación es correcta, proceder con la respuesta
+    
     const reporteRespuesta = {
       codigoReporte: reporteSeleccionado.codigoReporte,
       respuesta: respuesta,
-      subestado: nuevoReporte.subestado
+      subestado: nuevoReporte.subestado  // Asegúrate que el valor coincida con el enum esperado
     };
-  
+
     ReportesBD.responderReporte(reporteRespuesta)
       .then(response => {
         const reportesActualizados = reportes.map((reporte) =>
@@ -258,71 +128,15 @@ function Reportes() {
   const manejarCreacionReporte = (e) => {
     e.preventDefault();
   
-    // Validación general: concatenar valores de los campos y verificar si están todos vacíos
-    const formularioVacio = `${nuevoReporte.descripcionReporte || ''} ${nuevoReporte.encargadoResolver || ''} ${nuevoReporte.prioridad || ''}`;
-    if (!formularioVacio.trim()) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Formulario Vacío',
-        text: 'El formulario no puede estar vacío, por favor rellenar datos.',
-        showConfirmButton: false,
-        timer: 3000
-      });
+    // Validación de campos vacíos
+    if (
+      nuevoReporte.descripcionReporte.trim() === '' ||
+      nuevoReporte.encargadoResolver.trim() === ''
+    ) {
+      Swal.fire('Error', 'El formulario no puede estar vacío, por favor rellenar datos.', 'error');
       return;
     }
   
-    // Array para acumular errores de validación específica
-    const errores = [];
-  
-    // Validación 1: Si se ingresa dato en la descripción, se valida que encargado y prioridad no estén vacíos
-    if (nuevoReporte.descripcionReporte && nuevoReporte.descripcionReporte.trim() !== '') {
-      if (!nuevoReporte.encargadoResolver || nuevoReporte.encargadoResolver.trim() === '') {
-        errores.push("Encargado a Resolver no puede estar vacío.");
-      }
-      if (!nuevoReporte.prioridad || nuevoReporte.prioridad.trim() === '') {
-        errores.push("Debe de seleccionar una prioridad.");
-      }
-    }
-  
-    // Validación 2: Si se ingresa dato en "Encargado a Resolver" pero la descripción o la prioridad están vacíos
-    if (nuevoReporte.encargadoResolver && nuevoReporte.encargadoResolver.trim() !== '') {
-      const mensajePartes = [];
-      if (!nuevoReporte.descripcionReporte || nuevoReporte.descripcionReporte.trim() === '') {
-        mensajePartes.push("La Descripcion no puede estar vacio");
-      }
-      if (!nuevoReporte.prioridad || nuevoReporte.prioridad.trim() === '') {
-        mensajePartes.push("Debe seleccione una prioridad");
-      }
-      if (mensajePartes.length > 0) {
-        errores.push(mensajePartes.join(" <br/> "));
-      }
-    }
-  
-    // Validación 3: Si se ingresa dato en "Prioridad" pero los demás campos (Descripción y Encargado a Resolver) están vacíos
-    if (nuevoReporte.prioridad && nuevoReporte.prioridad.trim() !== '') {
-      const mensajePartes = [];
-      if (!nuevoReporte.descripcionReporte || nuevoReporte.descripcionReporte.trim() === '') {
-        mensajePartes.push("La Descripcion no puede estar vacio");
-      }
-      if (!nuevoReporte.encargadoResolver || nuevoReporte.encargadoResolver.trim() === '') {
-        mensajePartes.push("Encargado a Resolver no puede estar vacío.");
-      }
-      if (mensajePartes.length > 0) {
-        errores.push(mensajePartes.join(" <br/> "));
-      }
-    }
-  
-    // Si hay errores, se muestran y se detiene el envío
-    if (errores.length > 0) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        html: errores.join('<br/>')
-      });
-      return;
-    }
-  
-    // Si la validación es correcta, continuar con la creación del reporte
     ReportesBD.crearReporte(
       nuevoReporte.encargadoResolver,
       nuevoReporte.descripcionReporte,
@@ -349,7 +163,6 @@ function Reportes() {
         Swal.fire('Error', error.response?.data || "Error al crear el reporte.", 'error');
       });
   };
-  
 
   const manejarCancelacionReporte = () => {
     setNuevoReporte({
@@ -466,13 +279,14 @@ function Reportes() {
         <div className="modal">
           <div className="modal-content">
             <h2>Crear Reporte</h2>
-            <form onSubmit={manejarCreacionReporte} noValidate>
+            <form onSubmit={manejarCreacionReporte}>
               <label>Descripción:</label>
               <textarea
                 value={nuevoReporte.descripcionReporte}
                 onChange={(e) =>
                   setNuevoReporte({ ...nuevoReporte, descripcionReporte: e.target.value })
                 }
+                required
               />
               <label>Encargado Resolver:</label>
               <input
@@ -481,13 +295,14 @@ function Reportes() {
                 onChange={(e) =>
                   setNuevoReporte({ ...nuevoReporte, encargadoResolver: e.target.value })
                 }
+                required
               />
               <label>Prioridad:</label>
               <select
                 value={nuevoReporte.prioridad}
                 onChange={(e) => setNuevoReporte({ ...nuevoReporte, prioridad: e.target.value })}
+                required
               >
-                <option value="">Seleccione</option>
                 <option value="Alta">Alta</option>
                 <option value="Media">Media</option>
                 <option value="Baja">Baja</option>
@@ -516,6 +331,7 @@ function Reportes() {
                 onChange={(e) =>
                   setNuevoReporte({ ...nuevoReporte, descripcionReporte: e.target.value })
                 }
+                required
               />
               <label>Encargado a Resolver:</label>
               <input
@@ -524,14 +340,14 @@ function Reportes() {
                 onChange={(e) =>
                   setNuevoReporte({ ...nuevoReporte, encargadoResolver: e.target.value })
                 }
+                required
               />
               <label>Prioridad:</label>
               <select
                 value={nuevoReporte.prioridad}
                 onChange={(e) => setNuevoReporte({ ...nuevoReporte, prioridad: e.target.value })}
-                
+                required
               >
-                <option value="">Seleccione</option>
                 <option value="Alta">Alta</option>
                 <option value="Media">Media</option>
                 <option value="Baja">Baja</option>
@@ -540,9 +356,8 @@ function Reportes() {
               <select
                 value={nuevoReporte.estado}
                 onChange={(e) => setNuevoReporte({ ...nuevoReporte, estado: e.target.value })}
-                
+                required
               >
-                <option value="">Seleccione</option>
                 <option value="Pendiente">Pendiente</option>
                 <option value="Cancelado">Cancelado</option>
                 <option value="Cerrado">Cerrado</option>
@@ -621,11 +436,13 @@ function Reportes() {
                 value={respuesta}
                 onChange={(e) => setRespuesta(e.target.value)}
                 placeholder="Escribe la respuesta aquí..."
+                required
               />
               <label>Subestado:</label>
               <select
                 value={nuevoReporte.subestado}
                 onChange={(e) => setNuevoReporte({ ...nuevoReporte, subestado: e.target.value })}
+                required
               >
                 <option value="">Seleccione</option>
                 <option value="Acogido">Acogido</option>
