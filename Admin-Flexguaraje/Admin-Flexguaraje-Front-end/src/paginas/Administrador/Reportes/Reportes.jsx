@@ -16,9 +16,9 @@ function Reportes() {
   const [nuevoReporte, setNuevoReporte] = useState({
     descripcionReporte: '',
     encargadoResolver: '',
-    prioridad: 'Alta',
+    prioridad: 'Seleccione',
     estado: 'Pendiente',
-    subestado: 'Acogido',
+    subestado: 'Seleccione',
     fechaReporte: new Date().toLocaleDateString(),
     fechaRespuestaReporte: '',
     respuestaReporte: ''
@@ -36,13 +36,18 @@ function Reportes() {
       .then(response => {
         console.log("Reportes obtenidos:", response.data);
         setReportes(response.data);
-        setReportesFiltrados(response.data); // Inicialmente, todos los reportes están filtrados
+        
       })
       .catch(error => {
         console.error("Error al obtener los reportes:", error);
         Swal.fire('Error', 'No se pudieron obtener los reportes.', 'error');
       });
   }, []);
+
+  useEffect(() => {
+    manejarBusqueda(); // Llama a manejarBusqueda cada vez que cambian los filtros o el código de búsqueda
+  }, [filtroEstado, filtroPrioridad, codigoBuscar, reportes]);
+
 
   const filtrarReportes = (codigo) => {
     return reportes.filter((reporte) => {
