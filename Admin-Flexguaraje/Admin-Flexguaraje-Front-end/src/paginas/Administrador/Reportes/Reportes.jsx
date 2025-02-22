@@ -438,9 +438,25 @@ function Reportes() {
     value={codigoBuscar}
     onChange={(e) => setCodigoBuscar(e.target.value)}
   />
+  <div className='btn-accion-buscarN'>
   <button className="btn btn-info" onClick={buscarReporte}>
     Buscar
   </button>
+  <button className='btn btn-secondary btn-normalidad' onClick={() => {
+      setCodigoBuscar('');
+      ReportesBD.getAllReportes()
+          .then(response => {
+              setReportes(response.data);
+              setReportesFiltrados(response.data);
+          })
+          .catch(error => {
+              console.error("Error al listar reportes:", error);
+              Swal.fire('Error', 'No se pudieron obtener los reportes.', 'error'); // Muestra un mensaje de error
+          });
+  }}>
+      Normalidad
+  </button>
+  </div>
 </div>
 </div>
       <table className="table table-primary table-hover table-bordered border-primary text-center tabla-usuario">
