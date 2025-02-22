@@ -13,14 +13,16 @@ class SolicitudesBD {
     listarSolicitudes() {
         return axios.get(BD_API_REST_URL.LISTAR_GENERAL);
     }
-
     buscarSolicitudesPorDni(dni) {
+        console.log("Enviando búsqueda para DNI:", dni);
         return axios.post(BD_API_REST_URL.BUSCAR_SOLICITUD_DNI, { dni });
+    
     }
-
-    buscarSolicitudesPorCodigo(codigo) {
-        return axios.post(BD_API_REST_URL.RESPONDER_SOLICITUD, { codigoSolicitud, ...respuestaData });
+    
+    buscarSolicitudesPorCodigo(codigoSolicitud, dni) {
+        return axios.post(BD_API_REST_URL.BUSCAR_SOLICITUD_CODIGO, { codigoSolicitud, dni });
     }
+    
 
     crearSolicitud(solicitud) {
         return axios.post(BD_API_REST_URL.CREAR_SOLICITUD, solicitud);
@@ -33,6 +35,6 @@ class SolicitudesBD {
     responderSolicitud(codigoSolicitud, respuesta) {
         return axios.post(BD_API_REST_URL.RESPONDER_SOLICITUD, { codigoSolicitud, ...respuesta });
     }
-}
 
+}
 export default new SolicitudesBD();
