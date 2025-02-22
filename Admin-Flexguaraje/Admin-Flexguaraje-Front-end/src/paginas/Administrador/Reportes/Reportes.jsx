@@ -58,18 +58,73 @@ function Reportes() {
     });
   };
 
-  const manejarBusqueda = () => {
-    const reportesFiltrados = filtrarReportes(codigoBuscar);
-    setReportesFiltrados(reportesFiltrados);
+  const buscarReporte = () => {
+    // Validación: campo vacío
+    if (!codigoBuscar.trim()) {
+      Swal.fire({
+        title: '¡Campo vacío!',
+        text: 'Por favor, ingresa un código de boleta.',
+        icon: 'warning'
+      });
+      return;
+    }
+    
+    // Validación: longitud exacta de 15 caracteres
+    if (codigoBuscar.length !== 15) {
+      Swal.fire({
+        title: '¡Código inválido!',
+        text: 'El código de reporte debe tener exactamente 15 caracteres.',
+        icon: 'warning'
+      });
+      return;
+    }
+    
+    // Validación: formato (ejemplo: RPT-12345678901)
+    const formato = /^RPT-\d{11}$/;
+    if (!formato.test(codigoBuscar)) {
+      Swal.fire({
+        title: '¡Código inválido!',
+        text: 'El código de reporte debe seguir el formato correspondiente. EJEMPLO: RPT-12345678901',
+        icon: 'warning'
+      });
+      return;
+    }
+    
+    // Realiza la petición al backend
+    ReportesBD.buscarReporte(codigoBuscar)
+      .then(response => {
+        setReportesFiltrados([response.data]);
+      })
+      .catch(error => {
+        console.error("Error al buscar reporte:", error);
+        // Si el backend envía el mensaje "Reporte no encontrado con el código: " + codigoReporte, se muestra
+        Swal.fire({
+          title: 'Error',
+          text: error.response?.data || ("Reporte no encontrado con el código: " + codigoBuscar),
+          icon: 'error'
+        });
+      });
   };
+    
 
   // Función para actualizar reporte
   const manejarActualizacion = (e) => {
     e.preventDefault();
   
-    // Validación general: concatenar valores de los campos y verificar si están todos vacíos
-    const formularioVacio = `${nuevoReporte.descripcionReporte || ''} ${nuevoReporte.encargadoResolver || ''} ${nuevoReporte.prioridad || ''} ${nuevoReporte.estado || ''}`;
-    if (!formularioVacio.trim()) {
+    // 1. Verificamos si todos los campos están vacíos
+    const todosLosCampos = [
+      nuevoReporte.descripcionReporte,
+      nuevoReporte.encargadoResolver,
+      nuevoReporte.prioridad,
+      nuevoReporte.estado
+    ];
+    
+    // Si, al concatenar, todos están vacíos, mostramos la alerta de formulario vacío.
+    const formularioVacio = todosLosCampos.every(
+      (campo) => !campo || !campo.trim()
+    );
+  
+    if (formularioVacio) {
       Swal.fire({
         icon: 'error',
         title: 'Formulario Vacío',
@@ -80,81 +135,40 @@ function Reportes() {
       return;
     }
   
-    // Array para acumular errores de validación específica
+    // 2. Validamos campos individuales
     const errores = [];
   
-    // Validación 1: Si se ingresa dato en la descripción, se valida que "Encargado a Resolver", "Prioridad" y "Estado" no estén vacíos
-    if (nuevoReporte.descripcionReporte && nuevoReporte.descripcionReporte.trim() !== '') {
-      if (!nuevoReporte.encargadoResolver || nuevoReporte.encargadoResolver.trim() === '') {
-        errores.push("Encargado a Resolver no puede estar vacío.");
-      }
-      if (!nuevoReporte.prioridad || nuevoReporte.prioridad.trim() === '') {
-        errores.push("Debe de seleccionar una prioridad.");
-      }
-      if (!nuevoReporte.estado || nuevoReporte.estado.trim() === '') {
-        errores.push("El estado no puede estar vacío.");
-      }
+    // Validar campo "Descripción"
+    if (!nuevoReporte.descripcionReporte || !nuevoReporte.descripcionReporte.trim()) {
+      errores.push("La descripción no puede estar vacía.");
     }
   
-    // Validación 2: Si se ingresa dato en "Encargado a Resolver" pero la descripción, la prioridad o el estado están vacíos
-    if (nuevoReporte.encargadoResolver && nuevoReporte.encargadoResolver.trim() !== '') {
-      const mensajePartes = [];
-      if (!nuevoReporte.descripcionReporte || nuevoReporte.descripcionReporte.trim() === '') {
-        mensajePartes.push("La descripción no puede estar vacía.");
-      }
-      if (!nuevoReporte.prioridad || nuevoReporte.prioridad.trim() === '') {
-        mensajePartes.push("Debe seleccionar una prioridad.");
-      }
-      if (!nuevoReporte.estado || nuevoReporte.estado.trim() === '') {
-        mensajePartes.push("El estado no puede estar vacío.");
-      }
-      if (mensajePartes.length > 0) {
-        errores.push(mensajePartes.join(" <br/> "));
-      }
+    // Validar campo "Encargado a Resolver"
+    if (!nuevoReporte.encargadoResolver || !nuevoReporte.encargadoResolver.trim()) {
+      errores.push("Encargado a Resolver no puede estar vacío.");
     }
   
-    // Validación 3: Si se ingresa dato en "Prioridad" pero los demás campos (Descripción, Encargado a Resolver y Estado) están vacíos
-    if (nuevoReporte.prioridad && nuevoReporte.prioridad.trim() !== '') {
-      const mensajePartes = [];
-      if (!nuevoReporte.descripcionReporte || nuevoReporte.descripcionReporte.trim() === '') {
-        mensajePartes.push("La descripción no puede estar vacía.");
-      }
-      if (!nuevoReporte.encargadoResolver || nuevoReporte.encargadoResolver.trim() === '') {
-        mensajePartes.push("Encargado a Resolver no puede estar vacío.");
-      }
-      if (!nuevoReporte.estado || nuevoReporte.estado.trim() === '') {
-        mensajePartes.push("El estado no puede estar vacío.");
-      }
-      if (mensajePartes.length > 0) {
-        errores.push(mensajePartes.join(" <br/> "));
-      }
+    // Validar campo "Prioridad"
+    if (!nuevoReporte.prioridad || !nuevoReporte.prioridad.trim()) {
+      errores.push("Debe seleccionar una prioridad.");
     }
   
-    // Validación 4: Si se ingresa dato en "Estado" pero los demás campos (Descripción y Encargado a Resolver) están vacíos
-    if (nuevoReporte.estado && nuevoReporte.estado.trim() !== '') {
-      const mensajePartes = [];
-      if (!nuevoReporte.descripcionReporte || nuevoReporte.descripcionReporte.trim() === '') {
-        mensajePartes.push("La descripción no puede estar vacía.");
-      }
-      if (!nuevoReporte.encargadoResolver || nuevoReporte.encargadoResolver.trim() === '') {
-        mensajePartes.push("Encargado a Resolver no puede estar vacío.");
-      }
-      if (mensajePartes.length > 0) {
-        errores.push(mensajePartes.join(" <br/> "));
-      }
+    // Validar campo "Estado"
+    if (!nuevoReporte.estado || !nuevoReporte.estado.trim()) {
+      errores.push("Debe seleccionar un estado.");
     }
   
-    // Si hay errores, se muestran y se detiene el envío
+    // Si existen errores, se muestran y se detiene el proceso
     if (errores.length > 0) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        html: errores.join('<br/>')
+        html: errores.join("<br/>") // Cada mensaje en una línea distinta
       });
       return;
     }
   
-    // Si la validación es correcta, continuar con la actualización del reporte
+    // 3. Si todo está correcto, crear el objeto con los datos a actualizar
     const reporteAActualizar = {
       codigoReporte: reporteSeleccionado.codigoReporte,
       descripcionReporte: nuevoReporte.descripcionReporte,
@@ -163,13 +177,19 @@ function Reportes() {
       estado: nuevoReporte.estado
     };
   
+    // Llamar al servicio para actualizar el reporte
     ReportesBD.actualizarReporte(reporteAActualizar)
       .then(response => {
+        // Actualizar la lista de reportes en el estado
         const reportesActualizados = reportes.map((reporte) =>
           reporte.idReportes === reporteSeleccionado.idReportes ? response.data : reporte
         );
         setReportes(reportesActualizados);
+  
+        // Cerrar el modal
         setModalActualizarAbierto(false);
+  
+        // Mostrar mensaje de éxito
         Swal.fire('¡Actualizado!', 'El reporte se actualizó exitosamente.', 'success');
       })
       .catch(error => {
@@ -177,6 +197,7 @@ function Reportes() {
         Swal.fire('Error', error.response?.data || "Error al actualizar el reporte.", 'error');
       });
   };
+  
   
 
   const cerrarModalActualizar = () => setModalActualizarAbierto(false);
@@ -339,9 +360,9 @@ function Reportes() {
         setNuevoReporte({
           descripcionReporte: '',
           encargadoResolver: '',
-          prioridad: 'Alta',
-          estado: 'Pendiente',
-          subestado: 'Acogido',
+          prioridad: '',
+          estado: '',
+          subestado: '',
           fechaReporte: new Date().toLocaleDateString(),
           fechaRespuestaReporte: '',
           respuestaReporte: ''
@@ -360,9 +381,9 @@ function Reportes() {
     setNuevoReporte({
       descripcionReporte: '',
       encargadoResolver: '',
-      prioridad: 'Alta',
-      estado: 'Pendiente',
-      subestado: 'Acogido',
+      prioridad: '',
+      estado: '',
+      subestado: '',
       fechaReporte: new Date().toLocaleDateString(),
       fechaRespuestaReporte: '',
       respuestaReporte: ''
@@ -380,19 +401,21 @@ function Reportes() {
       <h1 className="titulo-reporte">Gestión de Reportes</h1>
 
       <div className="acciones-container">
-        <button className="btn btn-success" onClick={() => setModalAbierto(true)}>
-          Crear Reporte
-        </button>
-        <div className="buscar-container">
-          <input
-            type="text"
-            placeholder="Código del reporte"
-            value={codigoBuscar}
-            onChange={(e) => setCodigoBuscar(e.target.value)} // Esta línea se mantiene
-          />
-          <button className="btn btn-info" onClick={manejarBusqueda}>Buscar</button>
-        </div>
-      </div>
+  <button className="btn btn-success" onClick={() => setModalAbierto(true)}>
+    Crear Reporte
+  </button>
+  <div className="buscar-container">
+  <input
+    type="text"
+    placeholder="Código del reporte"
+    value={codigoBuscar}
+    onChange={(e) => setCodigoBuscar(e.target.value)}
+  />
+  <button className="btn btn-info" onClick={buscarReporte}>
+    Buscar
+  </button>
+</div>
+</div>
       <table className="table table-primary table-hover table-bordered border-primary text-center tabla-usuario">
         <thead>
           <tr>

@@ -4,6 +4,7 @@ const LISTAR_REPORTES_BD_API_URL = "http://127.0.0.1:8080/reportes/listar_report
 const CREAR_REPORTES_BD_API_URL = "http://127.0.0.1:8080/reportes/crear_reportes";
 const ACTUALIZAR_REPORTES_BD_API_URL = "http://127.0.0.1:8080/reportes/actualizar_reporte";
 const RESPONDER_REPORTES_BD_API_URL = "http://127.0.0.1:8080/reportes/responder_reporte";
+const BUSCAR_REPORTE_BD_API_URL = "http://127.0.0.1:8080/reportes/buscar_reporte"
 
 class ReportesBD {
     getAllReportes() {
@@ -36,6 +37,10 @@ class ReportesBD {
             "Content-Type": "application/json",
           },
         });
+      }
+
+      buscarReporte(codigoReporte) {
+        return axios.post(BUSCAR_REPORTE_BD_API_URL, { codigoReporte });
       }
     }
   
