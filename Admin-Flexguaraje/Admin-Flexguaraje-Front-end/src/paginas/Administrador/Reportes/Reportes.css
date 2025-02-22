@@ -146,13 +146,15 @@
         margin-bottom: 10px;
     }
 
-    .filtro-container {
-        margin-left: 0;
-        width: 100%;
-        justify-content: center;
-    }
+    
 
     .modal-content {
         width: 90%;
     }
+}
+
+.filtro-option {
+    display: grid;
+  margin: 0 auto;
+  text-align: center
 }

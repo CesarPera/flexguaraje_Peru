@@ -44,18 +44,17 @@ function Reportes() {
       });
   }, []);
 
-  const filtrarReportes = () => {
+  const filtrarReportes = (codigo) => {
     return reportes.filter((reporte) => {
-      const codigo = reporte.codigoReporte || "";
       const estadoCoincide = filtroEstado === 'Todos' || reporte.estado === filtroEstado;
       const prioridadCoincide = filtroPrioridad === 'Todos' || reporte.prioridad === filtroPrioridad;
-      const codigoCoincide = codigo.toLowerCase().includes(codigoBuscar.toLowerCase());
+      const codigoCoincide = reporte.codigoReporte?.toLowerCase().includes(codigo.toLowerCase());
       return estadoCoincide && prioridadCoincide && codigoCoincide;
     });
   };
 
   const manejarBusqueda = () => {
-    const reportesFiltrados = filtrarReportes();
+    const reportesFiltrados = filtrarReportes(codigoBuscar);
     setReportesFiltrados(reportesFiltrados);
   };
 
@@ -197,7 +196,7 @@ function Reportes() {
             type="text"
             placeholder="Código del reporte"
             value={codigoBuscar}
-            onChange={(e) => setCodigoBuscar(e.target.value)}
+            onChange={(e) => setCodigoBuscar(e.target.value)} // Esta línea se mantiene
           />
           <button className="btn btn-info" onClick={manejarBusqueda}>Buscar</button>
         </div>
@@ -210,7 +209,7 @@ function Reportes() {
             <th>Encargado a Resolver</th>
             <th>
               Prioridad
-              <select value={filtroPrioridad} onChange={(e) => setFiltroPrioridad(e.target.value)}>
+              <select className='filtro-option' value={filtroPrioridad} onChange={(e) => setFiltroPrioridad(e.target.value)}>
                 <option value="Todos">Todos</option>
                 <option value="Alta">Alta</option>
                 <option value="Media">Media</option>
@@ -219,7 +218,7 @@ function Reportes() {
             </th>
             <th>
               Estado
-              <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
+              <select className='filtro-option' value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
                 <option value="Todos">Todos</option>
                 <option value="Pendiente">Pendiente</option>
                 <option value="Cancelado">Cancelado</option>
@@ -232,7 +231,7 @@ function Reportes() {
           </tr>
         </thead>
         <tbody>
-          {filtrarReportes().map((reporte) => (
+          {reportesFiltrados.map((reporte) => ( // Cambiado de reportesFiltrados() a reportesFiltrados
             <tr key={reporte.idReportes}>
               <td>
                 <button className="btn btn-link" onClick={() => mostrarDetallesReporte(reporte)}>
