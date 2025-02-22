@@ -45,8 +45,15 @@ function Reportes() {
   }, []);
 
   useEffect(() => {
-    manejarBusqueda(); // Llama a manejarBusqueda cada vez que cambian los filtros o el código de búsqueda
-  }, [filtroEstado, filtroPrioridad, codigoBuscar, reportes]);
+    // Cuando cambien estado, prioridad o la lista de reportes,
+    // solo filtras localmente, ignorando codigoBuscar
+    const nuevosFiltrados = reportes.filter((reporte) => {
+      const estadoCoincide = filtroEstado === 'Todos' || reporte.estado === filtroEstado;
+      const prioridadCoincide = filtroPrioridad === 'Todos' || reporte.prioridad === filtroPrioridad;
+      return estadoCoincide && prioridadCoincide;
+    });
+    setReportesFiltrados(nuevosFiltrados);
+  }, [filtroEstado, filtroPrioridad, reportes]);
 
 
   const filtrarReportes = (codigo) => {
@@ -63,7 +70,7 @@ function Reportes() {
     if (!codigoBuscar.trim()) {
       Swal.fire({
         title: '¡Campo vacío!',
-        text: 'Por favor, ingresa un código de boleta.',
+        text: 'Por favor, ingresa un código de Reporte.',
         icon: 'warning'
       });
       return;
@@ -119,7 +126,6 @@ function Reportes() {
       nuevoReporte.estado
     ];
     
-    // Si, al concatenar, todos están vacíos, mostramos la alerta de formulario vacío.
     const formularioVacio = todosLosCampos.every(
       (campo) => !campo || !campo.trim()
     );
@@ -168,7 +174,23 @@ function Reportes() {
       return;
     }
   
-    // 3. Si todo está correcto, crear el objeto con los datos a actualizar
+    // 2.1. Verificar si se han realizado cambios
+    const noHayCambios =
+      nuevoReporte.descripcionReporte === reporteSeleccionado.descripcionReporte &&
+      nuevoReporte.encargadoResolver === reporteSeleccionado.encargadoResolver &&
+      nuevoReporte.prioridad === reporteSeleccionado.prioridad &&
+      nuevoReporte.estado === reporteSeleccionado.estado;
+  
+    if (noHayCambios) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'No se han realizado cambios',
+        text: 'No has realizado ninguna actualización en los datos.'
+      });
+      return;
+    }
+  
+    // 3. Si todo está correcto y hay cambios, crear el objeto con los datos a actualizar
     const reporteAActualizar = {
       codigoReporte: reporteSeleccionado.codigoReporte,
       descripcionReporte: nuevoReporte.descripcionReporte,
@@ -305,8 +327,9 @@ function Reportes() {
       if (!nuevoReporte.encargadoResolver || nuevoReporte.encargadoResolver.trim() === '') {
         errores.push("Encargado a Resolver no puede estar vacío.");
       }
+      // Unificamos el mensaje de prioridad
       if (!nuevoReporte.prioridad || nuevoReporte.prioridad.trim() === '') {
-        errores.push("Debe de seleccionar una prioridad.");
+        errores.push("Debe seleccionar una prioridad.");
       }
     }
   
@@ -316,8 +339,9 @@ function Reportes() {
       if (!nuevoReporte.descripcionReporte || nuevoReporte.descripcionReporte.trim() === '') {
         mensajePartes.push("La Descripcion no puede estar vacio");
       }
+      // Unificamos el mensaje de prioridad
       if (!nuevoReporte.prioridad || nuevoReporte.prioridad.trim() === '') {
-        mensajePartes.push("Debe seleccione una prioridad");
+        mensajePartes.push("Debe seleccionar una prioridad.");
       }
       if (mensajePartes.length > 0) {
         errores.push(mensajePartes.join(" <br/> "));
@@ -338,12 +362,15 @@ function Reportes() {
       }
     }
   
+    // ELIMINAR DUPLICADOS
+    const erroresUnicos = [...new Set(errores)];
+  
     // Si hay errores, se muestran y se detiene el envío
-    if (errores.length > 0) {
+    if (erroresUnicos.length > 0) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        html: errores.join('<br/>')
+        html: erroresUnicos.join('<br/>')
       });
       return;
     }
