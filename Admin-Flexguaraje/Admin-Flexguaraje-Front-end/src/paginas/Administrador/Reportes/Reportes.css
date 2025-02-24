@@ -18,27 +18,16 @@
 }
 
 /* Actions Container */
-.acciones-container {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
 
-.btn-crear, .btn-responder, .btn-buscar, .btn-actualizar {
+.btn-crear,
+.btn-responder,
+.btn-buscar,
+.btn-actualizar {
     color: white;
     padding: 8px 16px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-}
-
-.btn-responder {
-    background-color: #28a745;
-    margin-left: 10px;
-}
-
-.btn-responder:hover {
-    background-color: #218838;
 }
 
 /* Search and Filter Container */
@@ -56,11 +45,13 @@
 }
 
 .btn-buscar {
-    margin-right: 10px; /* Espacio entre el botón de buscar y normalidad */
+    margin-right: 10px;
+    /* Espacio entre el botón de buscar y normalidad */
 }
 
 .btn-normalidad {
-    margin-left: 10px; /* Espacio entre el botón de normalidad y el botón de buscar */
+    margin-left: 10px;
+    /* Espacio entre el botón de normalidad y el botón de buscar */
 }
 
 /* Table styling */
@@ -70,31 +61,13 @@
     margin-top: 20px;
 }
 
-.table-container th, .table-container td {
+.table-container th,
+.table-container td {
     vertical-align: middle;
 }
 
-/* Status styles */
-.estado-pendiente, .estado-cancelado, .estado-cerrado {
-    font-weight: bold;
-}
-
-.btn-codigo:hover {
-    text-decoration: underline;
-}
 
 /* Modal styling */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
 .modal-content {
     background-color: white;
@@ -117,43 +90,15 @@
     color: #555;
 }
 
-.modal-content button {
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Responsive Design */
-@media screen and (max-width: 768px) {
-    .reportes-page {
-        margin-left: 20px;
-        margin-top: 20px;
-    }
-
-    .acciones-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .btn-crear {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    .buscar-container input, .btn-buscar {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    .modal-content {
-        width: 90%;
-    }
-}
-
 .filtro-option {
     display: grid;
     margin: 0 auto;
     text-align: center;
+}
+
+.btn-accion-buscarN button {
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
 }

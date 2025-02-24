@@ -783,7 +783,7 @@ function Espacios() {
                                 <td>{dato.fechaInicioAlquiler}</td>
                                 <td>{dato.fechaFinAlquiler}</td>
                                 <td>{dato.diasAlquiler}</td>
-                                <td>{dato.estado}</td>
+                                <td className='fw-bold'>{dato.estado}</td>
                             </tr>
                         ))) : (
                         <tr>

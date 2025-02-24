@@ -408,14 +408,14 @@ function SolicitudesClientes() {
                                     <h3 className="text-center">CREAR NUEVA SOLICITUD</h3>
                                     <div className="formulario-campos">
                                         <label>Tipo Solicitud:</label>
-                                        <select name="tipoSolicitud" value={formCrear.tipoSolicitud} onChange={handleCrearChange}>
+                                        <select className='text-center' name="tipoSolicitud" value={formCrear.tipoSolicitud} onChange={handleCrearChange}>
                                             <option value="">Sin seleccionar</option>
                                             <option value="Consulta">Consulta</option>
                                             <option value="Problema">Problema</option>
                                             <option value="Reclamo">Reclamo</option>
                                         </select>
                                         <label>Categoria:</label>
-                                        <select name="categoria" value={formCrear.categoria} onChange={handleCrearChange}>
+                                        <select className='text-center' name="categoria" value={formCrear.categoria} onChange={handleCrearChange}>
                                             <option value="">Sin seleccionar</option>
                                             <option value="Espacio">Espacio</option>
                                             <option value="Cliente">Cliente</option>
@@ -423,23 +423,23 @@ function SolicitudesClientes() {
                                             <option value="Boleta">Boleta</option>
                                         </select>
                                         <label>Descripción:</label>
-                                        <input type="text" name="descripcion" value={formCrear.descripcion} onChange={handleCrearChange} required />
+                                        <textarea className='p-2 w-100' type="text" name="descripcion" value={formCrear.descripcion} onChange={handleCrearChange} required />
                                         <label>Prioridad:</label>
-                                        <select name="prioridad" value={formCrear.prioridad} onChange={handleCrearChange}>
+                                        <select className='text-center' name="prioridad" value={formCrear.prioridad} onChange={handleCrearChange}>
                                             <option value="">Sin seleccionar</option>
                                             <option value="Baja">Baja</option>
                                             <option value="Media">Media</option>
                                             <option value="Alta">Alta</option>
                                         </select>
                                         <label>Estado:</label>
-                                        <select name="estado" value={formCrear.estado} onChange={handleCrearChange}>
+                                        <select className='text-center' name="estado" value={formCrear.estado} onChange={handleCrearChange}>
                                             <option value="">Sin seleccionar</option>
                                             <option value="Cancelado">Cancelado</option>
                                             <option value="Pendiente">Pendiente</option>
                                             <option value="Cerrado">Cerrado</option>
                                         </select>
                                         <label>Sub estado:</label>
-                                        <select name="subestado" value={formCrear.subestado} onChange={handleCrearChange}>
+                                        <select className='text-center' name="subestado" value={formCrear.subestado} onChange={handleCrearChange}>
                                             <option value="">Sin seleccionar</option>
                                             <option value="Acogido">Acogido</option>
                                             <option value="No_acogido">No_acogido</option>
@@ -458,7 +458,7 @@ function SolicitudesClientes() {
                     <div className="formulario-buscar-infocliente">
                         <input
                             type="text"
-                            placeholder='Ingresar Codigo Solicitud'
+                            placeholder='Codigo Solicitud'
 
                         />
                         <div className='btn-acciones-buscar'>
@@ -558,7 +558,7 @@ function SolicitudesClientes() {
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Descripción:</label>
-                                                                <textarea type="text" value={solicitud.descripcion} disabled />
+                                                                <textarea className='p-2 w-100 text-center' type="text" value={solicitud.descripcion} disabled />
                                                             </div>
                                                         </div>
                                                         <div>
@@ -568,7 +568,7 @@ function SolicitudesClientes() {
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Respuesta:</label>
-                                                                <input type="text" value={solicitud.respuesta || '👻👻👻'} disabled />
+                                                                <textarea className='p-2 w-100 text-center' type="text" value={solicitud.respuesta || '👻👻👻'} disabled />
                                                             </div>
                                                         </div>
                                                         <div>
@@ -593,7 +593,7 @@ function SolicitudesClientes() {
                                     <td>{solicitud.tipoSolicitud}</td>
                                     <td>{solicitud.categoria}</td>
                                     <td>{solicitud.prioridad}</td>
-                                    <td>{solicitud.estado}</td>
+                                    <td className='fw-bold'>{solicitud.estado}</td>
                                     <td>{solicitud.subestado || "👻👻👻"}</td>
                                     <td className='tabla-acciones-permisos'>
                                         <button className='btn btn-primary' onClick={() => {
@@ -605,14 +605,13 @@ function SolicitudesClientes() {
                                             });
                                             setMostrarFormularioACT(true);
                                         }}>Actualizar</button>
-
                                         {mostrarFormularioACT && (
                                             <div className="modal-overlay">
                                                 <div className="modal-content">
                                                     <h3 className="text-center">ACTUALIZAR SOLICITUD</h3>
                                                     <div className="formulario-campos">
                                                         <label>Descripción:</label>
-                                                        <input
+                                                        <textarea className='p-2 w-100'
                                                             type="text"
                                                             name="descripcion"
                                                             value={formActualizar.descripcion}
@@ -620,14 +619,14 @@ function SolicitudesClientes() {
                                                             required
                                                         />
                                                         <label>Prioridad:</label>
-                                                        <select name="prioridad" value={formActualizar.prioridad} onChange={handleActualizarChange}>
+                                                        <select className='text-center' name="prioridad" value={formActualizar.prioridad} onChange={handleActualizarChange}>
                                                             <option value="">Sin seleccionar</option>
                                                             <option value="Baja">Baja</option>
                                                             <option value="Media">Media</option>
                                                             <option value="Alta">Alta</option>
                                                         </select>
                                                         <label>Estado:</label>
-                                                        <select name="estado" value={formActualizar.estado} onChange={handleActualizarChange}>
+                                                        <select className='text-center' name="estado" value={formActualizar.estado} onChange={handleActualizarChange}>
                                                             <option value="">Sin seleccionar</option>
                                                             <option value="Cancelado">Cancelado</option>
                                                             <option value="Pendiente">Pendiente</option>
@@ -641,6 +640,7 @@ function SolicitudesClientes() {
                                                 </div>
                                             </div>
                                         )}
+
                                         <button className='btn btn-success' onClick={() => {
                                             setFormRespuesta({
                                                 codigoSolicitud: solicitud.codigoSolicitud,
@@ -649,14 +649,13 @@ function SolicitudesClientes() {
                                             });
                                             setMostrarFormularioRESPUESTA(true);
                                         }}>Responder</button>
-
                                         {mostrarFormularioRESPUESTA && (
                                             <div className="modal-overlay">
                                                 <div className="modal-content">
                                                     <h3 className="text-center">RESPONDER SOLICITUD</h3>
                                                     <div className="formulario-campos">
                                                         <label>Respuesta:</label>
-                                                        <input
+                                                        <textarea className='p-2 w-100'
                                                             type="text"
                                                             name="respuesta"
                                                             value={formRespuesta.respuesta}
@@ -664,7 +663,7 @@ function SolicitudesClientes() {
                                                             required
                                                         />
                                                         <label>Sub estado:</label>
-                                                        <select name="subestado" value={formRespuesta.subestado} onChange={handleRespuestaChange}>
+                                                        <select className='text-center' name="subestado" value={formRespuesta.subestado} onChange={handleRespuestaChange}>
                                                             <option value="">Sin seleccionar</option>
                                                             <option value="Acogido">Acogido</option>
                                                             <option value="No_acogido">No_acogido</option>

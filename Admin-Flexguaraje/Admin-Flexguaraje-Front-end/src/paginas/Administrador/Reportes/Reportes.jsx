@@ -36,7 +36,7 @@ function Reportes() {
       .then(response => {
         console.log("Reportes obtenidos:", response.data);
         setReportes(response.data);
-        
+
       })
       .catch(error => {
         console.error("Error al obtener los reportes:", error);
@@ -75,7 +75,7 @@ function Reportes() {
       });
       return;
     }
-    
+
     // Validación: longitud exacta de 15 caracteres
     if (codigoBuscar.length !== 15) {
       Swal.fire({
@@ -85,7 +85,7 @@ function Reportes() {
       });
       return;
     }
-    
+
     // Validación: formato (ejemplo: RPT-12345678901)
     const formato = /^RPT-\d{11}$/;
     if (!formato.test(codigoBuscar)) {
@@ -96,7 +96,7 @@ function Reportes() {
       });
       return;
     }
-    
+
     // Realiza la petición al backend
     ReportesBD.buscarReporte(codigoBuscar)
       .then(response => {
@@ -112,12 +112,12 @@ function Reportes() {
         });
       });
   };
-    
+
 
   // Función para actualizar reporte
   const manejarActualizacion = (e) => {
     e.preventDefault();
-  
+
     // 1. Verificamos si todos los campos están vacíos
     const todosLosCampos = [
       nuevoReporte.descripcionReporte,
@@ -125,11 +125,11 @@ function Reportes() {
       nuevoReporte.prioridad,
       nuevoReporte.estado
     ];
-    
+
     const formularioVacio = todosLosCampos.every(
       (campo) => !campo || !campo.trim()
     );
-  
+
     if (formularioVacio) {
       Swal.fire({
         icon: 'error',
@@ -140,30 +140,30 @@ function Reportes() {
       });
       return;
     }
-  
+
     // 2. Validamos campos individuales
     const errores = [];
-  
+
     // Validar campo "Descripción"
     if (!nuevoReporte.descripcionReporte || !nuevoReporte.descripcionReporte.trim()) {
       errores.push("La descripción no puede estar vacía.");
     }
-  
+
     // Validar campo "Encargado a Resolver"
     if (!nuevoReporte.encargadoResolver || !nuevoReporte.encargadoResolver.trim()) {
       errores.push("Encargado a Resolver no puede estar vacío.");
     }
-  
+
     // Validar campo "Prioridad"
     if (!nuevoReporte.prioridad || !nuevoReporte.prioridad.trim()) {
       errores.push("Debe seleccionar una prioridad.");
     }
-  
+
     // Validar campo "Estado"
     if (!nuevoReporte.estado || !nuevoReporte.estado.trim()) {
       errores.push("Debe seleccionar un estado.");
     }
-  
+
     // Si existen errores, se muestran y se detiene el proceso
     if (errores.length > 0) {
       Swal.fire({
@@ -173,14 +173,14 @@ function Reportes() {
       });
       return;
     }
-  
+
     // 2.1. Verificar si se han realizado cambios
     const noHayCambios =
       nuevoReporte.descripcionReporte === reporteSeleccionado.descripcionReporte &&
       nuevoReporte.encargadoResolver === reporteSeleccionado.encargadoResolver &&
       nuevoReporte.prioridad === reporteSeleccionado.prioridad &&
       nuevoReporte.estado === reporteSeleccionado.estado;
-  
+
     if (noHayCambios) {
       Swal.fire({
         icon: 'warning',
@@ -189,7 +189,7 @@ function Reportes() {
       });
       return;
     }
-  
+
     // 3. Si todo está correcto y hay cambios, crear el objeto con los datos a actualizar
     const reporteAActualizar = {
       codigoReporte: reporteSeleccionado.codigoReporte,
@@ -198,7 +198,7 @@ function Reportes() {
       prioridad: nuevoReporte.prioridad,
       estado: nuevoReporte.estado
     };
-  
+
     // Llamar al servicio para actualizar el reporte
     ReportesBD.actualizarReporte(reporteAActualizar)
       .then(response => {
@@ -207,10 +207,10 @@ function Reportes() {
           reporte.idReportes === reporteSeleccionado.idReportes ? response.data : reporte
         );
         setReportes(reportesActualizados);
-  
+
         // Cerrar el modal
         setModalActualizarAbierto(false);
-  
+
         // Mostrar mensaje de éxito
         Swal.fire('¡Actualizado!', 'El reporte se actualizó exitosamente.', 'success');
       })
@@ -219,8 +219,8 @@ function Reportes() {
         Swal.fire('Error', error.response?.data || "Error al actualizar el reporte.", 'error');
       });
   };
-  
-  
+
+
 
   const cerrarModalActualizar = () => setModalActualizarAbierto(false);
   const cerrarModal = () => setModalAbierto(false);
@@ -238,7 +238,7 @@ function Reportes() {
   // Función para enviar la respuesta al backend
   const manejarRespuesta = (e) => {
     e.preventDefault();
-  
+
     // Concatenamos los valores de los campos para evaluar si están vacíos
     const formularioVacio = `${respuesta || ''} ${nuevoReporte.subestado || ''}`;
     if (!formularioVacio.trim()) {
@@ -251,24 +251,24 @@ function Reportes() {
       });
       return;
     }
-  
+
     // Array para acumular errores de validación específica
     const errores = [];
-  
+
     // Validación: Si se ingresa respuesta, se valida que el subestado no esté vacío
     if (respuesta && respuesta.trim() !== '') {
       if (!nuevoReporte.subestado || nuevoReporte.subestado.trim() === '') {
         errores.push("Debe seleccionar un subestado.");
       }
     }
-  
+
     // Validación: Si se selecciona un subestado pero la respuesta está vacía
     if (nuevoReporte.subestado && nuevoReporte.subestado.trim() !== '') {
       if (!respuesta || respuesta.trim() === '') {
         errores.push("La respuesta no puede estar vacía.");
       }
     }
-  
+
     // Si hay errores, se muestran y se detiene el envío
     if (errores.length > 0) {
       Swal.fire({
@@ -278,14 +278,14 @@ function Reportes() {
       });
       return;
     }
-  
+
     // Si la validación es correcta, proceder con la respuesta
     const reporteRespuesta = {
       codigoReporte: reporteSeleccionado.codigoReporte,
       respuesta: respuesta,
       subestado: nuevoReporte.subestado
     };
-  
+
     ReportesBD.responderReporte(reporteRespuesta)
       .then(response => {
         const reportesActualizados = reportes.map((reporte) =>
@@ -305,7 +305,7 @@ function Reportes() {
   // Función para crear reporte usando la Solución 1
   const manejarCreacionReporte = (e) => {
     e.preventDefault();
-  
+
     // Validación general: concatenar valores de los campos y verificar si están todos vacíos
     const formularioVacio = `${nuevoReporte.descripcionReporte || ''} ${nuevoReporte.encargadoResolver || ''} ${nuevoReporte.prioridad || ''}`;
     if (!formularioVacio.trim()) {
@@ -318,10 +318,10 @@ function Reportes() {
       });
       return;
     }
-  
+
     // Array para acumular errores de validación específica
     const errores = [];
-  
+
     // Validación 1: Si se ingresa dato en la descripción, se valida que encargado y prioridad no estén vacíos
     if (nuevoReporte.descripcionReporte && nuevoReporte.descripcionReporte.trim() !== '') {
       if (!nuevoReporte.encargadoResolver || nuevoReporte.encargadoResolver.trim() === '') {
@@ -332,7 +332,7 @@ function Reportes() {
         errores.push("Debe seleccionar una prioridad.");
       }
     }
-  
+
     // Validación 2: Si se ingresa dato en "Encargado a Resolver" pero la descripción o la prioridad están vacíos
     if (nuevoReporte.encargadoResolver && nuevoReporte.encargadoResolver.trim() !== '') {
       const mensajePartes = [];
@@ -347,7 +347,7 @@ function Reportes() {
         errores.push(mensajePartes.join(" <br/> "));
       }
     }
-  
+
     // Validación 3: Si se ingresa dato en "Prioridad" pero los demás campos (Descripción y Encargado a Resolver) están vacíos
     if (nuevoReporte.prioridad && nuevoReporte.prioridad.trim() !== '') {
       const mensajePartes = [];
@@ -361,10 +361,10 @@ function Reportes() {
         errores.push(mensajePartes.join(" <br/> "));
       }
     }
-  
+
     // ELIMINAR DUPLICADOS
     const erroresUnicos = [...new Set(errores)];
-  
+
     // Si hay errores, se muestran y se detiene el envío
     if (erroresUnicos.length > 0) {
       Swal.fire({
@@ -374,7 +374,7 @@ function Reportes() {
       });
       return;
     }
-  
+
     // Si la validación es correcta, continuar con la creación del reporte
     ReportesBD.crearReporte(
       nuevoReporte.encargadoResolver,
@@ -402,7 +402,7 @@ function Reportes() {
         Swal.fire('Error', error.response?.data || "Error al crear el reporte.", 'error');
       });
   };
-  
+
 
   const manejarCancelacionReporte = () => {
     setNuevoReporte({
@@ -427,38 +427,85 @@ function Reportes() {
     <div className="reportes-page">
       <h1 className="titulo-reporte">Gestión de Reportes</h1>
 
-      <div className="acciones-container">
-  <button className="btn btn-success" onClick={() => setModalAbierto(true)}>
-    Crear Reporte
-  </button>
-  <div className="buscar-container">
-  <input
-    type="text"
-    placeholder="Código del reporte"
-    value={codigoBuscar}
-    onChange={(e) => setCodigoBuscar(e.target.value)}
-  />
-  <div className='btn-accion-buscarN'>
-  <button className="btn btn-info" onClick={buscarReporte}>
-    Buscar
-  </button>
-  <button className='btn btn-secondary btn-normalidad' onClick={() => {
-      setCodigoBuscar('');
-      ReportesBD.getAllReportes()
-          .then(response => {
-              setReportes(response.data);
-              setReportesFiltrados(response.data);
-          })
-          .catch(error => {
-              console.error("Error al listar reportes:", error);
-              Swal.fire('Error', 'No se pudieron obtener los reportes.', 'error'); // Muestra un mensaje de error
-          });
-  }}>
-      Normalidad
-  </button>
-  </div>
-</div>
-</div>
+      <div className="acciones-usuario">
+        <div className='acciones-btn-usuario'>
+          <button className="btn btn-success" onClick={() => setModalAbierto(true)}>
+            Crear Reporte
+          </button>
+
+          {/* Modal para creación de reporte */}
+          {modalAbierto && (
+            <div className="modal">
+              <div className="modal-content">
+                <h2>CREAR REPORTE</h2>
+                <form onSubmit={manejarCreacionReporte} noValidate>
+                  <label>Descripción:</label>
+                  <textarea className='p-2 w-100 text-center'
+                    value={nuevoReporte.descripcionReporte}
+                    onChange={(e) =>
+                      setNuevoReporte({ ...nuevoReporte, descripcionReporte: e.target.value })
+                    }
+                  />
+                  <label>Encargado Resolver:</label>
+                  <input
+                    type="text"
+                    value={nuevoReporte.encargadoResolver}
+                    onChange={(e) =>
+                      setNuevoReporte({ ...nuevoReporte, encargadoResolver: e.target.value })
+                    }
+                  />
+                  <label>Prioridad:</label>
+                  <select className='text-center'
+                    value={nuevoReporte.prioridad}
+                    onChange={(e) => setNuevoReporte({ ...nuevoReporte, prioridad: e.target.value })}
+                  >
+                    <option value="">Sin seleccionar</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Media">Media</option>
+                    <option value="Baja">Baja</option>
+                  </select>
+                  <div className="modal-buttons">
+                    <button className="btn btn-success" type="submit">
+                      Crear
+                    </button>
+                    <button className="btn btn-secondary" type="button" onClick={manejarCancelacionReporte}>
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="buscar-container">
+          <input
+            type="text"
+            placeholder="Código del reporte"
+            value={codigoBuscar}
+            onChange={(e) => setCodigoBuscar(e.target.value)}
+          />
+          <div className='btn-accion-buscarN'>
+            <button className="btn btn-info" onClick={buscarReporte}>
+              Buscar
+            </button>
+            <button className='btn btn-secondary btn-normalidad' onClick={() => {
+              setCodigoBuscar('');
+              ReportesBD.getAllReportes()
+                .then(response => {
+                  setReportes(response.data);
+                  setReportesFiltrados(response.data);
+                })
+                .catch(error => {
+                  console.error("Error al listar reportes:", error);
+                  Swal.fire('Error', 'No se pudieron obtener los reportes.', 'error'); // Muestra un mensaje de error
+                });
+            }}>
+              Normalidad
+            </button>
+          </div>
+        </div>
+      </div>
       <table className="table table-primary table-hover table-bordered border-primary text-center tabla-usuario">
         <thead>
           <tr>
@@ -492,19 +539,78 @@ function Reportes() {
           {reportesFiltrados.map((reporte) => ( // Cambiado de reportesFiltrados() a reportesFiltrados
             <tr key={reporte.idReportes}>
               <td>
-                <button className="btn btn-link" onClick={() => mostrarDetallesReporte(reporte)}>
+                <button className='btn-codigo' onClick={() => mostrarDetallesReporte(reporte)}>
                   {mostrarValor(reporte.codigoReporte)}
                 </button>
+                {/* Modal Información Completa del Reporte */}
+                {mostrarFormularioCOMPLETO && reporteSeleccionado && (
+                  <div className="modal-overlay">
+                    <div className="modal-content-completo">
+                      <div className='titulo-completo-modal'>
+                        <h3 className="text-center">INFORMACIÓN COMPLETA DEL REPORTE</h3>
+                      </div>
+                      <div className="formulario-campos-completo">
+                        <div>
+                          <div className="campos-datos">
+                            <label>Código Reporte:</label>
+                            <input type="text" value={mostrarValor(reporteSeleccionado.codigoReporte)} disabled />
+                          </div>
+                          <div className="campos-datos">
+                            <label>Prioridad:</label>
+                            <input type="text" value={mostrarValor(reporteSeleccionado.prioridad)} disabled />
+                          </div>
+                          <div className="campos-datos">
+                            <label>Encargado Resolver:</label>
+                            <input type="text" value={mostrarValor(reporteSeleccionado.encargadoResolver)} disabled />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="campos-datos">
+                            <label>Fecha Reporte:</label>
+                            <input type="text" value={mostrarValor(reporteSeleccionado.fechaReporte)} disabled />
+                          </div>
+                          <div className="campos-datos">
+                            <label>Descripción:</label>
+                            <textarea className='p-2 w-100 text-center' type="text" value={mostrarValor(reporteSeleccionado.descripcionReporte)} disabled />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="campos-datos">
+                            <label>Fecha Respuesta:</label>
+                            <input type="text" value={mostrarValor(reporteSeleccionado.fechaRespuestaReporte)} disabled />
+                          </div>
+                          <div className="campos-datos">
+                            <label>Respuesta:</label>
+                            <textarea className='p-2 w-100 text-center' type="text" value={mostrarValor(reporteSeleccionado.respuestaReporte)} disabled />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="campos-datos">
+                            <label>Estado:</label>
+                            <input type="text" value={mostrarValor(reporteSeleccionado.estado)} disabled />
+                          </div>
+                          <div className="campos-datos">
+                            <label>Subestado:</label>
+                            <input type="text" value={mostrarValor(reporteSeleccionado.subestado)} disabled />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="formulario-botones-completo">
+                        <button className="btn btn-secondary" onClick={() => setMostrarFormularioCOMPLETO(false)}>
+                          Volver
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </td>
               <td>{mostrarValor(reporte.fechaReporte)}</td>
               <td>{mostrarValor(reporte.encargadoResolver)}</td>
               <td>{mostrarValor(reporte.prioridad)}</td>
-              <td className={`estado-${reporte.estado ? reporte.estado.toLowerCase() : ''}`}>
-                {mostrarValor(reporte.estado)}
-              </td>
+              <td className="fw-bold">{mostrarValor(reporte.estado)}</td>
               <td>{mostrarValor(reporte.subestado)}</td>
               <td>{mostrarValor(reporte.fechaRespuestaReporte)}</td>
-              <td>
+              <td className='tabla-acciones-permisos'>
                 <button
                   className="btn btn-primary"
                   onClick={() => {
@@ -520,200 +626,104 @@ function Reportes() {
                       respuestaReporte: reporte.respuestaReporte
                     });
                     setModalActualizarAbierto(true);
-                  }}
-                >
-                  Actualizar
-                </button>
-                <button className="btn-responder" onClick={() => responderReporte(reporte)}>
+                  }}>Actualizar</button>
+                {/* Modal Actualizar Reporte */}
+                {modalActualizarAbierto && (
+                  <div className="modal">
+                    <div className="modal-content">
+                      <h2>ACTUALIZAR REPORTE</h2>
+                      <form onSubmit={manejarActualizacion}>
+                        <label>Descripción del Reporte:</label>
+                        <textarea className='p-2 w-100 text-center'
+                          value={nuevoReporte.descripcionReporte}
+                          onChange={(e) =>
+                            setNuevoReporte({ ...nuevoReporte, descripcionReporte: e.target.value })
+                          }
+                        />
+                        <label>Encargado a Resolver:</label>
+                        <input
+                          type="text"
+                          value={nuevoReporte.encargadoResolver}
+                          onChange={(e) =>
+                            setNuevoReporte({ ...nuevoReporte, encargadoResolver: e.target.value })
+                          }
+                        />
+                        <label>Prioridad:</label>
+                        <select className='text-center'
+                          value={nuevoReporte.prioridad}
+                          onChange={(e) => setNuevoReporte({ ...nuevoReporte, prioridad: e.target.value })}
+
+                        >
+                          <option value="">Seleccione</option>
+                          <option value="Alta">Alta</option>
+                          <option value="Media">Media</option>
+                          <option value="Baja">Baja</option>
+                        </select>
+                        <label>Estado:</label>
+                        <select className='text-center'
+                          value={nuevoReporte.estado}
+                          onChange={(e) => setNuevoReporte({ ...nuevoReporte, estado: e.target.value })}
+
+                        >
+                          <option value="">Seleccione</option>
+                          <option value="Pendiente">Pendiente</option>
+                          <option value="Cancelado">Cancelado</option>
+                          <option value="Cerrado">Cerrado</option>
+                        </select>
+                        <div className="modal-buttons">
+                          <button type="submit" className="btn btn-primary">
+                            Actualizar
+                          </button>
+                          <button type="button" className="btn btn-secondary" onClick={cerrarModalActualizar}>
+                            Cancelar
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+
+                <button className="btn btn-success" onClick={() => responderReporte(reporte)}>
                   Responder
                 </button>
+                {/* Modal Responder Reporte */}
+                {modalRespuestaAbierto && (
+                  <div className="modal">
+                    <div className="modal-content">
+                      <h2>RESPONDER REPORTE</h2>
+                      <form onSubmit={manejarRespuesta}>
+                        <label>Respuesta:</label>
+                        <textarea className='p-2 w-100 text-center'
+                          value={respuesta}
+                          onChange={(e) => setRespuesta(e.target.value)}
+                          placeholder="Escribe la respuesta aquí..."
+                        />
+                        <label>Subestado:</label>
+                        <select className='text-center'
+                          value={nuevoReporte.subestado}
+                          onChange={(e) => setNuevoReporte({ ...nuevoReporte, subestado: e.target.value })}
+                        >
+                          <option value="">Seleccione</option>
+                          <option value="Acogido">Acogido</option>
+                          <option value="No_acogido">No Acogido</option>
+                        </select>
+                        <div className="modal-buttons">
+                          <button className="btn btn-primary" type="submit">
+                            Responder
+                          </button>
+                          <button className="btn btn-secondary" type="button" onClick={cerrarModalRespuesta}>
+                            Cancelar
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      {/* Modal para creación de reporte */}
-      {modalAbierto && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Crear Reporte</h2>
-            <form onSubmit={manejarCreacionReporte} noValidate>
-              <label>Descripción:</label>
-              <textarea
-                value={nuevoReporte.descripcionReporte}
-                onChange={(e) =>
-                  setNuevoReporte({ ...nuevoReporte, descripcionReporte: e.target.value })
-                }
-              />
-              <label>Encargado Resolver:</label>
-              <input
-                type="text"
-                value={nuevoReporte.encargadoResolver}
-                onChange={(e) =>
-                  setNuevoReporte({ ...nuevoReporte, encargadoResolver: e.target.value })
-                }
-              />
-              <label>Prioridad:</label>
-              <select
-                value={nuevoReporte.prioridad}
-                onChange={(e) => setNuevoReporte({ ...nuevoReporte, prioridad: e.target.value })}
-              >
-                <option value="">Seleccione</option>
-                <option value="Alta">Alta</option>
-                <option value="Media">Media</option>
-                <option value="Baja">Baja</option>
-              </select>
-              <div className="modal-buttons">
-                <button className="btn btn-primary" type="submit">
-                  Crear
-                </button>
-                <button className="btn btn-secondary" type="button" onClick={manejarCancelacionReporte}>
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-      {/* Modal Actualizar Reporte */}
-      {modalActualizarAbierto && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Actualizar Reporte</h2>
-            <form onSubmit={manejarActualizacion}>
-              <label>Descripción del Reporte:</label>
-              <textarea
-                value={nuevoReporte.descripcionReporte}
-                onChange={(e) =>
-                  setNuevoReporte({ ...nuevoReporte, descripcionReporte: e.target.value })
-                }
-              />
-              <label>Encargado a Resolver:</label>
-              <input
-                type="text"
-                value={nuevoReporte.encargadoResolver}
-                onChange={(e) =>
-                  setNuevoReporte({ ...nuevoReporte, encargadoResolver: e.target.value })
-                }
-              />
-              <label>Prioridad:</label>
-              <select
-                value={nuevoReporte.prioridad}
-                onChange={(e) => setNuevoReporte({ ...nuevoReporte, prioridad: e.target.value })}
-                
-              >
-                <option value="">Seleccione</option>
-                <option value="Alta">Alta</option>
-                <option value="Media">Media</option>
-                <option value="Baja">Baja</option>
-              </select>
-              <label>Estado:</label>
-              <select
-                value={nuevoReporte.estado}
-                onChange={(e) => setNuevoReporte({ ...nuevoReporte, estado: e.target.value })}
-                
-              >
-                <option value="">Seleccione</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Cancelado">Cancelado</option>
-                <option value="Cerrado">Cerrado</option>
-              </select>
-              <div className="modal-buttons">
-                <button type="submit" className="btn btn-primary">
-                  Guardar Cambios
-                </button>
-                <button type="button" className="btn btn-secondary" onClick={cerrarModalActualizar}>
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-      {/* Modal Información Completa del Reporte */}
-      {mostrarFormularioCOMPLETO && reporteSeleccionado && (
-        <div className="modal-overlay">
-          <div className="modal-content-completo">
-            <h3 className="text-center">INFORMACIÓN COMPLETA DEL REPORTE</h3>
-            <div className="formulario-campos-completo">
-              <div className="campos-datos">
-                <label>Código Reporte:</label>
-                <input type="text" value={mostrarValor(reporteSeleccionado.codigoReporte)} disabled />
-              </div>
-              <div className="campos-datos">
-                <label>Encargado Resolver:</label>
-                <input type="text" value={mostrarValor(reporteSeleccionado.encargadoResolver)} disabled />
-              </div>
-              <div className="campos-datos">
-                <label>Descripción:</label>
-                <input type="text" value={mostrarValor(reporteSeleccionado.descripcionReporte)} disabled />
-              </div>
-              <div className="campos-datos">
-                <label>Prioridad:</label>
-                <input type="text" value={mostrarValor(reporteSeleccionado.prioridad)} disabled />
-              </div>
-              <div className="campos-datos">
-                <label>Fecha Reporte:</label>
-                <input type="text" value={mostrarValor(reporteSeleccionado.fechaReporte)} disabled />
-              </div>
-              <div className="campos-datos">
-                <label>Fecha Respuesta:</label>
-                <input type="text" value={mostrarValor(reporteSeleccionado.fechaRespuestaReporte)} disabled />
-              </div>
-              <div className="campos-datos">
-                <label>Estado:</label>
-                <input type="text" value={mostrarValor(reporteSeleccionado.estado)} disabled />
-              </div>
-              <div className="campos-datos">
-                <label>Subestado:</label>
-                <input type="text" value={mostrarValor(reporteSeleccionado.subestado)} disabled />
-              </div>
-              <div className="campos-datos">
-                <label>Respuesta:</label>
-                <input type="text" value={mostrarValor(reporteSeleccionado.respuestaReporte)} disabled />
-              </div>
-            </div>
-            <div className="formulario-botones-completo">
-              <button className="btn btn-secondary" onClick={() => setMostrarFormularioCOMPLETO(false)}>
-                Volver
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Modal Responder Reporte */}
-      {modalRespuestaAbierto && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Responder Reporte</h2>
-            <form onSubmit={manejarRespuesta}>
-              <label>Respuesta:</label>
-              <textarea
-                value={respuesta}
-                onChange={(e) => setRespuesta(e.target.value)}
-                placeholder="Escribe la respuesta aquí..."
-              />
-              <label>Subestado:</label>
-              <select
-                value={nuevoReporte.subestado}
-                onChange={(e) => setNuevoReporte({ ...nuevoReporte, subestado: e.target.value })}
-              >
-                <option value="">Seleccione</option>
-                <option value="Acogido">Acogido</option>
-                <option value="No_acogido">No Acogido</option>
-              </select>
-              <div className="modal-buttons">
-                <button className="btn btn-primary" type="submit">
-                  Responder
-                </button>
-                <button className="btn btn-secondary" type="button" onClick={cerrarModalRespuesta}>
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
