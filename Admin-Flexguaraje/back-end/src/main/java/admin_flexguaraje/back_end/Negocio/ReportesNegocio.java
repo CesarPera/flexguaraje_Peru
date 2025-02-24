@@ -39,7 +39,7 @@ public class ReportesNegocio {
 
         Optional<Usuario> usuarioOptional = usuarioRepositorio.findByDni(dniEncargado);
         if (usuarioOptional.isEmpty()) {
-            throw new IllegalArgumentException("DNI no encontrado.");
+            throw new IllegalArgumentException("DNI "+ dniEncargado +" no encontrado.");
         }
 
         Usuario usuario = usuarioOptional.get();
@@ -95,6 +95,9 @@ public class ReportesNegocio {
         // Validar que el estado solo pueda cambiar a Pendiente o Cancelado
         if (estado != Reportes.EstadoR.Pendiente && estado != Reportes.EstadoR.Cancelado) {
             throw new IllegalArgumentException("El estado solo se puede actualizar a 'Pendiente' o 'Cancelado'.");
+        }
+        if (reporte.getEstado() != Reportes.EstadoR.Pendiente) {
+            throw new RuntimeException("Solo se puede actualizar reportes en estado Pendiente");
         }
 
         Usuario usuario = validarUsuarioParaReporte(encargadoResolver);
