@@ -15,8 +15,20 @@ function SolicitudesClientes() {
     const [mostrarFormularioACT, setMostrarFormularioACT] = useState(false);
     const [mostrarFormularioRESPUESTA, setMostrarFormularioRESPUESTA] = useState(false);
     const [mostrarFormularioCOMPLETO, setMostrarFormularioCOMPLETO] = useState(false);
-    const [filtroPrioridad, setFiltroPrioridad] = useState('Todos');
-
+    const [filtroSolicitud, setFiltroSolicitud] = useState({
+        tipo: 'Todos',
+        categoria: 'Todos',
+        prioridad: 'Todos',
+        estado: 'Todos',
+        subestado: 'Todos'
+    });
+    const handleFiltroChange = (e) => {
+        const { name, value } = e.target;
+        setFiltroSolicitud(prevFiltro => ({
+            ...prevFiltro,
+            [name]: value
+        }));
+    };
 
     // Estados para modales de solicitudes
     const [formCrear, setFormCrear] = useState({
@@ -55,6 +67,21 @@ function SolicitudesClientes() {
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
     const [isUpdated, setIsUpdated] = useState(false);
+    const limpiarFormulario = () => {
+        setFormCrear({
+            dniCliente: cliente?.dni || '',
+            tipoSolicitud: '',
+            categoria: '',
+            descripcion: '',
+            prioridad: '',
+            estado: '',
+            subestado: ''
+        });
+    };
+    const cerrarModal = () => {
+        limpiarFormulario(); // Limpiar el formulario al cerrar el modal
+        setMostrarFormulario(false); // Suponiendo que tienes un estado para el modal
+    };
 
     if (!cliente) {
         return (
@@ -248,9 +275,69 @@ function SolicitudesClientes() {
     };
 
     const handleCrearSolicitud = async () => {
+        if (
+            !formCrear.tipoSolicitud.trim() &&
+            !formCrear.categoria.trim() &&
+            !formCrear.descripcion.trim() &&
+            !formCrear.prioridad.trim() &&
+            !formCrear.estado.trim() &&
+            !formCrear.subestado.trim()
+        ) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Formulario Vacío',
+                text: 'El formulario no puede estar vacío, por favor ingrese datos.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        let errores = [];
+
+        // Validación de Tipo de Solicitud
+        if (!formCrear.tipoSolicitud.trim()) {
+            errores.push("Debes seleccionar un tipo de solicitud.");
+        }
+
+        // Validación de Categoría
+        if (!formCrear.categoria.trim()) {
+            errores.push("Debes seleccionar una categoría.");
+        }
+
+        // Validación de Descripción
+        if (!formCrear.descripcion.trim()) {
+            errores.push("La descripción no puede estar vacía.");
+        }
+
+        // Validación de Prioridad
+        if (!formCrear.prioridad.trim()) {
+            errores.push("Debes seleccionar una prioridad.");
+        }
+
+        // Validación de Estado
+        if (!formCrear.estado.trim()) {
+            errores.push("Debes seleccionar un estado.");
+        }
+
+        if (errores.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Errores en el formulario',
+                html: errores.join("<br/>") // Cada mensaje en una línea distinta
+            });
+            return;
+        }
+
         try {
             await SolicitudesBD.crearSolicitud(formCrear);
-            Swal.fire('Éxito', 'Solicitud creada correctamente', 'success');
+            Swal.fire({
+                icon: 'success',
+                title: '¡Solicitud creada!',
+                text: 'La solicitud ha sido registrada exitosamente.',
+                showConfirmButton: false,
+                timer: 3000
+            });
             obtenerSolicitudes(cliente.dni);
             setMostrarFormulario(false);
             setFormCrear({
@@ -265,11 +352,11 @@ function SolicitudesClientes() {
         } catch (error) {
             console.error("Error en crearSolicitud:", error.response?.data || error.message);
             // Intenta mostrar el mensaje devuelto por el backend, si existe
-            Swal.fire(
-                'Error',
-                error.response?.data?.message || error.response?.data?.mensaje || 'No se pudo crear la solicitud',
-                'error'
-            );
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al crear la solicitud',
+                text: error.response?.data || error.message,
+            });
         }
     };
 
@@ -279,14 +366,91 @@ function SolicitudesClientes() {
         setFormActualizar(prev => ({ ...prev, [name]: value }));
     };
 
+    const [codigoBusqueda, setCodigoBusqueda] = useState('');
+
+    const handleBuscarPorCodigo = async () => {
+        if (!codigoBusqueda.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Campo vacío',
+                text: 'Debe ingresar un código de solicitud para buscar.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: "Buscando cuenta...",
+            text: "Por favor espera mientras buscamos la cuenta.",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+        });
+
+        try {
+            const response = await SolicitudesBD.buscarSolicitudesPorCodigo(codigoBusqueda, cliente.dni);
+            Swal.close();
+            setSolicitudes(response.data);
+        } catch (error) {
+            console.error("Error en buscar solicitud:", error.response?.data || error.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error en la búsqueda',
+                text: error.response?.data || error.message
+            });
+        }
+    };
+
     const handleActualizarSolicitud = async () => {
+
+        if (
+            !formActualizar.descripcion.trim() &&
+            !formActualizar.prioridad.trim() &&
+            !formActualizar.estado.trim()
+        ) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Formulario Vacío',
+                text: 'El formulario no puede estar vacío, por favor ingrese datos.',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            return;
+        }
+
+        let errores = [];
+
+        if (!formActualizar.descripcion.trim()) errores.push("La descripción no puede estar vacía.");
+        if (!formActualizar.prioridad.trim()) errores.push("Debes seleccionar una prioridad.");
+        if (!formActualizar.estado.trim()) errores.push("Debes seleccionar un estado.");
+
+        if (errores.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Errores en el formulario',
+                html: errores.join("<br/>") // Cada mensaje en una línea distinta
+            });
+            return;
+        }
+
         try {
             await SolicitudesBD.actualizarSolicitud(formActualizar);
-            Swal.fire('Éxito', 'Solicitud actualizada correctamente', 'success');
+            Swal.fire({
+                icon: 'success',
+                title: '¡Solicitud actualizada!',
+                text: 'La solicitud ha sido actualizada correctamente.',
+                showConfirmButton: false,
+                timer: 3000
+            });
             obtenerSolicitudes(cliente.dni);
             setMostrarFormularioACT(false);
         } catch (error) {
-            Swal.fire('Error', 'No se pudo actualizar la solicitud', 'error');
+            console.error("Error en actualizarSolicitud:", error.response?.data || error.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al actualizar la solicitud',
+                text: error.response?.data || error.message,
+            });
         }
     };
 
@@ -297,13 +461,37 @@ function SolicitudesClientes() {
     };
 
     const handleResponderSolicitud = async () => {
-        // Opcional: validar que los campos no estén vacíos y que subestado sea válido
-        if (!formRespuesta.codigoSolicitud || !formRespuesta.respuesta || !formRespuesta.subestado) {
-            Swal.fire('Error', 'Por favor, completa todos los campos (Respuesta y Sub estado).', 'error');
+        if (formRespuesta.respuesta.trim() === "" && formRespuesta.subestado.trim() === "") {
+            Swal.fire({
+                icon: 'error',
+                title: 'Formulario Vacío',
+                text: 'Debe completar todos los campos antes de enviar la respuesta.',
+                showConfirmButton: false,
+                timer: 3000
+            });
             return;
         }
-        if (formRespuesta.subestado !== 'Acogido' && formRespuesta.subestado !== 'No_acogido') {
-            Swal.fire('Error', 'El subestado debe ser "Acogido" o "No_acogido".', 'error');
+
+        let errores = [];
+
+        // Validar que la respuesta no esté vacía
+        if (!formRespuesta.respuesta || formRespuesta.respuesta.trim() === "") {
+            errores.push("La respuesta no puede estar vacía.");
+        }
+
+        // Validar que el subestado esté seleccionado y no sea "Seleccione"
+        if (!formRespuesta.subestado || formRespuesta.subestado.trim() === "" || formRespuesta.subestado === "Seleccione") {
+            errores.push("Debes seleccionar un subestado.");
+        }
+
+        if (errores.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Errores en el formulario',
+                html: errores.join("<br/>"),
+                showConfirmButton: false,
+                timer: 3000
+            });
             return;
         }
 
@@ -312,19 +500,36 @@ function SolicitudesClientes() {
                 respuesta: formRespuesta.respuesta,
                 subestado: formRespuesta.subestado
             });
-            Swal.fire('Éxito', 'Respuesta registrada correctamente', 'success');
+            Swal.fire({
+                icon: 'success',
+                title: '¡Solicitud respondida!',
+                text: 'La respuesta ha sido enviada correctamente.',
+                showConfirmButton: false,
+                timer: 3000
+            });
             obtenerSolicitudes(cliente.dni);
             setMostrarFormularioRESPUESTA(false);
             setFormRespuesta({ codigoSolicitud: '', respuesta: '', subestado: '' });
         } catch (error) {
             console.error("Error al responder:", error.response?.data || error.message);
-            Swal.fire(
-                'Error',
-                error.response?.data?.message || error.response?.data?.mensaje || 'No se pudo registrar la respuesta',
-                'error'
-            );
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al responder la solicitud',
+                text: error.response?.data || error.message || 'No se pudo enviar la respuesta.',
+            });
         }
     };
+
+    const solicitudesFiltradas = solicitudes.filter((solicitud) => {
+        return (
+            (filtroSolicitud.tipo === 'Todos' || solicitud.tipoSolicitud === filtroSolicitud.tipo) &&
+            (filtroSolicitud.categoria === 'Todos' || solicitud.categoria === filtroSolicitud.categoria) &&
+            (filtroSolicitud.prioridad === 'Todos' || solicitud.prioridad === filtroSolicitud.prioridad) &&
+            (filtroSolicitud.estado === 'Todos' || solicitud.estado === filtroSolicitud.estado) &&
+            (filtroSolicitud.subestado === 'Todos' || (solicitud.subestado ? solicitud.subestado : '') === filtroSolicitud.subestado)
+
+        );
+    });
 
 
     return (
@@ -423,7 +628,7 @@ function SolicitudesClientes() {
                                             <option value="Boleta">Boleta</option>
                                         </select>
                                         <label>Descripción:</label>
-                                        <textarea className='p-2 w-100' type="text" name="descripcion" value={formCrear.descripcion} onChange={handleCrearChange} required />
+                                        <textarea className='p-2 w-100 text-center' type="text" name="descripcion" value={formCrear.descripcion} onChange={handleCrearChange} required />
                                         <label>Prioridad:</label>
                                         <select className='text-center' name="prioridad" value={formCrear.prioridad} onChange={handleCrearChange}>
                                             <option value="">Sin seleccionar</option>
@@ -434,7 +639,6 @@ function SolicitudesClientes() {
                                         <label>Estado:</label>
                                         <select className='text-center' name="estado" value={formCrear.estado} onChange={handleCrearChange}>
                                             <option value="">Sin seleccionar</option>
-                                            <option value="Cancelado">Cancelado</option>
                                             <option value="Pendiente">Pendiente</option>
                                             <option value="Cerrado">Cerrado</option>
                                         </select>
@@ -448,7 +652,7 @@ function SolicitudesClientes() {
 
                                     <div className="formulario-botones">
                                         <button className="btn btn-success" onClick={handleCrearSolicitud}>Crear</button>
-                                        <button className="btn btn-secondary" onClick={() => setMostrarFormulario(false)}>Cancelar</button>
+                                        <button className="btn btn-secondary" onClick={cerrarModal}>Cancelar</button>
                                     </div>
                                 </div>
                             </div>
@@ -459,11 +663,21 @@ function SolicitudesClientes() {
                         <input
                             type="text"
                             placeholder='Codigo Solicitud'
-
+                            value={codigoBusqueda}
+                            onChange={(e) => setCodigoBusqueda(e.target.value)}
                         />
                         <div className='btn-acciones-buscar'>
-                            <button className='btn btn-info'>Buscar</button>
-                            <button className='btn btn-secondary'>
+                            <button className='btn btn-info' onClick={handleBuscarPorCodigo}>Buscar</button>
+                            <button className='btn btn-secondary' onClick={() => {
+                                setCodigoBusqueda('');
+                                SolicitudesBD.listarSolicitudes()
+                                    .then(response => {
+                                        setSolicitudes(response.data);
+                                    })
+                                    .catch(error => {
+                                        console.error("Error al listar solicitud:", error);
+                                    });
+                            }}>
                                 Normalidad
                             </button>
                         </div>
@@ -476,58 +690,62 @@ function SolicitudesClientes() {
                             <th>codigo Solicitud</th>
                             <th>Fecha</th>
                             <th >Tipo
-                                <select className='filtro-table'>
-                                    <option>Todos</option>
-                                    <option>Consulta</option>
-                                    <option>Problema</option>
-                                    <option>Reclamo</option>
+                                <select className='filtro-table' name="tipo" value={filtroSolicitud.tipo} onChange={handleFiltroChange}>
+                                    <option value="Todos">Todos</option>
+                                    <option value="Consulta">Consulta</option>
+                                    <option value="Problema">Problema</option>
+                                    <option value="Reclamo">Reclamo</option>
                                 </select>
                             </th>
                             <th >Categoria
-                                <select className='filtro-table'>
-                                    <option>Todos</option>
-                                    <option>Espacio</option>
-                                    <option>Cliente</option>
-                                    <option>Alquiler</option>
-                                    <option>Boleta</option>
+                                <select className='filtro-table' name="categoria" value={filtroSolicitud.categoria} onChange={handleFiltroChange}>
+                                    <option value="Todos">Todos</option>
+                                    <option value="Espacio">Espacio</option>
+                                    <option value="Cliente">Cliente</option>
+                                    <option value="Alquiler">Alquiler</option>
+                                    <option value="Boleta">Boleta</option>
                                 </select>
                             </th>
                             <th >Prioridad
-                                <select className='filtro-table'>
-                                    <option>Todos</option>
-                                    <option>Baja</option>
-                                    <option>Media</option>
-                                    <option>Alta</option>
+                                <select className='filtro-table' name="prioridad" value={filtroSolicitud.prioridad} onChange={handleFiltroChange}>
+                                    <option value="Todos">Todos</option>
+                                    <option value="Baja">Baja</option>
+                                    <option value="Media">Media</option>
+                                    <option value="Alta">Alta</option>
                                 </select>
                             </th>
                             <th >Estado
-                                <select className='filtro-table'>
-                                    <option>Todos</option>
-                                    <option>Cancelado</option>
-                                    <option>Pendiente</option>
-                                    <option>Cerrado</option>
+                                <select className='filtro-table' name="estado" value={filtroSolicitud.estado} onChange={handleFiltroChange}>
+                                    <option value="Todos">Todos</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                    <option value="Pendiente">Pendiente</option>
+                                    <option value="Cerrado">Cerrado</option>
                                 </select>
                             </th>
                             <th >Sub estado
-                                <select className='filtro-table'>
-                                    <option>Todos</option>
-                                    <option>Acogido</option>
-                                    <option>No acogido</option>
+                                <select className='filtro-table' name="subestado" value={filtroSolicitud.subestado} onChange={handleFiltroChange}>
+                                    <option value="Todos">Todos</option>
+                                    <option value="Acogido">Acogido</option>
+                                    <option value="No acogido">No acogido</option>
                                 </select>
                             </th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {solicitudes.length > 0 ? (
-                            solicitudes.map((solicitud) => (
-                                <tr key={solicitud.codigoSolicitud}>
+                        {solicitudes.length === 0 ? (
+                            <tr>
+                                <td colSpan="8">No hay solicitudes registradas.</td>
+                            </tr>
+                        ) : solicitudesFiltradas.length > 0 ? (
+                            solicitudesFiltradas.map((solicitud, index) => (
+                                <tr key={solicitud.codigoSolicitud || `solicitud-${index}`}>
                                     <td>
                                         <button className='btn-codigo' onClick={() => setMostrarFormularioCOMPLETO(true)}>
                                             {solicitud.codigoSolicitud}
                                         </button>
                                         {mostrarFormularioCOMPLETO && (
-                                            <div className="modal-overlay">
+                                            <div className="modal-overlay modal-Arreglo-2">
                                                 <div className="modal-content-completo">
                                                     <div className='titulo-completo-modal'>
                                                         <h3 className="text-center">INFORMACIÓN COMPLETA DE LA SOLICITUD</h3>
@@ -539,7 +757,7 @@ function SolicitudesClientes() {
                                                                 <input type="text" value={solicitud.codigoSolicitud} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
-                                                                <label>Tipo:</label>
+                                                                <label>Tipo de solicitud:</label>
                                                                 <input type="text" value={solicitud.tipoSolicitud} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
@@ -597,6 +815,18 @@ function SolicitudesClientes() {
                                     <td>{solicitud.subestado || "👻👻👻"}</td>
                                     <td className='tabla-acciones-permisos'>
                                         <button className='btn btn-primary' onClick={() => {
+                                            if (solicitud.estado === "Cancelado" || solicitud.estado === "Cerrado") {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'No se puede actualizar',
+                                                    text: `La solicitud está en estado ${solicitud.estado}. Solo las solicitudes en estado PENDIENTE pueden actualizarse.`,
+                                                    showConfirmButton: false,
+                                                    timer: 3000
+                                                });
+                                                return; // Evita que el formulario se abra
+                                            }
+
+                                            // Si el estado es PENDIENTE, permite la actualización
                                             setFormActualizar({
                                                 codigoSolicitud: solicitud.codigoSolicitud,
                                                 descripcion: solicitud.descripcion,
@@ -604,9 +834,11 @@ function SolicitudesClientes() {
                                                 estado: solicitud.estado
                                             });
                                             setMostrarFormularioACT(true);
-                                        }}>Actualizar</button>
+                                        }}>
+                                            Actualizar
+                                        </button>
                                         {mostrarFormularioACT && (
-                                            <div className="modal-overlay">
+                                            <div className="modal-overlay modal-Arreglo-2">
                                                 <div className="modal-content">
                                                     <h3 className="text-center">ACTUALIZAR SOLICITUD</h3>
                                                     <div className="formulario-campos">
@@ -630,7 +862,6 @@ function SolicitudesClientes() {
                                                             <option value="">Sin seleccionar</option>
                                                             <option value="Cancelado">Cancelado</option>
                                                             <option value="Pendiente">Pendiente</option>
-                                                            <option value="Cerrado">Cerrado</option>
                                                         </select>
                                                     </div>
                                                     <div className="formulario-botones">
@@ -642,15 +873,29 @@ function SolicitudesClientes() {
                                         )}
 
                                         <button className='btn btn-success' onClick={() => {
+                                            if (solicitud.estado === "Cancelado" || solicitud.estado === "Cerrado") {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'No se puede responder',
+                                                    text: `La solicitud está en estado ${solicitud.estado}. Solo las solicitudes en estado PENDIENTE pueden responderse.`,
+                                                    showConfirmButton: false,
+                                                    timer: 5000
+                                                });
+                                                return; // Evita que el formulario se abra
+                                            }
+
+                                            // Si el estado es PENDIENTE, permite la respuesta
                                             setFormRespuesta({
                                                 codigoSolicitud: solicitud.codigoSolicitud,
                                                 respuesta: '',
                                                 subestado: ''
                                             });
                                             setMostrarFormularioRESPUESTA(true);
-                                        }}>Responder</button>
+                                        }}>
+                                            Responder
+                                        </button>
                                         {mostrarFormularioRESPUESTA && (
-                                            <div className="modal-overlay">
+                                            <div className="modal-overlay modal-Arreglo-2">
                                                 <div className="modal-content">
                                                     <h3 className="text-center">RESPONDER SOLICITUD</h3>
                                                     <div className="formulario-campos">
@@ -681,7 +926,7 @@ function SolicitudesClientes() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="8">No se encontraron solicitudes.</td>
+                                <td colSpan="8">No se encontraron solicitudes del filtrado.</td>
                             </tr>
                         )}
                     </tbody>

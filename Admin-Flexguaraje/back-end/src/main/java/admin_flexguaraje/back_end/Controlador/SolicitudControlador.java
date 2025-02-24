@@ -50,22 +50,20 @@ public class SolicitudControlador {
         // Validar que el DNI esté presente y tenga 8 dígitos
         if (dni == null || dni.trim().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("mensaje", "El campo DNI es obligatorio."));
+                    .body("El campo DNI es obligatorio.");
         }
         if (dni.length() != 8 || !dni.matches("\\d{8}")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("mensaje", "El DNI debe tener exactamente 8 dígitos numéricos."));
+                    .body("El DNI debe tener exactamente 8 dígitos numéricos.");
         }
 
         // Validar si el código tiene exactamente 15 caracteres
         if (codigoSolicitud == null || codigoSolicitud.length() != 15) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("mensaje", "El código de solicitud debe tener exactamente 15 caracteres."));
+            return ResponseEntity.badRequest().body("El código de solicitud debe tener exactamente 15 caracteres.");
         }
 
         if (!codigoSolicitud.matches("^SLT-\\d{11}$")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("mensaje", "El código de solicitud debe seguir el formato correspondiente. EJEMPLO: SLT-12345678901"));
+            return ResponseEntity.badRequest().body("El código de solicitud debe seguir el formato correspondiente. EJEMPLO: SLT-12345678901");
         }
 
         // Buscar en la capa de negocio por código de solicitud
@@ -75,13 +73,12 @@ public class SolicitudControlador {
             Solicitudes solicitud = solicitudOptional.get();
             // Comprobar que la solicitud pertenece al DNI ingresado
             if (solicitud.getCliente() == null || !solicitud.getCliente().getDni().equals(dni)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.of("mensaje", "No se encontró ninguna solicitud con el código proporcionado para el DNI indicado."));
+                return ResponseEntity.badRequest().body("No se encontró ninguna solicitud con el código proporcionado para el DNI indicado.");
             }
             return ResponseEntity.ok(List.of(solicitud)); // Devuelve la solicitud en una lista
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("mensaje", "No se encontró ninguna solicitud con el código proporcionado."));
+                    .body("No se encontró ninguna solicitud con el código proporcionado.");
         }
     }
 
@@ -89,38 +86,6 @@ public class SolicitudControlador {
     @PostMapping("/crear_solicitud")
     public ResponseEntity<Object> crearSolicitud(@RequestBody Map<String, Object> body) {
         try {
-            List<String> errores = new ArrayList<>();
-
-            // Validación de campos obligatorios
-            if (body.get("dniCliente") == null || body.get("dniCliente").toString().trim().isEmpty()) {
-                errores.add(": El campo dniCliente es obligatorio.");
-            } else {
-                String dniCliente = body.get("dniCliente").toString().trim();
-                if (dniCliente.length() != 8 || !dniCliente.matches("\\d{8}")) {
-                    errores.add("El campo dniCliente debe tener exactamente 8 caracteres numéricos.");
-                }
-            }
-
-            if (body.get("tipoSolicitud") == null || body.get("tipoSolicitud").toString().trim().isEmpty()) {
-                errores.add(": El campo tipoSolicitud es obligatorio.");
-            }
-            if (body.get("categoria") == null || body.get("categoria").toString().trim().isEmpty()) {
-                errores.add(": El campo categoria es obligatorio.");
-            }
-            if (body.get("descripcion") == null || body.get("descripcion").toString().trim().isEmpty()) {
-                errores.add(": El campo descripcion es obligatorio.");
-            }
-            if (body.get("prioridad") == null || body.get("prioridad").toString().trim().isEmpty()) {
-                errores.add(": El campo prioridad es obligatorio.");
-            }
-            if (body.get("estado") == null || body.get("estado").toString().trim().isEmpty()) {
-                errores.add(": El campo estado es obligatorio.");
-            }
-
-            if (!errores.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Errores en la solicitud", "detalles", errores));
-            }
-
             // Capturar datos
             String dniCliente = body.get("dniCliente").toString();
             String tipoSolicitudStr = body.get("tipoSolicitud").toString().trim();
@@ -133,7 +98,7 @@ public class SolicitudControlador {
             // Validar si el cliente existe
             Cliente cliente = solicitudNegocio.obtenerClientePorDni(dniCliente);
             if (cliente == null) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Cliente con DNI " + dniCliente + " no encontrado."));
+                return ResponseEntity.badRequest().body("Cliente con DNI " + dniCliente + " no encontrado.");
             }
 
             try {
@@ -144,90 +109,85 @@ public class SolicitudControlador {
                 Solicitudes.Estado estado = null;
                 Solicitudes.Subestado subestado = null;
 
+                // Convertir tipoSolicitudStr a Enum
                 try {
                     tipoSolicitud = Solicitudes.TipoSolicitud.valueOf(tipoSolicitudStr);
                 } catch (IllegalArgumentException e) {
-                    errores.add("Por favor escriba bien su dato: El valor '" + tipoSolicitudStr + "' en tipoSolicitud está mal escrito.");
+                    return ResponseEntity.badRequest().body("Tipo de solicitud inválido: " + tipoSolicitudStr);
                 }
 
+                // Convertir categoría a Enum
                 try {
                     categoria = Solicitudes.Categoria.valueOf(categoriaStr);
                 } catch (IllegalArgumentException e) {
-                    errores.add("Por favor escriba bien su dato: El valor '" + categoriaStr + "' en categoria está mal escrito.");
+                    return ResponseEntity.badRequest().body("Categoría inválida: " + categoriaStr);
                 }
 
+                // Convertir prioridad a Enum
                 try {
                     prioridad = Solicitudes.Prioridad.valueOf(prioridadStr);
                 } catch (IllegalArgumentException e) {
-                    errores.add("Por favor escriba bien su dato: El valor '" + prioridadStr + "' en prioridad está mal escrito.");
+                    return ResponseEntity.badRequest().body("Prioridad inválida: " + prioridadStr);
                 }
 
+                // Convertir estado a Enum
                 try {
                     estado = Solicitudes.Estado.valueOf(estadoStr);
                 } catch (IllegalArgumentException e) {
-                    errores.add("Por favor escriba bien su dato: El valor '" + estadoStr + "' en estado está mal escrito.");
+                    return ResponseEntity.badRequest().body("Estado inválido: " + estadoStr);
                 }
 
+                // Convertir subestado si no está vacío
                 if (!subestadoStr.isEmpty()) {
                     try {
                         subestado = Solicitudes.Subestado.valueOf(subestadoStr);
                     } catch (IllegalArgumentException e) {
-                        errores.add("Por favor escriba bien su dato: El valor '" + subestadoStr + "' en subestado está mal escrito.");
+                        return ResponseEntity.badRequest().body("Subestado inválido: " + subestadoStr);
                     }
-                }
-
-                if (!errores.isEmpty()) {
-                    return ResponseEntity.badRequest().body(Map.of("message", "El subestado debe estar vacio", "detalles", errores));
                 }
 
                 // Validaciones adicionales según tipo de solicitud y prioridad
                 if (tipoSolicitud == Solicitudes.TipoSolicitud.Consulta) {
                     if (prioridad != Solicitudes.Prioridad.Baja) {
-                        return ResponseEntity.badRequest().body(Map.of("message", "Dato denegado: Para tipo de solicitud 'Consulta', la prioridad debe ser únicamente 'Baja'."));
+                        return ResponseEntity.badRequest().body("Para tipo de solicitud CONSULTA, la prioridad debe ser únicamente BAJA.");
                     }
                 }
 
                 if (tipoSolicitud == Solicitudes.TipoSolicitud.Problema) {
                     if (prioridad != Solicitudes.Prioridad.Media && prioridad != Solicitudes.Prioridad.Alta) {
-                        return ResponseEntity.badRequest().body(Map.of("message", "Dato denegado: Para tipo de solicitud 'Problema', la prioridad debe ser 'Media' o 'Alta'."));
+                        return ResponseEntity.badRequest().body("Para tipo de solicitud PROBLEMA, la prioridad debe ser MEDIA o ALTA.");
                     }
                 }
 
                 if (tipoSolicitud == Solicitudes.TipoSolicitud.Reclamo) {
                     if (prioridad != Solicitudes.Prioridad.Alta) {
-                        return ResponseEntity.badRequest().body(Map.of("message", "Dato denegado: Para tipo de solicitud 'Reclamo', la prioridad debe ser únicamente 'Alta'."));
+                        return ResponseEntity.badRequest().body("Para tipo de solicitud RECLAMO, la prioridad debe ser únicamente ALTA.");
                     }
                 }
 
                 // Validaciones previas de estado y subestado para "Consulta"
                 if (tipoSolicitud == Solicitudes.TipoSolicitud.Consulta) {
-                    if (estado != Solicitudes.Estado.Cerrado && estado != Solicitudes.Estado.Cancelado) {
-                        return ResponseEntity.badRequest().body(Map.of("message", "Dato denegado: Para tipo de solicitud 'Consulta', solo se permite estado 'Cerrado' o 'Cancelado'."));
+                    if (estado != Solicitudes.Estado.Cerrado) {
+                        return ResponseEntity.badRequest().body("Para tipo de solicitud CONSULTA, solo se permite estado CERRADO.");
                     }
-
                     if (estado == Solicitudes.Estado.Cerrado) {
                         if (subestadoStr.isEmpty()) {
-                            return ResponseEntity.badRequest().body(Map.of("message", "Dato denegado: No se permite crear una solicitud de tipo 'Consulta' con estado 'Cerrado' y subestado vacío."));
+                            return ResponseEntity.badRequest().body("Para tipo de solicitud CONSULTA, nose permite el subestado vacío.");
                         }
                         if ("No_acogido".equals(subestadoStr)) {
-                            return ResponseEntity.badRequest().body(Map.of("message", "Dato denegado: No se permite crear una solicitud de tipo 'Consulta' con estado 'Cerrado' y subestado 'No_acogido'."));
+                            return ResponseEntity.badRequest().body("Para tipo de solicitud CONSULTA, solo se permite subestado ACOGIDO.");
                         }
                     }
-
-
-
-
                 }
-
                 // Validaciones adicionales para "Reclamo"
                 if (tipoSolicitud == Solicitudes.TipoSolicitud.Reclamo) {
                     // El estado debe ser "Cancelado" o "Pendiente"
-                    if (estado != Solicitudes.Estado.Cancelado && estado != Solicitudes.Estado.Pendiente) {
-                        return ResponseEntity.badRequest().body(Map.of("message", "Dato denegado: Para tipo de solicitud 'Reclamo', el estado debe ser 'Cancelado' o 'Pendiente'."));
+                    if (estado != Solicitudes.Estado.Pendiente) {
+                        return ResponseEntity.badRequest().body("Para tipo de solicitud RECLAMO, el estado debe ser PENDIENTE.");
                     }
                     // El subestado debe estar vacío
                     if (!subestadoStr.isEmpty()) {
-                        return ResponseEntity.badRequest().body(Map.of("message", "Dato denegado: Para tipo de solicitud 'Reclamo', el subestado debe estar vacío."));
+                        return ResponseEntity.badRequest().body("Para tipo de solicitud RECLAMO, el subestado debe estar vacío.");
                     }
                 }
 
@@ -235,11 +195,11 @@ public class SolicitudControlador {
                 if (tipoSolicitud == Solicitudes.TipoSolicitud.Problema) {
                     // El estado obligatoriamente debe ser "Pendiente"
                     if (estado != Solicitudes.Estado.Pendiente) {
-                        return ResponseEntity.badRequest().body(Map.of("message", "Dato denegado: Para tipo de solicitud 'Problema', el estado debe ser 'Pendiente'."));
+                        return ResponseEntity.badRequest().body("Para tipo de solicitud PROBLEMA, el estado debe ser PENDIENTE.");
                     }
                     // El subestado debe estar vacío
                     if (!subestadoStr.isEmpty()) {
-                        return ResponseEntity.badRequest().body(Map.of("message", "Dato denegado: Para tipo de solicitud 'Problema', el subestado debe estar vacío."));
+                        return ResponseEntity.badRequest().body("Para tipo de solicitud PROBLEMA, el subestado debe estar vacío.");
                     }
                 }
 
@@ -259,14 +219,12 @@ public class SolicitudControlador {
         }
     }
 
-
-
     @PutMapping("/actualizar_solicitud")
     public ResponseEntity<Object> actualizarSolicitud(@RequestBody Map<String, Object> body) {
         try {
             // Obtener el codigo_solicitud desde el body
             if (!body.containsKey("codigoSolicitud") || body.get("codigoSolicitud") == null || body.get("codigoSolicitud").toString().trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("message", "El campo 'codigoSolicitud' no tiene dato."));
+                return ResponseEntity.badRequest().body("El campo 'codigoSolicitud' no tiene dato.");
             }
 
             String CodigoSolicitud = body.get("codigoSolicitud").toString().trim();
@@ -274,69 +232,47 @@ public class SolicitudControlador {
             // Buscar solicitud por codigo_solicitud
             Optional<Solicitudes> solicitudExistente = solicitudNegocio.obtenerSolicitudPorCodigo(CodigoSolicitud);
             if (solicitudExistente.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Solicitud con código " + CodigoSolicitud + " no encontrada."));
+                return ResponseEntity.badRequest().body("Solicitud con código " + CodigoSolicitud + " no encontrada.");
             }
             Solicitudes solicitud = solicitudExistente.get();
 
+            if (solicitud.getEstado() != Solicitudes.Estado.Pendiente) {
+                return ResponseEntity.badRequest().body("Solo se pueden actualizar solicitudes en estado PENDIENTE.");
+            }
             // Validación: Si el estado original es PENDIENTE, no se puede actualizar a CERRADO
             if (solicitud.getEstado() == Solicitudes.Estado.Pendiente) {
                 String nuevoEstado = body.get("estado") != null ? body.get("estado").toString().trim() : null;
                 if ("CERRADO".equalsIgnoreCase(nuevoEstado)) {
-                    return ResponseEntity.badRequest().body(Map.of("message", "Cuando el estado es 'PENDIENTE', no puedes actualizarlo a 'CERRADO'."));
+                    return ResponseEntity.badRequest().body("Cuando el estado es PENDIENTE, no puedes actualizarlo a CERRADO.");
                 }
-            }
-
-            // Lista para almacenar errores
-            List<String> errores = new ArrayList<>();
-
-            // Validaciones de datos requeridos
-            if (!body.containsKey("prioridad") || body.get("prioridad") == null || body.get("prioridad").toString().trim().isEmpty()) {
-                errores.add("El campo 'prioridad' no tiene dato.");
-            }
-
-            if (!body.containsKey("estado") || body.get("estado") == null || body.get("estado").toString().trim().isEmpty()) {
-                errores.add("El campo 'estado' no tiene dato.");
-            }
-
-            // Si hay errores, devolverlos
-            if (!errores.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Errores en la solicitud", "detalles", errores));
             }
 
             // Convertir Strings a Enums
             Solicitudes.Prioridad prioridad;
             Solicitudes.Estado estadoEnum;
-
-            try {
-                prioridad = Solicitudes.Prioridad.valueOf(body.get("prioridad").toString().trim());
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().body(Map.of("message", "El valor de 'prioridad' no es válido."));
-            }
-
-            try {
-                estadoEnum = Solicitudes.Estado.valueOf(body.get("estado").toString().trim());
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.badRequest().body(Map.of("message", "El valor de 'estado' no es válido."));
-            }
+            prioridad = Solicitudes.Prioridad.valueOf(body.get("prioridad").toString().trim());
+            estadoEnum = Solicitudes.Estado.valueOf(body.get("estado").toString().trim());
+            String nuevaDescripcion = body.get("descripcion") != null ? body.get("descripcion").toString().trim() : solicitud.getDescripcion();
 
             // Validaciones de prioridad según el tipo de solicitud
             String tipoSolicitud = solicitud.getTipoSolicitud().name();
 
             if ("problema".equalsIgnoreCase(tipoSolicitud)) {
                 if (prioridad == Solicitudes.Prioridad.Baja) {
-                    return ResponseEntity.badRequest().body(Map.of("message", "Para solicitudes de tipo 'problema', la prioridad debe ser 'media' o 'alta'."));
+                    return ResponseEntity.badRequest().body("Para solicitudes de tipo PROBLEMA, la prioridad debe ser MEDIA o ALTA.");
                 }
             }
 
             if ("reclamo".equalsIgnoreCase(tipoSolicitud)) {
                 if (prioridad != Solicitudes.Prioridad.Alta) {
-                    return ResponseEntity.badRequest().body(Map.of("message", "Para solicitudes de tipo 'reclamo', la prioridad debe ser únicamente 'alta'."));
+                    return ResponseEntity.badRequest().body("Para solicitudes de tipo RECLAMO, la prioridad debe ser únicamente ALTA.");
                 }
             }
 
             // Actualizar solicitud
             solicitud.setPrioridad(prioridad);
             solicitud.setEstado(estadoEnum);
+            solicitud.setDescripcion(nuevaDescripcion);
 
             // Guardar la solicitud actualizada
             Solicitudes solicitudActualizada = solicitudNegocio.actualizarSolicitud(solicitud);
@@ -359,15 +295,15 @@ public class SolicitudControlador {
             // Buscar la solicitud por código y verificar que esté en estado Pendiente
             Optional<Solicitudes> solicitudExistente = solicitudNegocio.obtenerSolicitudPorCodigo(codigoSolicitud);
             if (solicitudExistente.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Solicitud con código " + codigoSolicitud + " no encontrada."));
+                return ResponseEntity.badRequest().body("Solicitud con código " + codigoSolicitud + " no encontrada.");
             }
             if (solicitudExistente.get().getEstado() != Solicitudes.Estado.Pendiente) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Solo se pueden responder solicitudes con estado 'Pendiente'."));
+                return ResponseEntity.badRequest().body("Solo se pueden responder solicitudes con estado PENDIENTE.");
             }
 
             // Validar subestado
             if (!subestadoStr.equals("Acogido") && !subestadoStr.equals("No_acogido")) {
-                return ResponseEntity.badRequest().body(Map.of("message", "El subestado debe ser 'Acogido' o 'No_acogido'."));
+                return ResponseEntity.badRequest().body("El subestado debe ser ACOGIDO o NO_ACOGIDO.");
             }
 
             // Actualizar la solicitud con la respuesta, cambiar su estado a Cerrado y asignar fechaRespuesta

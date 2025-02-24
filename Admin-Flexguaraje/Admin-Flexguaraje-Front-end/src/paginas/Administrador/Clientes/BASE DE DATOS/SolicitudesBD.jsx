@@ -8,21 +8,20 @@ const BD_API_REST_URL = {
     ACTUALIZAR_SOLICITUD: "http://localhost:8080/solicitudes/actualizar_solicitud",
     RESPONDER_SOLICITUD: "http://localhost:8080/solicitudes/responder_solicitud"
 };
-    
+
 class SolicitudesBD {
     listarSolicitudes() {
         return axios.get(BD_API_REST_URL.LISTAR_GENERAL);
     }
     buscarSolicitudesPorDni(dni) {
-        console.log("Enviando búsqueda para DNI:", dni);
         return axios.post(BD_API_REST_URL.BUSCAR_SOLICITUD_DNI, { dni });
-    
+
     }
-    
+
     buscarSolicitudesPorCodigo(codigoSolicitud, dni) {
         return axios.post(BD_API_REST_URL.BUSCAR_SOLICITUD_CODIGO, { codigoSolicitud, dni });
     }
-    
+
 
     crearSolicitud(solicitud) {
         return axios.post(BD_API_REST_URL.CREAR_SOLICITUD, solicitud);

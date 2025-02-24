@@ -33,7 +33,7 @@ public class CuentaControlador {
 
     }
 
-    @PostMapping("/buscar_cdn")
+    @PostMapping("/buscar_cuenta")
     public ResponseEntity<?> buscarCuenta(@RequestBody Map<String, String> body) {
         // Obtener el DNI desde el cuerpo de la solicitud
         String dni = body.get("dni");

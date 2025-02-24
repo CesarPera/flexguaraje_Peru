@@ -102,3 +102,7 @@
     font-size: 1.2rem;
     font-weight: 700;
 }
+
+.modal-Arreglo {
+    background-color: rgba(160, 157, 157, 0.15) !important;
+}
