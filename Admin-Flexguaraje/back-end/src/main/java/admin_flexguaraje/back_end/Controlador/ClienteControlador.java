@@ -44,7 +44,7 @@ public class ClienteControlador {
             Cliente cliente = clienteNegocio.buscarPorDni(dni);
             return ResponseEntity.ok(cliente);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body("Cliente con DNI " + dni + " no existe.");
+            return ResponseEntity.badRequest().body("Cliente con DNI " + dni + " no existe.");
         }
     }
 

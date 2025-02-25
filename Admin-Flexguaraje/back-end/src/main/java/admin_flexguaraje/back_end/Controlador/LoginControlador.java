@@ -44,11 +44,6 @@ public class LoginControlador {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecto"));
         }
 
-        String passwordPattern = "^(?=.*[A-Z].*[A-Z].*[A-Z])(?=.*\\d.*\\d.*\\d)(?=.*[!@#$%^&*()_+=-].*[!@#$%^&*()_+=-]).{10,}$";
-        if (!password.matches(passwordPattern)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Correo y/o contraseña incorrecto"));
-        }
-
         try {
             // Autenticación del usuario
             Cuenta cuenta = LoginNegocio.autenticarUsuario(email.toUpperCase(), password);

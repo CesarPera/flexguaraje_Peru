@@ -179,7 +179,6 @@ function Clientes() {
 
     // Función para buscar por DNI
     const handleBuscarClientePorDni = () => {
-
         if (!busqueda.trim()) {
             Swal.fire({
                 icon: 'error',
@@ -221,24 +220,11 @@ function Clientes() {
                 }
             })
             .catch((error) => {
-                Swal.close();
-                if (error.response && error.response.status !== 404) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Cliente no encontrado',
-                        text: `Cliente con DNI ${busqueda} no existe.`,
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error al buscar cliente',
-                        text: 'Ocurrió un error inesperado.',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
-                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error en buscar al cliente',
+                    text: error.response?.data || 'Error inesperado'
+                });
             });
     };
 

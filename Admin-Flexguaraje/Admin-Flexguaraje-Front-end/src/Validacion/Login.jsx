@@ -77,12 +77,13 @@ const Login = () => {
       const result = await ValidacionBD.login(formData.email.trim(), formData.password.trim());
 
       localStorage.setItem('nombreUsuario', result.message);
+      window.dispatchEvent(new Event("storage"));
       navigate('/bienvenido_a_flexguaraje_peru');
     } catch (error) {
       if (error) {
         Swal.fire({
           icon: 'error',
-          title: 'Error',
+          title: 'Error En Iniciar Sesión',
           text: error,
         });
       }

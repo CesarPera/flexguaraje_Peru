@@ -99,6 +99,21 @@ function SolicitudesClientes() {
     }, [cliente?.dni]);
 
     useEffect(() => {
+        if (cliente?.dni) {
+            const obtenerDatosCliente = async () => {
+                try {
+                    const response = await ClientesBD.buscarCliente('dni', cliente.dni);
+                    setClienteActualizado(response.data);
+                    setFormData(response.data);
+                } catch (error) {
+                    console.error('Error al obtener los datos del cliente', error);
+                }
+            };
+            obtenerDatosCliente();
+        }
+    }, [cliente?.dni]); // Se ejecuta cada vez que el DNI cambia
+
+    useEffect(() => {
         if (clienteActualizado?.dni) {
             const obtenerDatosCliente = async () => {
                 try {
@@ -247,8 +262,8 @@ function SolicitudesClientes() {
 
             // 🔹 Refresca la página sin recargar completamente
             navigate(`/solicitudesclientes`, { state: { cliente: response.data } });
-
         } catch (error) {
+            console.error("Error en actualizar al cliente la informacion:", error.response?.data || error.message);
             Swal.fire({
                 icon: 'error',
                 title: 'Error al actualizar el cliente',

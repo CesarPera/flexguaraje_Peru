@@ -50,7 +50,7 @@ const CambiarPassManual = () => {
         }
 
         const errores = [];
-        const passwordPattern = /^(?=.*[A-Z].*[A-Z].*[A-Z])(?=.*\d.*\d.*\d)(?=.*[!@#$%^&*()_+=-].*[!@#$%^&*()_+=-]).{10,}$/;
+        const passwordPattern = /^(?=(?:.*[A-Z]){3})(?=(?:.*\d){3})(?=(?:.*[!@#$%^&*(),.?":{}|<>]){2})(?=.*[a-z]).{10,}$/;
         const emailPattern = /^[A-Za-zÁÉÍÓÚáéíóú]+_\d{8}@flexguaraje_peru\.com$/i;
 
         // Validaciones individuales
@@ -96,32 +96,38 @@ const CambiarPassManual = () => {
                 formData.newPassword.trim(),
                 formData.repeatPassword.trim()
             );
-            Swal.fire({
-                icon: 'success',
-                title: 'Contraseña Actualizada',
-                text: result,
-                showConfirmButton: false,
-                timer: 3000
-            });
-            onChangeMode(false);
-        } catch (error) {
-            const errorMessage = typeof error === "string" ? error : "Error inesperado";
 
-            if (errorMessage.includes("Correo y/o contraseña incorrecta")) {
+            // Verificar si el backend respondió con un mensaje de éxito
+            if (result.includes("Contraseña actualizada con éxito")) {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Correo y/o contraseña incorrecta.',
+                    icon: 'success',
+                    title: 'Contraseña Actualizada',
+                    text: result,
                     showConfirmButton: false,
                     timer: 3000
                 });
+
+                // Redirigir al login después de cambiar la contraseña
+                navigate("/");
             } else {
+                // Si la respuesta no indica éxito, mostrar error
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: errorMessage,
+                    text: result,
+                    showConfirmButton: false,
+                    timer: 3000
                 });
             }
+
+        } catch (error) {
+            const errorMessage = typeof error === "string" ? error : "Error inesperado";
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: errorMessage,
+            });
         }
     };
 

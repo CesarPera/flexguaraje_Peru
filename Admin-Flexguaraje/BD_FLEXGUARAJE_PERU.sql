@@ -11,7 +11,7 @@ create table roles (
 );
 # DATOS PARA LA TABLA ROLES
 INSERT INTO roles (nombre_rol, estado) VALUES 
-('ADMINISTRADOR', 'Activo'), ('PROPIETARIO', 'Activo'), ('MANTENIMIENTO', 'Activo');
+('PROPIETARIO', 'Activo'), ('ADMINISTRADOR', 'Activo'), ('MANTENIMIENTO', 'Activo');
 
 # TABLAAAAAAAA PERMISOSSSSSSSSSS
 create table permisos (
@@ -218,7 +218,8 @@ select * from cliente;
 select * from espacio;
 select * from alquileres;
 select * from boleta;
-
+select * from solicitudes;
+select * from reportes;
 
 
 # VISUALIZAR LOS DATOS COMBINADOS DE ROLES Y PERMISOS
