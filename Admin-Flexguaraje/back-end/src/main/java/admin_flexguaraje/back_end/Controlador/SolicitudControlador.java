@@ -35,11 +35,7 @@ public class SolicitudControlador {
         String dni = request.get("dni");
         List<Solicitudes> solicitudes = solicitudNegocio.buscarPorDni(dni);
 
-        if (!solicitudes.isEmpty()) {
-            return ResponseEntity.ok(solicitudes);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        return ResponseEntity.ok(solicitudes); // Devuelve 200 OK con una lista vacía en caso de no encontrar solicitudes
     }
 
     @PostMapping("/buscar_codigo_solicitud")

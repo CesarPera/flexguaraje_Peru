@@ -146,7 +146,7 @@ function SolicitudesClientes() {
             Swal.fire({
                 icon: 'error',
                 title: 'Error al obtener solicitudes',
-                text: 'No se pudieron cargar las solicitudes del cliente.',
+                text: 'No se pudieron cargar las solicitudes del cliente.' + error.response?.data || error.message,
             });
         }
     };
