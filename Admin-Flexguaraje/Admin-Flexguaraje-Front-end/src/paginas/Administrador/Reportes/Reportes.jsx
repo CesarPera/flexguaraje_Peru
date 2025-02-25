@@ -691,7 +691,6 @@ function Reportes() {
                             <option value="">Sin seleccionar</option>
                             <option value="Pendiente">Pendiente</option>
                             <option value="Cancelado">Cancelado</option>
-                            <option value="Cerrado">Cerrado</option>
                           </select>
                           <div className="modal-buttons">
                             <button type="submit" className="btn btn-primary">

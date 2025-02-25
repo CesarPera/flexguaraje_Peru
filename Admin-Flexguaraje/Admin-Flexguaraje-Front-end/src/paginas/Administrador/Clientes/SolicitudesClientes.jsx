@@ -14,6 +14,7 @@ function SolicitudesClientes() {
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
     const [mostrarFormularioACT, setMostrarFormularioACT] = useState(false);
     const [mostrarFormularioRESPUESTA, setMostrarFormularioRESPUESTA] = useState(false);
+    const [solicitudSeleccionada, setSolicitudSeleccionada] = useState(null);
     const [mostrarFormularioCOMPLETO, setMostrarFormularioCOMPLETO] = useState(false);
     const [filtroSolicitud, setFiltroSolicitud] = useState({
         tipo: 'Todos',
@@ -103,13 +104,23 @@ function SolicitudesClientes() {
                 try {
                     const response = await ClientesBD.buscarCliente('dni', clienteActualizado.dni);
                     setClienteActualizado(response.data);
+                    setFormData({
+                        dni: response.data.dni,
+                        nombre: response.data.nombre,
+                        apellido_paterno: response.data.apellidoPaterno,  // Asegurar que sean los correctos
+                        apellido_materno: response.data.apellidoMaterno,
+                        telefono: response.data.telefono,
+                        email: response.data.email,
+                        direccion: response.data.direccion,
+                        nota: response.data.notaAdicional
+                    });
                 } catch (error) {
                     console.error('Error al obtener los datos del cliente', error);
                 }
             };
             obtenerDatosCliente();
         }
-    }, [clienteActualizado?.dni]);
+    }, [isModalOpen]);  // Se ejecuta cuando se abre el modal
 
     const obtenerSolicitudes = async (dni) => {
         try {
@@ -219,28 +230,24 @@ function SolicitudesClientes() {
             return;
         }
 
-        const updatedData = {
-            dni: formData.dni,
-            nombre: formData.nombre,
-            apellido_paterno: formData.apellido_paterno,
-            apellido_materno: formData.apellido_materno,
-            telefono: formData.telefono,
-            email: formData.email,
-            direccion: formData.direccion,
-            nota: formData.nota
-        };
-
         try {
-            await ClientesBD.actualizarCliente(updatedData);
+            await ClientesBD.actualizarCliente(formData);
             const response = await ClientesBD.buscarCliente('dni', formData.dni);
             setClienteActualizado(response.data);
+            setFormData(response.data);
+
             Swal.fire({
                 icon: 'success',
                 title: 'Cliente actualizado exitosamente',
                 showConfirmButton: false,
                 timer: 3000,
             });
-            closeModal();
+
+            closeModal(); // Cierra el modal después de actualizar
+
+            // 🔹 Refresca la página sin recargar completamente
+            navigate(`/solicitudesclientes`, { state: { cliente: response.data } });
+
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -565,8 +572,21 @@ function SolicitudesClientes() {
                     </div>
 
                     <div className='btn-acciones-infocliente'>
-                        <button className='btn btn-primary btn-act-cliente' onClick={openModal}>Actualizar</button>
-
+                        <button className='btn btn-primary btn-act-cliente' onClick={() => {
+                            setFormData({
+                                dni: clienteActualizado.dni,
+                                nombre: clienteActualizado.nombre,
+                                apellido_paterno: clienteActualizado.apellidoPaterno,  // Asegurar que los datos sean los correctos
+                                apellido_materno: clienteActualizado.apellidoMaterno,
+                                telefono: clienteActualizado.telefono,
+                                email: clienteActualizado.email,
+                                direccion: clienteActualizado.direccion,
+                                nota: clienteActualizado.notaAdicional
+                            });
+                            openModal();
+                        }}>
+                            Actualizar
+                        </button>
                         {isModalOpen && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
@@ -577,9 +597,9 @@ function SolicitudesClientes() {
                                         <label>Nombre:</label>
                                         <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} />
                                         <label>Apellido Paterno:</label>
-                                        <input type="text" name="apellido_paterno" value={formData.apellido_paterno} onChange={handleChange} />
+                                        <input type="text" name="apellido_paterno" value={formData.apellido_paterno || ''} onChange={handleChange} />
                                         <label>Apellido Materno:</label>
-                                        <input type="text" name="apellido_materno" value={formData.apellido_materno} onChange={handleChange} />
+                                        <input type="text" name="apellido_materno" value={formData.apellido_materno || ''} onChange={handleChange} />
                                         <label>Teléfono:</label>
                                         <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} />
                                         <label>Email:</label>
@@ -587,9 +607,8 @@ function SolicitudesClientes() {
                                         <label>Dirección:</label>
                                         <input type="text" name="direccion" value={formData.direccion} onChange={handleChange} />
                                         <label>Notas:</label>
-                                        <input type="text" name="nota" value={formData.nota} onChange={handleChange} />
+                                        <input type="text" name="nota" value={formData.nota || ''} onChange={handleChange} />
                                     </div>
-
                                     <div className="formulario-botones">
                                         <button type="button" className="btn btn-primary" onClick={actualizarinfocliente}>Actualizar</button>
                                         <button type="button" className="btn btn-secondary" onClick={handleCancelar}>Cancelar</button>
@@ -741,8 +760,10 @@ function SolicitudesClientes() {
                             solicitudesFiltradas.map((solicitud, index) => (
                                 <tr key={solicitud.codigoSolicitud || `solicitud-${index}`}>
                                     <td>
-                                        <button className='btn-codigo' onClick={() => setMostrarFormularioCOMPLETO(true)}>
-                                            {solicitud.codigoSolicitud}
+                                        <button className='btn-codigo' onClick={() => {
+                                            setSolicitudSeleccionada(solicitud);
+                                            setMostrarFormularioCOMPLETO(true);
+                                        }}>{solicitud.codigoSolicitud}
                                         </button>
                                         {mostrarFormularioCOMPLETO && (
                                             <div className="modal-overlay modal-Arreglo-2">
@@ -754,49 +775,49 @@ function SolicitudesClientes() {
                                                         <div>
                                                             <div className='campos-datos'>
                                                                 <label>Codigo Solicitud:</label>
-                                                                <input type="text" value={solicitud.codigoSolicitud} disabled />
+                                                                <input type="text" value={solicitudSeleccionada.codigoSolicitud} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Tipo de solicitud:</label>
-                                                                <input type="text" value={solicitud.tipoSolicitud} disabled />
+                                                                <input type="text" value={solicitudSeleccionada.tipoSolicitud} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Categoria:</label>
-                                                                <input type="text" value={solicitud.categoria} disabled />
+                                                                <input type="text" value={solicitudSeleccionada.categoria} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Prioridad:</label>
-                                                                <input type="text" value={solicitud.prioridad} disabled />
+                                                                <input type="text" value={solicitudSeleccionada.prioridad} disabled />
                                                             </div>
                                                         </div>
                                                         <div>
                                                             <div className='campos-datos'>
                                                                 <label>Fecha Solicitud:</label>
-                                                                <input type="text" value={solicitud.fechaSolicitud} disabled />
+                                                                <input type="text" value={solicitudSeleccionada.fechaSolicitud} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Descripción:</label>
-                                                                <textarea className='p-2 w-100 text-center' type="text" value={solicitud.descripcion} disabled />
+                                                                <textarea className='p-2 w-100 text-center' type="text" value={solicitudSeleccionada.descripcion} disabled />
                                                             </div>
                                                         </div>
                                                         <div>
                                                             <div className='campos-datos'>
                                                                 <label>Fecha Respuesta:</label>
-                                                                <input type="text" value={solicitud.fechaRespuesta || '👻👻👻'} disabled />
+                                                                <input type="text" value={solicitudSeleccionada.fechaRespuesta || '👻👻👻'} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Respuesta:</label>
-                                                                <textarea className='p-2 w-100 text-center' type="text" value={solicitud.respuesta || '👻👻👻'} disabled />
+                                                                <textarea className='p-2 w-100 text-center' type="text" value={solicitudSeleccionada.respuesta || '👻👻👻'} disabled />
                                                             </div>
                                                         </div>
                                                         <div>
                                                             <div className='campos-datos'>
                                                                 <label>Estado:</label>
-                                                                <input type="text" value={solicitud.estado} disabled />
+                                                                <input type="text" value={solicitudSeleccionada.estado} disabled />
                                                             </div>
                                                             <div className='campos-datos'>
                                                                 <label>Sub estado:</label>
-                                                                <input type="text" value={solicitud.subestado || '👻👻👻'} disabled />
+                                                                <input type="text" value={solicitudSeleccionada.subestado || '👻👻👻'} disabled />
                                                             </div>
                                                         </div>
                                                     </div>

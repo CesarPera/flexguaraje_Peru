@@ -185,6 +185,8 @@ function Clientes() {
                 icon: 'error',
                 title: 'Error en DNI',
                 text: 'El DNI no puede estar vacío.',
+                showConfirmButton: false,
+                timer: 3000
             });
             return;
         }
@@ -193,7 +195,9 @@ function Clientes() {
             Swal.fire({
                 icon: 'error',
                 title: 'Error en DNI',
-                text: 'El DNI debe tener exactamente 8 caracteres numéricos.'
+                text: 'El DNI debe tener exactamente 8 caracteres numéricos.',
+                showConfirmButton: false,
+                timer: 3000
             });
             return;
         }
@@ -223,12 +227,16 @@ function Clientes() {
                         icon: 'error',
                         title: 'Cliente no encontrado',
                         text: `Cliente con DNI ${busqueda} no existe.`,
+                        showConfirmButton: false,
+                        timer: 3000
                     });
                 } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error al buscar cliente',
                         text: 'Ocurrió un error inesperado.',
+                        showConfirmButton: false,
+                        timer: 3000
                     });
                 }
             });
@@ -243,6 +251,8 @@ function Clientes() {
                 icon: 'error',
                 title: 'Error en Nombre Completo',
                 text: 'El Nombre Completo no puede estar vacío.',
+                showConfirmButton: false,
+                timer: 3000
             });
             return;
         }
@@ -317,6 +327,8 @@ function Clientes() {
                         icon: 'error',
                         title: 'Error al buscar cliente',
                         text: 'Ocurrió un error inesperado.',
+                        showConfirmButton: false,
+                        timer: 3000
                     });
                 }
             });
