@@ -47,9 +47,11 @@ public class LoginControlador {
         try {
             // Autenticación del usuario
             Cuenta cuenta = LoginNegocio.autenticarUsuario(email.toUpperCase(), password);
+            String rolUsuario = cuenta.getUsuario().getRoles().getNombreRol();
 
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Bienvenido, " + cuenta.getUsuario().getNombre() + " " + cuenta.getUsuario().getApellidoPaterno() + " " + cuenta.getUsuario().getApellidoMaterno());
+            response.put("rol", rolUsuario); // 🔥 Enviamos el rol en la respuesta
 
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {

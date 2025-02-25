@@ -77,6 +77,9 @@ const Login = () => {
       const result = await ValidacionBD.login(formData.email.trim(), formData.password.trim());
 
       localStorage.setItem('nombreUsuario', result.message);
+      localStorage.setItem('rolUsuario', result.rol);
+      console.log("Rol guardado en localStorage:", localStorage.getItem('rolUsuario')); // 🔹 Verificar si se guarda bien
+
       window.dispatchEvent(new Event("storage"));
       navigate('/bienvenido_a_flexguaraje_peru');
     } catch (error) {
