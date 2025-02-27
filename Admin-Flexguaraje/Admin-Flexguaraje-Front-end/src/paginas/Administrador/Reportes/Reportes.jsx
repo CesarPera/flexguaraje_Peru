@@ -553,7 +553,7 @@ function Reportes() {
                   </button>
                   {/* Modal Información Completa del Reporte */}
                   {mostrarFormularioCOMPLETO && reporteSeleccionado && (
-                    <div className="modal-overlay modal-Arreglo">
+                    <div className="modal-overlay">
                       <div className="modal-content-completo">
                         <div className='titulo-completo-modal'>
                           <h3 className="text-center">INFORMACIÓN COMPLETA DEL REPORTE</h3>
@@ -653,7 +653,7 @@ function Reportes() {
                   </button>
                   {/* Modal Actualizar Reporte */}
                   {modalActualizarAbierto && (
-                    <div className="modal-overlay modal-Arreglo">
+                    <div className="modal-overlay">
                       <div className="modal-content">
                         <h2>ACTUALIZAR REPORTE</h2>
                         <form onSubmit={manejarActualizacion}>
@@ -710,7 +710,7 @@ function Reportes() {
                   </button>
                   {/* Modal Responder Reporte */}
                   {modalRespuestaAbierto && (
-                    <div className="modal-overlay modal-Arreglo">
+                    <div className="modal-overlay">
                       <div className="modal-content">
                         <h2>RESPONDER REPORTE</h2>
                         <form onSubmit={manejarRespuesta}>
