@@ -7,6 +7,7 @@ const ProtegerRutasUrl = ({ allowedRoles }) => {
     const location = useLocation();
 
     if (!rolUsuario || !nombreUsuario) {
+        localStorage.clear(); // Asegurar que no queden datos de sesión
         Swal.fire({
             icon: "warning",
             title: "Acceso Restringido",

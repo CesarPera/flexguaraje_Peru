@@ -22,9 +22,11 @@ function HeaderAdmin() {
 
     const handleBackToHome = () => {
         localStorage.removeItem("nombreUsuario");
+        localStorage.removeItem("rolUsuario"); // Asegurar que el rol también se borre
         setNombreUsuario("Usuario Invitado");
         navigate("/");
     };
+
 
     return (
         <>

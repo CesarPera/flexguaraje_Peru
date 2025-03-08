@@ -251,6 +251,7 @@ SELECT
     permisos.nombre_permiso,
 	usuario.nombre_usuario,
     cuenta.email AS cuenta_email,
+    cuenta.pass as cuenta_contraseña,
     cuenta.estado AS cuenta_estado
 FROM 
     cuenta
